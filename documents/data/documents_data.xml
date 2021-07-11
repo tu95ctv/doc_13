@@ -29,6 +29,8 @@
                 <p>Incoming letters sent to inbox email alias will be added to your inbox automatically.</p>
             </field>
             <field name="sequence">1</field>
+            <!-- <field name="​alias_model_id" ref="documents.model_documents_document"/> -->
+
         </record>
 
         <record id="documents_finance_folder" model="documents.folder">
@@ -39,6 +41,7 @@
                 </center>
             </field>
             <field name="sequence">11</field>
+            <!-- <field name="​alias_model_id" ref="documents.model_documents_document"/> -->
         </record>
 
         <record id="documents_marketing_folder" model="documents.folder">
@@ -51,7 +54,7 @@
         <record id="documents_internal_status" model="documents.facet">
             <field name="name">Status</field>
             <field name="sequence">1</field>
-            <field name="folder_id" ref="documents_internal_folder"/>
+            <!-- <field name="folder_id" ref="documents_internal_folder"/> -->
         </record>
 
         <record id="documents_internal_knowledge" model="documents.facet">
@@ -277,6 +280,7 @@
             <field name="activity_type_id" ref="mail_documents_activity_data_Inbox"/>
             <field name="activity_date_deadline_range">7</field>
             <field name="activity_date_deadline_range_type">days</field>
+            <field name="alias_model_id" ref="documents.model_documents_share"/>
         </record>
 
         <record id="share_internal_folder" model="documents.share">
@@ -291,6 +295,7 @@
             <field name="activity_type_id" ref="mail_documents_activity_data_Inbox"/>
             <field name="activity_date_deadline_range">7</field>
             <field name="activity_date_deadline_range_type">days</field>
+            <field name="alias_model_id" ref="documents.model_documents_share"/>
         </record>
     </data>
 </odoo>

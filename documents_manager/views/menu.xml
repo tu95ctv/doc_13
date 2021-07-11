@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="action_documents_manager" model="ir.actions.client">
+    <field name="name">Documents Manager</field>
+    <field name="tag">documents_manager.documents_manager</field>
+</record>
+
+<menuitem
+        id="menu_documents_manager_root"
+        name="Documents Manager"
+        action="action_documents_manager"
+        groups="base.group_user"
+        sequence="1"/>
+</odoo>

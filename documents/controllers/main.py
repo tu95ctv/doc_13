@@ -321,6 +321,52 @@ class ShareRoute(http.Controller):
             logger.exception("Failed to download document %s" % id)
 
         return request.not_found()
+    
+
+    # Upload file(s) route.
+    @http.route(['/document/upload1/'],
+                type='http', auth='public', methods=['POST'], csrf=False)
+    def upload_attachment1(self,**kwargs):
+
+        # ad = 'admin:admin'
+        # rs = base64.b64encode(ad.encode("utf-8"))
+        # self.env['documents.document'].create({'name':'1', 'folder_id':1,'datas':rs})
+        # self._cr.commit() 
+
+        print ('**kwargs', kwargs)
+        print ('**request.httprequest.files**', request.httprequest.files)
+        requestFile = kwargs['requestFile']
+        requestFile = requestFile.split(';base64,',1)
+        data = requestFile[1]
+        file = data.encode("utf-8")
+        mimetype = requestFile[0].split(':')[1]
+
+        # file= base64.b64encode(requestFile.encode("utf-8"))# code gốc
+        # file_data = base64.urlsafe_b64decode(requestFile.encode('UTF-8'))# code trên mạng đối chiệu
+        # file = request.httprequest.files.getlist('requestFile')[0]
+        # data = file.read()#code gốc
+        # mimetype = file.content_type
+
+        ###########
+        #code trên mạng
+        # file_data = base64.urlsafe_b64decode(requestFile.encode('UTF-8'))
+
+        ###########
+        # mimetype = 'text/plain'
+
+        write_vals = {
+            'mimetype': mimetype,
+            'name': mimetype,
+            'type': 'binary',
+            # 'datas': base64.b64encode(data),#cooe gốc
+            'datas': file,
+            'folder_id':1
+        }
+        request.env['documents.document'].with_user(1).create(write_vals)
+        return {'res':'OK'}
+
+
+
 
     # Upload file(s) route.
     @http.route(["/document/upload/<int:share_id>/<token>/",

@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="digest_tip_documents_0" model="digest.tip">
-            <field name="name">Tip: Become a paperless company</field>
+            <!-- <field name="name">Tip: Become a paperless company</field> -->
             <field name="sequence">300</field>
             <field name="group_id" ref="documents.group_documents_user" />
             <field name="tip_description" type="html">

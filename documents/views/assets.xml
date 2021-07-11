@@ -54,7 +54,7 @@
         <script type="text/javascript" src="/documents/static/src/js/documents_public_pages.js"/>
     </template>
 
-    <template id="qunit_suite" name="documents test suite" inherit_id="web.qunit_suite_tests">
+    <!-- <template id="qunit_suite" name="documents test suite" inherit_id="web.qunit_suite_tests">
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/documents/static/src/bugfix/bugfix_tests.js"></script>
 
@@ -64,17 +64,17 @@
             <script type="text/javascript" src="/documents/static/tests/documents_systray_activity_menu_tests.js"></script>
             <script type="text/javascript" src="/documents/static/tests/mock_server.js"></script>
         </xpath>
-    </template>
+    </template> -->
 
-    <template id="qunit_mobile_suite" name="lunch mobile tests" inherit_id="web.qunit_mobile_suite_tests">
+    <!-- <template id="qunit_mobile_suite" name="lunch mobile tests" inherit_id="web.qunit_mobile_suite_tests">
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/documents/static/tests/documents_test_utils.js"></script>
             <script type="text/javascript" src="/documents/static/tests/documents_kanban_mobile_tests.js"></script>
             <script type="text/javascript" src="/documents/static/tests/mock_server.js"></script>
         </xpath>
-    </template>
+    </template> -->
 
-    <template id="pdf_js_assets" name="Documents pdf js assets" groups="base.group_user">
+    <template id="pdf_js_assets" name="Documents pdf js assets" >
         <t t-call-assets="web.pdf_js_lib"/>
     </template>
 </odoo>
