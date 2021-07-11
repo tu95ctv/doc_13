@@ -216,7 +216,7 @@ class CreatePartner(graphene.Mutation):
 class FileInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     # size = graphene.Float(required=True)
-    # type = graphene.String(required=True)
+    type = graphene.String(required=True)
     blob = graphene.String(required=True)
 ###uploadM###
 class UploadDocM(graphene.Mutation):
@@ -242,11 +242,11 @@ class UploadDocM(graphene.Mutation):
         print ('cccccccccccccc', len(file_objects))
         for obj in file_objects:
             name = obj['name']
-            requestFile = obj['blob']
-            requestFile = requestFile.split(';base64,',1)
-            data = requestFile[1]
+            data = obj['blob']
+            # requestFile = requestFile.split(';base64,',1)
+            # data = requestFile[1]
             file = data.encode("utf-8")
-            mimetype = requestFile[0].split(':')[1]
+            mimetype = obj['type']
             vals = {
                 'mimetype': mimetype,
                 'name': name,
@@ -255,7 +255,7 @@ class UploadDocM(graphene.Mutation):
                 'datas': file,
                 'folder_id':1
             }
-            doc = env["documents.document"].with_user(1).create(vals)
+            doc = env["documents.document"].create(vals)
             empty_docs = empty_docs|doc
         return doc
 ###!upload###
@@ -264,8 +264,8 @@ class UploadDocM(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
     create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
-    create_doc = CreateDoc.Field(description="Documentation of Document")
-    upload_doc = UploadDoc.Field(description="Documentation of Upload")
+    # create_doc = CreateDoc.Field(description="Documentation of Document")
+    # upload_doc = UploadDoc.Field(description="Documentation of Upload")
     upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
