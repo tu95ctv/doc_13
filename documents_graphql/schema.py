@@ -86,6 +86,7 @@ class Query(graphene.ObjectType):
     all_folders = graphene.List(
         graphene.NonNull(Folder),
         required=True,
+        parent_folder_id=graphene.Int(),
         companies_only=graphene.Boolean(),
         limit=graphene.Int(),
         offset=graphene.Int(),
@@ -107,8 +108,12 @@ class Query(graphene.ObjectType):
         )
 
     @staticmethod
-    def resolve_all_folders(root, info, limit=80, offset=None):
+    def resolve_all_folders(root, info, parent_folder_id = None, limit=80, offset=None):
+
         domain = []
+        if parent_folder_id:
+            domain +=[('parent_folder_id','=', parent_folder_id)]
+
         return info.context["env"]["documents.folder"].search(
             domain, limit=limit, offset=offset
         )
