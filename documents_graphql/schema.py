@@ -136,40 +136,93 @@ class CreatePartner(graphene.Mutation):
 # class Folder(OdooObjectType):
 #     name = graphene.String(required=True)
 
-class CreateDoc(graphene.Mutation):
+# class CreateDoc(graphene.Mutation):
+#     class Arguments:
+#         name = graphene.String(required=True)
+#         folder_id = graphene.Int(required=True)
+#         line_ids = graphene.JSONString()
+#         # folder_id = graphene.Field(Folder)
+#         # email = graphene.String(required=True)
+#         # is_company = graphene.Boolean()
+#         # raise_after_create = graphene.Boolean()
+
+#     Output = Document
+
+#     @staticmethod
+#     def resolve_folder_id(root, info):
+#         return root.folder_id or None
+
+#     @staticmethod
+#     def mutate(self, info, name, folder_id,line_ids=False, raise_after_create=False):
+#         print ('(***line_ids**', line_ids)
+#         env = info.context["env"]
+#         doc = env["documents.document"].create(
+#             {"name": name,
+#             "folder_id":folder_id,
+#              }
+#         )
+#         if raise_after_create:
+#             raise UserError(_("as requested"))
+#         return doc
+
+# ###upload###
+# class UploadDoc(graphene.Mutation):
+#     class Arguments:
+#         requestFile = graphene.String(required=True)
+#         folder_id = graphene.Int(required=True)
+#         # line_ids = graphene.JSONString()
+#         # folder_id = graphene.Field(Folder)
+#         # email = graphene.String(required=True)
+#         # is_company = graphene.Boolean()
+#         # raise_after_create = graphene.Boolean()
+
+#     Output = Document
+#     # @staticmethod
+#     # def resolve_folder_id(root, info):
+#     #     return root.folder_id or None
+
+#     @staticmethod
+#     def mutate(self, info, requestFile, folder_id, raise_after_create=False):
+#         env = info.context["env"]
+#         ##
+#         # requestFile = kwargs['requestFile']
+#         requestFile = requestFile.split(';base64,',1)
+#         data = requestFile[1]
+#         file = data.encode("utf-8")
+#         mimetype = requestFile[0].split(':')[1]
+#         ###
+
+#         vals = {
+#             'mimetype': mimetype,
+#             'name': mimetype,
+#             'type': 'binary',
+#             # 'datas': base64.b64encode(data),#cooe gốc
+#             'datas': file,
+#             'folder_id':folder_id
+#         }
+#         doc = env["documents.document"].with_user(1).create(vals)
+#         # doc = env["documents.document"].create(
+#         #     {"name": name,
+#         #     "folder_id":folder_id,
+#         #      }
+#         # )
+
+#         if raise_after_create:
+#             raise UserError(_("as requested"))
+#         return doc
+
+
+# ###!upload###
+class FileInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    # size = graphene.Float(required=True)
+    # type = graphene.String(required=True)
+    blob = graphene.String(required=True)
+###uploadM###
+class UploadDocM(graphene.Mutation):
     class Arguments:
-        name = graphene.String(required=True)
-        folder_id = graphene.Int(required=True)
-        line_ids = graphene.JSONString()
-        # folder_id = graphene.Field(Folder)
-        # email = graphene.String(required=True)
-        # is_company = graphene.Boolean()
-        # raise_after_create = graphene.Boolean()
-
-    Output = Document
-
-    @staticmethod
-    def resolve_folder_id(root, info):
-        return root.folder_id or None
-
-    @staticmethod
-    def mutate(self, info, name, folder_id,line_ids=False, raise_after_create=False):
-        print ('(***line_ids**', line_ids)
-        env = info.context["env"]
-        doc = env["documents.document"].create(
-            {"name": name,
-            "folder_id":folder_id,
-             }
-        )
-        if raise_after_create:
-            raise UserError(_("as requested"))
-        return doc
-
-###upload###
-class UploadDoc(graphene.Mutation):
-    class Arguments:
-        requestFile = graphene.String(required=True)
-        folder_id = graphene.Int(required=True)
+        file_objects = graphene.List(FileInput, required=True)
+        # folder_id = graphene.Int(required=True)
         # line_ids = graphene.JSONString()
         # folder_id = graphene.Field(Folder)
         # email = graphene.String(required=True)
@@ -182,40 +235,37 @@ class UploadDoc(graphene.Mutation):
     #     return root.folder_id or None
 
     @staticmethod
-    def mutate(self, info, requestFile, folder_id, raise_after_create=False):
+    def mutate(self, info, file_objects):
         env = info.context["env"]
-        ##
-        # requestFile = kwargs['requestFile']
-        requestFile = requestFile.split(';base64,',1)
-        data = requestFile[1]
-        file = data.encode("utf-8")
-        mimetype = requestFile[0].split(':')[1]
-        ###
-
-        vals = {
-            'mimetype': mimetype,
-            'name': mimetype,
-            'type': 'binary',
-            # 'datas': base64.b64encode(data),#cooe gốc
-            'datas': file,
-            'folder_id':folder_id
-        }
-        doc = env["documents.document"].with_user(1).create(vals)
-        # doc = env["documents.document"].create(
-        #     {"name": name,
-        #     "folder_id":folder_id,
-        #      }
-        # )
-
-        if raise_after_create:
-            raise UserError(_("as requested"))
+        print ('**file_objects**', file_objects)
+        empty_docs = env["documents.document"]
+        print ('cccccccccccccc', len(file_objects))
+        for obj in file_objects:
+            name = obj['name']
+            requestFile = obj['blob']
+            requestFile = requestFile.split(';base64,',1)
+            data = requestFile[1]
+            file = data.encode("utf-8")
+            mimetype = requestFile[0].split(':')[1]
+            vals = {
+                'mimetype': mimetype,
+                'name': name,
+                'type': 'binary',
+                # 'datas': base64.b64encode(data),#cooe gốc
+                'datas': file,
+                'folder_id':1
+            }
+            doc = env["documents.document"].with_user(1).create(vals)
+            empty_docs = empty_docs|doc
         return doc
+###!upload###
+
 
 
 class Mutation(graphene.ObjectType):
     create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
     create_doc = CreateDoc.Field(description="Documentation of Document")
     upload_doc = UploadDoc.Field(description="Documentation of Upload")
-
+    upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

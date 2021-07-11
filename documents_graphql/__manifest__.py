@@ -7,7 +7,7 @@
     "license": "LGPL-3",
     "author": "Viindoo",
     "website": "",
-    "depends": ["graphql_base"],
+    "depends": ["graphql_base","documents"],
     "external_dependencies": {"python": ["graphene"]},
     "development_status": "Beta",
     "maintainers": ["sbidoul"],
