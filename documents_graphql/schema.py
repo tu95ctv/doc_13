@@ -39,8 +39,28 @@ class Partner(OdooObjectType):
         return root.child_ids
 
 ###docs###
-class Document(OdooObjectType):
+class ParentFolder(OdooObjectType):
+    id = graphene.Int(required=True)
     name = graphene.String(required=True)
+
+class Folder(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+    parent_folder_id = graphene.Field(ParentFolder)
+
+    @staticmethod
+    def resolve_parent_folder_id(root, info):
+        return root.parent_folder_id or None
+
+class Document(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+    folder_id = graphene.Field(Folder)
+
+    @staticmethod
+    def resolve_folder_id(root, info):
+        return root.folder_id or None
+
     # street = graphene.String()
     # street2 = graphene.String()
     # city = graphene.String()
@@ -68,7 +88,7 @@ class Query(graphene.ObjectType):
         offset=graphene.Int(),
     )
 
-    all_docs = graphene.List(
+    all_documents = graphene.List(
         graphene.NonNull(Document),
         required=True,
         companies_only=graphene.Boolean(),
@@ -76,6 +96,14 @@ class Query(graphene.ObjectType):
         offset=graphene.Int(),
     )
 
+
+    all_folders = graphene.List(
+        graphene.NonNull(Folder),
+        required=True,
+        companies_only=graphene.Boolean(),
+        limit=graphene.Int(),
+        offset=graphene.Int(),
+    )
 
     reverse = graphene.String(
         required=True,
@@ -86,11 +114,16 @@ class Query(graphene.ObjectType):
     error_example = graphene.String()
     #tu them
     @staticmethod
-    def resolve_all_docs(root, info, companies_only=False, limit=None, offset=None):
+    def resolve_all_documents(root, info, limit=80, offset=None):
         domain = []
-        if companies_only:
-            domain.append(("is_company", "=", True))
         return info.context["env"]["documents.document"].search(
+            domain, limit=limit, offset=offset
+        )
+
+    @staticmethod
+    def resolve_all_folders(root, info, limit=80, offset=None):
+        domain = []
+        return info.context["env"]["documents.folder"].search(
             domain, limit=limit, offset=offset
         )
 
