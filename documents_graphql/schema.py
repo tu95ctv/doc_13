@@ -13,32 +13,33 @@ from odoo.exceptions import UserError
 from odoo.addons.graphql_base import OdooObjectType
 
 
-class Country(OdooObjectType):
-    code = graphene.String(required=True)
-    name = graphene.String(required=True)
+# class Country(OdooObjectType):
+#     code = graphene.String(required=True)
+#     name = graphene.String(required=True)
 
 
-class Partner(OdooObjectType):
-    name = graphene.String(required=True)
-    street = graphene.String()
-    street2 = graphene.String()
-    city = graphene.String()
-    zip = graphene.String()
-    country = graphene.Field(Country)
-    email = graphene.String()
-    phone = graphene.String()
-    is_company = graphene.Boolean(required=True)
-    contacts = graphene.List(graphene.NonNull(lambda: Partner), required=True)
+# class Partner(OdooObjectType):
+#     name = graphene.String(required=True)
+#     street = graphene.String()
+#     street2 = graphene.String()
+#     city = graphene.String()
+#     zip = graphene.String()
+#     country = graphene.Field(Country)
+#     email = graphene.String()
+#     phone = graphene.String()
+#     is_company = graphene.Boolean(required=True)
+#     contacts = graphene.List(graphene.NonNull(lambda: Partner), required=True)
 
-    @staticmethod
-    def resolve_country(root, info):
-        return root.country_id or None
+#     @staticmethod
+#     def resolve_country(root, info):
+#         return root.country_id or None
 
-    @staticmethod
-    def resolve_contacts(root, info):
-        return root.child_ids
+#     @staticmethod
+#     def resolve_contacts(root, info):
+#         return root.child_ids
 
-###docs###
+
+##folder##
 class ParentFolder(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)
@@ -51,7 +52,8 @@ class Folder(OdooObjectType):
     @staticmethod
     def resolve_parent_folder_id(root, info):
         return root.parent_folder_id or None
-
+##!folder##
+###docs###
 class Document(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)
@@ -61,32 +63,16 @@ class Document(OdooObjectType):
     def resolve_folder_id(root, info):
         return root.folder_id or None
 
-    # street = graphene.String()
-    # street2 = graphene.String()
-    # city = graphene.String()
-    # zip = graphene.String()
-    # country = graphene.Field(Country)
-    # email = graphene.String()
-    # phone = graphene.String()
-    # is_company = graphene.Boolean(required=True)
-    # contacts = graphene.List(graphene.NonNull(lambda: Partner), required=True)
-
-    # @staticmethod
-    # def resolve_country(root, info):
-    #     return root.country_id or None
-
-    # @staticmethod
-    # def resolve_contacts(root, info):
-    #     return root.child_ids
 ###!docs###
 class Query(graphene.ObjectType):
-    all_partners = graphene.List(
-        graphene.NonNull(Partner),
-        required=True,
-        companies_only=graphene.Boolean(),
-        limit=graphene.Int(),
-        offset=graphene.Int(),
-    )
+    
+    # all_partners = graphene.List(
+    #     graphene.NonNull(Partner),
+    #     required=True,
+    #     companies_only=graphene.Boolean(),
+    #     limit=graphene.Int(),
+    #     offset=graphene.Int(),
+    # )
 
     all_documents = graphene.List(
         graphene.NonNull(Document),
@@ -128,15 +114,14 @@ class Query(graphene.ObjectType):
         )
 
     #!tu them
-    @staticmethod
-    def resolve_all_partners(root, info, companies_only=False, limit=None, offset=None):
-        domain = []
-        if companies_only:
-            domain.append(("is_company", "=", True))
-        return info.context["env"]["res.partner"].search(
-            domain, limit=limit, offset=offset
-        )
-
+    # @staticmethod
+    # def resolve_all_partners(root, info, companies_only=False, limit=None, offset=None):
+    #     domain = []
+    #     if companies_only:
+    #         domain.append(("is_company", "=", True))
+    #     return info.context["env"]["res.partner"].search(
+    #         domain, limit=limit, offset=offset
+    #     )
 
     @staticmethod
     def resolve_reverse(root, info, word):
@@ -147,144 +132,50 @@ class Query(graphene.ObjectType):
         raise UserError(_("UserError example"))
 
 
-class CreatePartner(graphene.Mutation):
-    class Arguments:
-        name = graphene.String(required=True)
-        email = graphene.String(required=True)
-        is_company = graphene.Boolean()
-        raise_after_create = graphene.Boolean()
-
-    Output = Partner
-
-    @staticmethod
-    def mutate(self, info, name, email, is_company=False, raise_after_create=False):
-        env = info.context["env"]
-        partner = env["res.partner"].create(
-            {"name": name, "email": email, "is_company": is_company}
-        )
-        if raise_after_create:
-            raise UserError(_("as requested"))
-        return partner
-
-# class Folder(OdooObjectType):
-#     name = graphene.String(required=True)
-
-# class CreateDoc(graphene.Mutation):
+# class CreatePartner(graphene.Mutation):
 #     class Arguments:
 #         name = graphene.String(required=True)
-#         folder_id = graphene.Int(required=True)
-#         line_ids = graphene.JSONString()
-#         # folder_id = graphene.Field(Folder)
-#         # email = graphene.String(required=True)
-#         # is_company = graphene.Boolean()
-#         # raise_after_create = graphene.Boolean()
+#         email = graphene.String(required=True)
+#         is_company = graphene.Boolean()
+#         raise_after_create = graphene.Boolean()
 
-#     Output = Document
+#     Output = Partner
 
 #     @staticmethod
-#     def resolve_folder_id(root, info):
-#         return root.folder_id or None
-
-#     @staticmethod
-#     def mutate(self, info, name, folder_id,line_ids=False, raise_after_create=False):
-#         print ('(***line_ids**', line_ids)
+#     def mutate(self, info, name, email, is_company=False, raise_after_create=False):
 #         env = info.context["env"]
-#         doc = env["documents.document"].create(
-#             {"name": name,
-#             "folder_id":folder_id,
-#              }
+#         partner = env["res.partner"].create(
+#             {"name": name, "email": email, "is_company": is_company}
 #         )
 #         if raise_after_create:
 #             raise UserError(_("as requested"))
-#         return doc
+#         return partner
 
-# ###upload###
-# class UploadDoc(graphene.Mutation):
-#     class Arguments:
-#         requestFile = graphene.String(required=True)
-#         folder_id = graphene.Int(required=True)
-#         # line_ids = graphene.JSONString()
-#         # folder_id = graphene.Field(Folder)
-#         # email = graphene.String(required=True)
-#         # is_company = graphene.Boolean()
-#         # raise_after_create = graphene.Boolean()
+###uploadM###
 
-#     Output = Document
-#     # @staticmethod
-#     # def resolve_folder_id(root, info):
-#     #     return root.folder_id or None
-
-#     @staticmethod
-#     def mutate(self, info, requestFile, folder_id, raise_after_create=False):
-#         env = info.context["env"]
-#         ##
-#         # requestFile = kwargs['requestFile']
-#         requestFile = requestFile.split(';base64,',1)
-#         data = requestFile[1]
-#         file = data.encode("utf-8")
-#         mimetype = requestFile[0].split(':')[1]
-#         ###
-
-#         vals = {
-#             'mimetype': mimetype,
-#             'name': mimetype,
-#             'type': 'binary',
-#             # 'datas': base64.b64encode(data),#cooe gốc
-#             'datas': file,
-#             'folder_id':folder_id
-#         }
-#         doc = env["documents.document"].with_user(1).create(vals)
-#         # doc = env["documents.document"].create(
-#         #     {"name": name,
-#         #     "folder_id":folder_id,
-#         #      }
-#         # )
-
-#         if raise_after_create:
-#             raise UserError(_("as requested"))
-#         return doc
-
-
-# ###!upload###
 class FileInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     # size = graphene.Float(required=True)
     type = graphene.String(required=True)
     blob = graphene.String(required=True)
-###uploadM###
 class UploadDocM(graphene.Mutation):
     class Arguments:
         file_objects = graphene.List(FileInput, required=True)
-        # folder_id = graphene.Int(required=True)
-        # line_ids = graphene.JSONString()
-        # folder_id = graphene.Field(Folder)
-        # email = graphene.String(required=True)
-        # is_company = graphene.Boolean()
-        # raise_after_create = graphene.Boolean()
-
     Output = Document
-    # @staticmethod
-    # def resolve_folder_id(root, info):
-    #     return root.folder_id or None
-
+   
     @staticmethod
     def mutate(self, info, file_objects):
         env = info.context["env"]
-        print ('**file_objects**', file_objects)
         empty_docs = env["documents.document"]
-        print ('cccccccccccccc', len(file_objects))
         for obj in file_objects:
             name = obj['name']
             data = obj['blob']
-            # requestFile = requestFile.split(';base64,',1)
-            # data = requestFile[1]
             file = data.encode("utf-8")
             mimetype = obj['type']
             vals = {
                 'mimetype': mimetype,
                 'name': name,
                 'type': 'binary',
-                # 'datas': base64.b64encode(data),#cooe gốc
                 'datas': file,
                 'folder_id':1
             }
@@ -296,9 +187,7 @@ class UploadDocM(graphene.Mutation):
 
 
 class Mutation(graphene.ObjectType):
-    create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
-    # create_doc = CreateDoc.Field(description="Documentation of Document")
-    # upload_doc = UploadDoc.Field(description="Documentation of Upload")
+    # create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
     upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
