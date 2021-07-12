@@ -86,6 +86,11 @@ export type GetAllFoldersQuery = (
   & { allFolders: Array<(
     { __typename?: 'Folder' }
     & Pick<Folder, 'id' | 'name'>
+    & { key: Folder['id'], label: Folder['name'] }
+    & { parentFolderId?: Maybe<(
+      { __typename?: 'ParentFolder' }
+      & Pick<ParentFolder, 'id'>
+    )> }
   )> }
 );
 
@@ -95,6 +100,11 @@ export const GetAllFoldersDocument = gql`
   allFolders {
     id
     name
+    key: id
+    label: name
+    parentFolderId {
+      id
+    }
   }
 }
     `;

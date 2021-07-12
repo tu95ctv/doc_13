@@ -2,5 +2,10 @@ query getAllFolders {
   allFolders{
     id
     name
+    key:id
+    label:name
+    parentFolderId{
+      id
+    }
   }
 }
