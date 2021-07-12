@@ -4,8 +4,6 @@ query getAllFolders {
     name
     key:id
     label:name
-    parentFolderId{
-      id
-    }
+    parentFolderId
   }
 }

@@ -4,7 +4,7 @@
     <t t-name="documents_manager_template">
         <div class="container-fluid py-2 o_web_settings_dashboard">
             <div id="root"></div>
-            <script type="text/javascript" src="/documents_frontends/static/dist/index.bbb42a43.js"></script>
+            <script type="text/javascript" src="/documents_frontends/static/dist/index.65510c84.js"></script>
         </div>
     </t>
 

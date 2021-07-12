@@ -1,5 +1,5 @@
 overwrite: true
-schema: schema.graphql
+schema: schema.json
 documents:
   - ./gql/query/*.gql
 generates:
