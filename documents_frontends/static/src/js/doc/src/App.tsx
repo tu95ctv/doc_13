@@ -1,55 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Tree } from 'primereact/tree';
 import Toolbar from './Toolbar'
 import { useGetAllFoldersLazyQuery } from './codegen'
 import listToTree from './listToTree';
 import Documents from './Documents';
+
 const TreeLazyDemo = () => {
     const [createLazyNodes, { loading, data }] = useGetAllFoldersLazyQuery()
     const [folderId, setFolderId] = React.useState<number>()
-    // const [nodes, setNodes] = useState<any>(null);
-    
-    /*
-    const createLazyNodes = () => {
-        return [
-            {
-                key: '0',
-                label: 'Node 0',
-                leaf: false
-            },
-            {
-                key: '1',
-                label: 'Node 1',
-                leaf: false
-            },
-            {
-                key: '2',
-                label: 'Node 2',
-                leaf: false
-            }
-        ];
-    }
-    */
-    /*
-    const loadOnExpand = async (event: any) => {
-        if (!event.node.children) {
-            const nodes = await createLazyNodes()
-            let node = { ...event.node };
-            node.children = [];
-
-            for (let i = 0; i < 3; i++) {
-                node.children.push({
-                    key: node.key + '-' + i,
-                    label: 'Lazy ' + node.label + '-' + i
-                });
-            }
-
-            let value = [...nodes];
-            value[parseInt(event.node.key, 10)] = node;
-            setNodes(value);
-        }
-    }
-    */
 
     useEffect(() => {
         createLazyNodes()   
@@ -75,17 +33,16 @@ const TreeLazyDemo = () => {
     
     return (
         <div className="p-grid">
-            <div className="p-col-4">
+            <div className="p-col-3">
             <div className="card">
                 <Tree value={nodes} loading={loading} nodeTemplate={nodeTemplate} />
             </div>
             </div>
-            <div className="p-col-8">
-                <Toolbar />
+            <div className="p-col-9">
+                {folderId && <Toolbar folderId={folderId} />}
                 <Documents folderId={folderId} />
             </div>
-        </div>
-    
+        </div>    
     )
 }
 export default TreeLazyDemo

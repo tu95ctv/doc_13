@@ -1,9 +1,13 @@
 import React from 'react';
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
-import { SplitButton } from 'primereact/splitbutton';
-
-const ToolbarDemo = () => {
+import Modal from './Modal'
+import SearchButton from './Toolbar/SearchButton';
+import Tags from './Tags/Tags'
+type ToolbarDemoProps = {
+    folderId: number
+}
+const ToolbarDemo: React.FC<ToolbarDemoProps> = ({ folderId }) => {
     const items = [
         {
             label: 'Update',
@@ -31,16 +35,15 @@ const ToolbarDemo = () => {
     const leftContents = (
         <React.Fragment>
             <Button label="New" icon="pi pi-plus" className="p-mr-2" />
-            <Button label="Upload" icon="pi pi-upload" className="p-button-success" />
-            <i className="pi pi-bars p-toolbar-separator p-mr-2" />
-            <SplitButton label="Save" icon="pi pi-check" model={items} className="p-button-warning"></SplitButton>
+            <Modal folderId={folderId} />
+            <i className="pi p-toolbar-separator p-mr-2" />
+            <Tags />
         </React.Fragment>
     );
 
     const rightContents = (
         <React.Fragment>
-            <Button icon="pi pi-search" className="p-mr-2" />
-            <Button icon="pi pi-calendar" className="p-button-success p-mr-2" />
+            <SearchButton />
             <Button icon="pi pi-times" className="p-button-danger" />
         </React.Fragment>
     );

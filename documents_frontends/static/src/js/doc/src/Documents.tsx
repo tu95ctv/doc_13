@@ -7,7 +7,7 @@ type DocumentsProps = {
 const Documents: React.FC<DocumentsProps> = ({
     folderId
 }) => {
-    const { data, loading } = useGetAllDocumentsQuery({
+    const { data, loading, refetch } = useGetAllDocumentsQuery({
         variables: { folderId },        
     })
 

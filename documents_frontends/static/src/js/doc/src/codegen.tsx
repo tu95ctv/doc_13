@@ -93,6 +93,19 @@ export type QueryReverseArgs = {
   word: Scalars['String'];
 };
 
+export type UploadFilesMutationVariables = Exact<{
+  fileObjects: Array<Maybe<FileInput>> | Maybe<FileInput>;
+}>;
+
+
+export type UploadFilesMutation = (
+  { __typename?: 'Mutation' }
+  & { uploadDocM?: Maybe<(
+    { __typename?: 'Document' }
+    & Pick<Document, 'id' | 'name'>
+  )> }
+);
+
 export type GetAllDocumentsQueryVariables = Exact<{
   folderId?: Maybe<Scalars['Int']>;
 }>;
@@ -119,6 +132,40 @@ export type GetAllFoldersQuery = (
 );
 
 
+export const UploadFilesDocument = gql`
+    mutation uploadFiles($fileObjects: [FileInput]!) {
+  uploadDocM(fileObjects: $fileObjects) {
+    id
+    name
+  }
+}
+    `;
+export type UploadFilesMutationFn = Apollo.MutationFunction<UploadFilesMutation, UploadFilesMutationVariables>;
+
+/**
+ * __useUploadFilesMutation__
+ *
+ * To run a mutation, you first call `useUploadFilesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFilesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFilesMutation, { data, loading, error }] = useUploadFilesMutation({
+ *   variables: {
+ *      fileObjects: // value for 'fileObjects'
+ *   },
+ * });
+ */
+export function useUploadFilesMutation(baseOptions?: Apollo.MutationHookOptions<UploadFilesMutation, UploadFilesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFilesMutation, UploadFilesMutationVariables>(UploadFilesDocument, options);
+      }
+export type UploadFilesMutationHookResult = ReturnType<typeof useUploadFilesMutation>;
+export type UploadFilesMutationResult = Apollo.MutationResult<UploadFilesMutation>;
+export type UploadFilesMutationOptions = Apollo.BaseMutationOptions<UploadFilesMutation, UploadFilesMutationVariables>;
 export const GetAllDocumentsDocument = gql`
     query getAllDocuments($folderId: Int) {
   allDocuments(folderId: $folderId) {
