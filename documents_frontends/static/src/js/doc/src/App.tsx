@@ -6,6 +6,7 @@ import listToTree from './listToTree';
 import Documents from './Documents';
 const TreeLazyDemo = () => {
     const [createLazyNodes, { loading, data }] = useGetAllFoldersLazyQuery()
+    const [folderId, setFolderId] = React.useState<number>()
     // const [nodes, setNodes] = useState<any>(null);
     
     /*
@@ -56,12 +57,13 @@ const TreeLazyDemo = () => {
 
     const onClick = (node: any) => (e: any) => {
         console.log('id', node)
+        setFolderId(node.id)
     }
 
     const nodeTemplate = (node: any, options: { className: string | undefined; }) => {
         return (
             <span onClick={onClick(node)} className={options.className}>
-                {node.label}
+                {folderId === node.id ? <strong>{node.label}</strong> : node.label}
             </span>
         )
     }
@@ -80,7 +82,7 @@ const TreeLazyDemo = () => {
             </div>
             <div className="p-col-8">
                 <Toolbar />
-                <Documents />
+                <Documents folderId={folderId} />
             </div>
         </div>
     
