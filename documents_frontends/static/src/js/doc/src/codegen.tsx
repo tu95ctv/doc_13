@@ -12,12 +12,18 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `GenericScalar` scalar type represents a generic
+   * GraphQL scalar value that could be:
+   * String, Boolean, Int, Float, List or Object.
+   */
+  GenericScalar: any;
 };
 
 export type Document = {
   __typename?: 'Document';
   id: Scalars['Int'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   folderId?: Maybe<Folder>;
 };
 
@@ -35,6 +41,7 @@ export type Folder = {
   parentFolder?: Maybe<ParentFolder>;
   parentFolderId?: Maybe<Scalars['Int']>;
 };
+
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -64,8 +71,11 @@ export type Query = {
 
 
 export type QueryAllDocumentsArgs = {
-  companiesOnly?: Maybe<Scalars['Boolean']>;
+  domain?: Maybe<Scalars['GenericScalar']>;
+  search?: Maybe<Scalars['String']>;
   folderId?: Maybe<Scalars['Int']>;
+  tagIds?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  companiesOnly?: Maybe<Scalars['Boolean']>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };

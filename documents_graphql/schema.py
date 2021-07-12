@@ -89,7 +89,6 @@ class Query(graphene.ObjectType):
         folder_id=graphene.Int(),
         tag_ids=graphene.List(graphene.Int),
         companies_only=graphene.Boolean(),
-        folder_id=graphene.Int(),
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
