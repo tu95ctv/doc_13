@@ -12,6 +12,7 @@
     "license": "MIT",
     "dependencies": {
         "@apollo/client": "^3.3.21",
+        "@reduxjs/toolkit": "^1.6.0",
         "graphql": "^15.5.1",
         "primeflex": "^2.0.0",
         "primeicons": "^4.1.0",
@@ -20,7 +21,9 @@
         "react-dom": "^17.0.1",
         "react-dropdown-tree-select": "^2.5.1",
         "react-dropzone-uploader": "^2.11.0",
-        "react-transition-group": "^4.4.1"
+        "react-redux": "^7.2.4",
+        "react-transition-group": "^4.4.1",
+        "redux": "^4.1.0"
     },
     "devDependencies": {
         "@babel/preset-typescript": "^7.10.4",

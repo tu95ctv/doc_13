@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { useUploadFilesMutation, useGetAllDocumentsQuery } from './codegen'
+import { useAppSelector } from './app/hooks'
+import { selectCurrentFolder } from './features/currentFolder/slice'
 
 const toBase64 = (file: any) =>
   new Promise((resolve, reject) => {
@@ -11,14 +13,10 @@ const toBase64 = (file: any) =>
     reader.onerror = (error) => reject(error);
   });
 
-type UploaderProps = {
-    folderId: number
-}
-const Uploader: React.FC<UploaderProps> = ({
-    folderId
-}) => {
+const Uploader: React.FC = () => {
+  const folderId = useAppSelector(selectCurrentFolder)
   const { refetch } = useGetAllDocumentsQuery({
-    variables: { folderId },        
+    variables: { folderId },
   })
   const [mutate, { loading }] = useUploadFilesMutation({
     onCompleted: () => {
@@ -84,6 +82,7 @@ const Uploader: React.FC<UploaderProps> = ({
         // getUploadParams={getUploadParams}
         onChangeStatus={handleChangeStatus}
         onSubmit={handleSubmit}
+        disabled={loading}
         styles={{ dropzone: { minHeight: 250, maxHeight: 300 } }}
       />
       <img id="blah" src={img} alt="preview" />

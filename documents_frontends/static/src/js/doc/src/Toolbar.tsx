@@ -4,10 +4,11 @@ import { Button } from 'primereact/button';
 import Modal from './Modal'
 import SearchButton from './Toolbar/SearchButton';
 import Tags from './Tags/Tags'
-type ToolbarDemoProps = {
-    folderId: number
-}
-const ToolbarDemo: React.FC<ToolbarDemoProps> = ({ folderId }) => {
+import { useAppSelector } from './app/hooks'
+import { selectCurrentFolder } from './features/currentFolder/slice'
+
+const ToolbarDemo: React.FC<{}> = () => {
+    const folderId = useAppSelector(selectCurrentFolder)
     const items = [
         {
             label: 'Update',
@@ -35,7 +36,7 @@ const ToolbarDemo: React.FC<ToolbarDemoProps> = ({ folderId }) => {
     const leftContents = (
         <React.Fragment>
             <Button label="New" icon="pi pi-plus" className="p-mr-2" />
-            <Modal folderId={folderId} />
+            {folderId && <Modal />}
             <i className="pi p-toolbar-separator p-mr-2" />
             <Tags />
         </React.Fragment>
