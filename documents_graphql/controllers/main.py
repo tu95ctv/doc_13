@@ -7,7 +7,6 @@ from odoo.addons.graphql_base import GraphQLControllerMixin
 
 from ..schema import schema
 
-
 class GraphQLController(http.Controller, GraphQLControllerMixin):
 
     # The GraphiQL route, providing an IDE for developers
@@ -19,7 +18,7 @@ class GraphQLController(http.Controller, GraphQLControllerMixin):
     # requests. If you only need to accept GET requests or POST
     # with application/x-www-form-urlencoded content,
     # this is not necessary.
-    GraphQLControllerMixin.patch_for_json("^/graphql/demo/?$")
+    GraphQLControllerMixin.patch_for_json("^/graphql/demo1/?$")
 
     # The graphql route, for applications.
     # Note csrf=False: you may want to apply extra security

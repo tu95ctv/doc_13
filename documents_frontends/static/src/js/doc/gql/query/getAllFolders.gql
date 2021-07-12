@@ -1,0 +1,6 @@
+query getAllFolders {
+  allFolders{
+    id
+    name
+  }
+}

@@ -1,0 +1,38 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Document {
+  id: Int!
+  name: String!
+  folderId: Folder
+}
+
+input FileInput {
+  name: String!
+  type: String!
+  blob: String!
+}
+
+type Folder {
+  id: Int!
+  name: String!
+  parentFolderId: ParentFolder
+}
+
+type Mutation {
+  uploadDocM(fileObjects: [FileInput]!): Document
+}
+
+type ParentFolder {
+  id: Int!
+  name: String!
+}
+
+type Query {
+  allDocuments(companiesOnly: Boolean, limit: Int, offset: Int): [Document!]!
+  allFolders(parentFolderId: Int, companiesOnly: Boolean, limit: Int, offset: Int): [Folder!]!
+  reverse(word: String!): String!
+  errorExample: String
+}

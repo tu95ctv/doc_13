@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "jsx": "react",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "~*": ["./*"]
+    },
+    "strict": true,
+    "resolveJsonModule": true,
+    "target": "ES2015"
+  },
+  "include": ["src/**/*"]
+}
