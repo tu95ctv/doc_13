@@ -1,0 +1,10 @@
+<odoo>
+    <template id="assets_backend" name="documents_frontends assets" inherit_id="web.assets_backend">
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/documents_frontends/static/src/js/documents_manager.js"></script>                       
+        </xpath>
+        <xpath expr="." position="inside">
+            <link type="text/css" rel="stylesheet" href="/documents_frontends/static/dist/index.4489e27d.css" />
+        </xpath>
+    </template>
+</odoo>
