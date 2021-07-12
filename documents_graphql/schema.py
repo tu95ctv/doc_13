@@ -85,6 +85,7 @@ class Query(graphene.ObjectType):
         graphene.NonNull(Document),
         required=True,
         domain=GenericScalar(),
+        search=graphene.String(),
         folder_id=graphene.Int(),
         tag_ids=graphene.List(graphene.Int),
         companies_only=graphene.Boolean(),
@@ -112,7 +113,10 @@ class Query(graphene.ObjectType):
     error_example = graphene.String()
     #tu them
     @staticmethod
-    def resolve_all_documents(root, info, domain=None,folder_id=None, tag_ids=None, offset=None,limit=80):
+    def resolve_all_documents(root, info, limit=80,domain=None, folder_id=None, tag_ids=None,
+        search=None,
+        offset=None):
+        print ('**domain**', domain, type(domain))
         domain_new = []
         if domain:
             domain_new += domain
@@ -120,6 +124,8 @@ class Query(graphene.ObjectType):
             domain_new +=[('folder_id', '=', folder_id)]
         if tag_ids:
             domain_new +=[('tag_ids', '=', tag_ids)]
+        if search:
+            domain_new +=[('name', 'ilike', search)]
         return info.context["env"]["documents.document"].search(
             domain_new, limit=limit, offset=offset
         )
