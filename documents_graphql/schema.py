@@ -11,6 +11,7 @@ from odoo import _
 from odoo.exceptions import UserError
 
 from odoo.addons.graphql_base import OdooObjectType
+from graphene.types.generic import GenericScalar
 
 
 # class Country(OdooObjectType):
@@ -62,7 +63,7 @@ class Folder(OdooObjectType):
 ###docs###
 class Document(OdooObjectType):
     id = graphene.Int(required=True)
-    name = graphene.String(required=True)
+    name = graphene.String()
     folder_id = graphene.Field(Folder)
 
     @staticmethod
@@ -83,6 +84,9 @@ class Query(graphene.ObjectType):
     all_documents = graphene.List(
         graphene.NonNull(Document),
         required=True,
+        domain=GenericScalar(),
+        folder_id=graphene.Int(),
+        tag_ids=graphene.List(graphene.Int),
         companies_only=graphene.Boolean(),
         limit=graphene.Int(),
         offset=graphene.Int(),
@@ -107,10 +111,17 @@ class Query(graphene.ObjectType):
     error_example = graphene.String()
     #tu them
     @staticmethod
-    def resolve_all_documents(root, info, limit=80, offset=None):
-        domain = []
+    def resolve_all_documents(root, info, limit=80,domain=None, folder_id=None, tag_ids=None, offset=None):
+        print ('**domain**', domain, type(domain))
+        domain_new = []
+        if domain:
+            domain_new += domain
+        if folder_id:
+            domain_new +=[('folder_id', '=', folder_id)]
+        if tag_ids:
+            domain_new +=[('tag_ids', '=', tag_ids)]
         return info.context["env"]["documents.document"].search(
-            domain, limit=limit, offset=offset
+            domain_new, limit=limit, offset=offset
         )
 
     @staticmethod
