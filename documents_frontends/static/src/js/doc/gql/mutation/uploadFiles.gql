@@ -1,0 +1,8 @@
+mutation uploadFiles(
+  $fileObjects:[FileInput]!
+){
+  uploadDocM(fileObjects:$fileObjects){
+    id
+    name    
+  }
+}

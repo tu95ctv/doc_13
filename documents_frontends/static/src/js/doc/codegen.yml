@@ -2,6 +2,7 @@ overwrite: true
 schema: schema.json
 documents:
   - ./gql/query/*.gql
+  - ./gql/mutation/*.gql
 generates:
   src/codegen.tsx:
     plugins:
