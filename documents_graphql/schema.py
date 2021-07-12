@@ -88,6 +88,7 @@ class Query(graphene.ObjectType):
         folder_id=graphene.Int(),
         tag_ids=graphene.List(graphene.Int),
         companies_only=graphene.Boolean(),
+        folder_id=graphene.Int(),
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
@@ -111,8 +112,7 @@ class Query(graphene.ObjectType):
     error_example = graphene.String()
     #tu them
     @staticmethod
-    def resolve_all_documents(root, info, limit=80,domain=None, folder_id=None, tag_ids=None, offset=None):
-        print ('**domain**', domain, type(domain))
+    def resolve_all_documents(root, info, domain=None,folder_id=None, tag_ids=None, offset=None,limit=80):
         domain_new = []
         if domain:
             domain_new += domain

@@ -1,0 +1,10 @@
+query getAllDocuments(
+  $folderId:Int
+){
+  allDocuments(
+    folderId:$folderId
+  ){
+    id
+    name
+  }
+}
