@@ -47,11 +47,17 @@ class ParentFolder(OdooObjectType):
 class Folder(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)
-    parent_folder_id = graphene.Field(ParentFolder)
+    parent_folder = graphene.Field(ParentFolder)
+    parent_folder_id = graphene.Int()
 
     @staticmethod
-    def resolve_parent_folder_id(root, info):
+    def resolve_parent_folder(root, info):
         return root.parent_folder_id or None
+    
+    @staticmethod
+    def resolve_parent_folder_id(root, info):
+        return root.parent_folder_id.id or None
+
 ##!folder##
 ###docs###
 class Document(OdooObjectType):
@@ -163,6 +169,8 @@ class FileInput(graphene.InputObjectType):
     # size = graphene.Float(required=True)
     type = graphene.String(required=True)
     blob = graphene.String(required=True)
+    folder_id = graphene.Int(required=True)
+
 class UploadDocM(graphene.Mutation):
     class Arguments:
         file_objects = graphene.List(FileInput, required=True)
@@ -174,6 +182,8 @@ class UploadDocM(graphene.Mutation):
         empty_docs = env["documents.document"]
         for obj in file_objects:
             name = obj['name']
+            folder_id = obj['folder_id']
+            print ('**folder_id**', folder_id)
             data = obj['blob']
             file = data.encode("utf-8")
             mimetype = obj['type']
@@ -182,7 +192,7 @@ class UploadDocM(graphene.Mutation):
                 'name': name,
                 'type': 'binary',
                 'datas': file,
-                'folder_id':1
+                'folder_id':folder_id
             }
             doc = env["documents.document"].create(vals)
             empty_docs = empty_docs|doc
