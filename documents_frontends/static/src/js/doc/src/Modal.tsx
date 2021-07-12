@@ -3,11 +3,11 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import Uploader from './Uploader';
 import './Modal.css';
+import { useAppSelector } from './app/hooks'
+import { selectCurrentFolder } from './features/currentFolder/slice'
 
-type DialogDemoProps = {
-    folderId: number
-}
-const DialogDemo: React.FC<DialogDemoProps> = ({ folderId }) => {
+const DialogDemo: React.FC = () => {
+    const folderId = useAppSelector(selectCurrentFolder)
     const [displayMaximizable, setDisplayMaximizable] = useState(false);
 
     const dialogFuncMap: any = {
@@ -39,7 +39,7 @@ const DialogDemo: React.FC<DialogDemoProps> = ({ folderId }) => {
         <>
             <Button label="Upload" icon="pi pi-external-link" onClick={() => onClick('displayMaximizable')} />
             <Dialog header="Header" visible={displayMaximizable} maximizable modal style={{ width: '50vw' }} footer={renderFooter('displayMaximizable')} onHide={() => onHide('displayMaximizable')}>
-                <Uploader folderId={folderId} />
+                {folderId && <Uploader />}
             </Dialog>
         </>
     )

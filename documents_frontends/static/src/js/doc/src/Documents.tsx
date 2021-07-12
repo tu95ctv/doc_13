@@ -1,12 +1,11 @@
 // import { useGetAllDocumentsQuery } from "~codegen";
 import React from "react";
 import { useGetAllDocumentsQuery } from "./codegen";
-type DocumentsProps = {
-    folderId?: number
-}
-const Documents: React.FC<DocumentsProps> = ({
-    folderId
-}) => {
+import { useAppSelector } from './app/hooks'
+import { selectCurrentFolder } from './features/currentFolder/slice'
+
+const Documents: React.FC = () => {
+    const folderId = useAppSelector(selectCurrentFolder)
     const { data, loading, refetch } = useGetAllDocumentsQuery({
         variables: { folderId },        
     })

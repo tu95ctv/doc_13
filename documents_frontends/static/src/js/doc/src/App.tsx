@@ -5,9 +5,11 @@ import { useGetAllFoldersLazyQuery } from './codegen'
 import listToTree from './listToTree';
 import Documents from './Documents';
 
+import useCurrentFolder from './features/currentFolder/useCurrentFolder'
+
 const TreeLazyDemo = () => {
+    const  { currentFolder: folderId, setCurrentFolder } = useCurrentFolder()
     const [createLazyNodes, { loading, data }] = useGetAllFoldersLazyQuery()
-    const [folderId, setFolderId] = React.useState<number>()
 
     useEffect(() => {
         createLazyNodes()   
@@ -15,7 +17,8 @@ const TreeLazyDemo = () => {
 
     const onClick = (node: any) => (e: any) => {
         console.log('id', node)
-        setFolderId(node.id)
+        // setFolderId(node.id)
+        setCurrentFolder(node.id)
     }
 
     const nodeTemplate = (node: any, options: { className: string | undefined; }) => {
@@ -26,7 +29,14 @@ const TreeLazyDemo = () => {
         )
     }
 
-    const nodes = listToTree(data?.allFolders.map((it) => ({
+    const treeData = [{
+        id: null,
+        name: 'All',
+        label: 'All',
+        parentFolderId: null,
+    }, ...data?.allFolders as any]
+
+    const nodes = listToTree(treeData.map((it) => ({
         ...it,
         parent_id: it.parentFolderId,        
     } as any)))
@@ -39,8 +49,8 @@ const TreeLazyDemo = () => {
             </div>
             </div>
             <div className="p-col-9">
-                {folderId && <Toolbar folderId={folderId} />}
-                <Documents folderId={folderId} />
+                <Toolbar />
+                <Documents />
             </div>
         </div>    
     )
