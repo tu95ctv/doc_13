@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Tree } from 'primereact/tree';
 import Toolbar from './Toolbar'
 import { useGetAllFoldersLazyQuery } from './codegen'
+import listToTree from './listToTree';
+import Documents from './Documents';
 const TreeLazyDemo = () => {
     const [createLazyNodes, { loading, data }] = useGetAllFoldersLazyQuery()
     // const [nodes, setNodes] = useState<any>(null);
@@ -64,13 +66,11 @@ const TreeLazyDemo = () => {
         )
     }
 
-    const nodes = data?.allFolders?.map(item => {
-        return {
-            key: item.id,
-            label: item.name,
-            children: []
-        }
-    }) || []
+    const nodes = listToTree(data?.allFolders.map((it) => ({
+        ...it,
+        parent_id: it.parentFolderId,        
+    } as any)))
+    
     return (
         <div className="p-grid">
             <div className="p-col-4">
@@ -80,7 +80,7 @@ const TreeLazyDemo = () => {
             </div>
             <div className="p-col-8">
                 <Toolbar />
-
+                <Documents />
             </div>
         </div>
     

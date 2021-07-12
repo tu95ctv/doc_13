@@ -84,6 +84,7 @@ class Query(graphene.ObjectType):
         graphene.NonNull(Document),
         required=True,
         companies_only=graphene.Boolean(),
+        folder_id=graphene.Int(),
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
@@ -107,8 +108,11 @@ class Query(graphene.ObjectType):
     error_example = graphene.String()
     #tu them
     @staticmethod
-    def resolve_all_documents(root, info, limit=80, offset=None):
+    def resolve_all_documents(root, info, folder_id=None, limit=80, offset=None):
         domain = []
+        if folder_id:
+            domain += [('folder_id', '=', folder_id)]
+
         return info.context["env"]["documents.document"].search(
             domain, limit=limit, offset=offset
         )

@@ -25,17 +25,20 @@ export type FileInput = {
   name: Scalars['String'];
   type: Scalars['String'];
   blob: Scalars['String'];
+  folderId: Scalars['Int'];
 };
 
 export type Folder = {
   __typename?: 'Folder';
   id: Scalars['Int'];
   name: Scalars['String'];
-  parentFolderId?: Maybe<ParentFolder>;
+  parentFolder?: Maybe<ParentFolder>;
+  parentFolderId?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Documentation of Upload Multiple */
   uploadDocM?: Maybe<Document>;
 };
 
@@ -54,6 +57,7 @@ export type Query = {
   __typename?: 'Query';
   allDocuments: Array<Document>;
   allFolders: Array<Folder>;
+  /** Reverse a string */
   reverse: Scalars['String'];
   errorExample?: Maybe<Scalars['String']>;
 };
@@ -61,6 +65,7 @@ export type Query = {
 
 export type QueryAllDocumentsArgs = {
   companiesOnly?: Maybe<Scalars['Boolean']>;
+  folderId?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
@@ -78,6 +83,19 @@ export type QueryReverseArgs = {
   word: Scalars['String'];
 };
 
+export type GetAllDocumentsQueryVariables = Exact<{
+  folderId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetAllDocumentsQuery = (
+  { __typename?: 'Query' }
+  & { allDocuments: Array<(
+    { __typename?: 'Document' }
+    & Pick<Document, 'id' | 'name'>
+  )> }
+);
+
 export type GetAllFoldersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -85,16 +103,56 @@ export type GetAllFoldersQuery = (
   { __typename?: 'Query' }
   & { allFolders: Array<(
     { __typename?: 'Folder' }
-    & Pick<Folder, 'id' | 'name'>
+    & Pick<Folder, 'id' | 'name' | 'parentFolderId'>
+    & { key: Folder['id'], label: Folder['name'] }
   )> }
 );
 
 
+export const GetAllDocumentsDocument = gql`
+    query getAllDocuments($folderId: Int) {
+  allDocuments(folderId: $folderId) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetAllDocumentsQuery__
+ *
+ * To run a query within a React component, call `useGetAllDocumentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllDocumentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllDocumentsQuery({
+ *   variables: {
+ *      folderId: // value for 'folderId'
+ *   },
+ * });
+ */
+export function useGetAllDocumentsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllDocumentsQuery, GetAllDocumentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllDocumentsQuery, GetAllDocumentsQueryVariables>(GetAllDocumentsDocument, options);
+      }
+export function useGetAllDocumentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllDocumentsQuery, GetAllDocumentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllDocumentsQuery, GetAllDocumentsQueryVariables>(GetAllDocumentsDocument, options);
+        }
+export type GetAllDocumentsQueryHookResult = ReturnType<typeof useGetAllDocumentsQuery>;
+export type GetAllDocumentsLazyQueryHookResult = ReturnType<typeof useGetAllDocumentsLazyQuery>;
+export type GetAllDocumentsQueryResult = Apollo.QueryResult<GetAllDocumentsQuery, GetAllDocumentsQueryVariables>;
 export const GetAllFoldersDocument = gql`
     query getAllFolders {
   allFolders {
     id
     name
+    key: id
+    label: name
+    parentFolderId
   }
 }
     `;
