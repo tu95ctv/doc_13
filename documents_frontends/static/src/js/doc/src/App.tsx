@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Tree } from 'primereact/tree';
 import Toolbar from './Toolbar'
-import { useGetAllFoldersLazyQuery } from './codegen'
+import { useGetAllFoldersQuery } from './codegen'
 import listToTree from './listToTree';
 import Documents from './Documents';
 
@@ -9,11 +9,7 @@ import useCurrentFolder from './features/currentFolder/useCurrentFolder'
 
 const TreeLazyDemo = () => {
     const  { currentFolder: folderId, setCurrentFolder } = useCurrentFolder()
-    const [createLazyNodes, { loading, data }] = useGetAllFoldersLazyQuery()
-
-    useEffect(() => {
-        createLazyNodes()   
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const { loading, data } = useGetAllFoldersQuery()
 
     const onClick = (node: any) => (e: any) => {
         console.log('id', node)
@@ -29,6 +25,9 @@ const TreeLazyDemo = () => {
         )
     }
 
+    if (loading) return <div>...</div>
+    console.log('ahahaa')
+    console.log('xx', data?.allFolders)
     const treeData = [{
         id: null,
         name: 'All',
@@ -38,7 +37,7 @@ const TreeLazyDemo = () => {
 
     const nodes = listToTree(treeData.map((it) => ({
         ...it,
-        parent_id: it.parentFolderId,        
+        parent_id: it?.parentFolderId,        
     } as any)))
     
     return (
