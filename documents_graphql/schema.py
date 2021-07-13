@@ -240,7 +240,7 @@ class UploadDocM(graphene.Mutation):
             folder_id = obj['folder_id']
             print ('**folder_id**', folder_id)
             data = obj['blob']
-            file = data.encode("utf-8")
+            file = (data + "===").encode("utf-8")
             mimetype = obj['type']
             vals = {
                 'mimetype': mimetype,
