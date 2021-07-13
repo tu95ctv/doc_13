@@ -70,6 +70,29 @@ class Document(OdooObjectType):
     def resolve_folder_id(root, info):
         return root.folder_id or None
 
+class Tag(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+    
+
+class TagCategory(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+    folder_id = graphene.Int()
+    tags = graphene.List(
+        graphene.NonNull(Tag),
+        required=True,
+        limit=graphene.Int(),
+        offset=graphene.Int(),
+    )
+    
+    @staticmethod
+    def resolve_tags(root, info, limit=80, offset=None):
+        return info.context["env"]["documents.tag"].search(
+            [('facet_id','=', root.id)], limit=limit, offset=offset
+        )
+    
+
 ###!docs###
 class Query(graphene.ObjectType):
     
@@ -102,6 +125,14 @@ class Query(graphene.ObjectType):
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
+    
+    all_tag_categories = graphene.List(
+        graphene.NonNull(TagCategory),
+        required=True,
+        folder_id=graphene.Int(),
+        limit=graphene.Int(),
+        offset=graphene.Int(),
+    )
 
     reverse = graphene.String(
         required=True,
@@ -131,7 +162,6 @@ class Query(graphene.ObjectType):
 
     @staticmethod
     def resolve_all_folders(root, info, parent_folder_id = None, limit=80, offset=None):
-
         domain = []
         if parent_folder_id:
             domain +=[('parent_folder_id','=', parent_folder_id)]
@@ -140,6 +170,15 @@ class Query(graphene.ObjectType):
             domain, limit=limit, offset=offset
         )
 
+    @staticmethod
+    def resolve_all_tag_categories(root, info, folder_id = None, limit=80, offset=None):
+        domain = []
+        if folder_id:
+            domain +=[('folder_id','=', folder_id)]
+
+        return info.context["env"]["documents.facet"].search(
+            domain, limit=limit, offset=offset
+        )
     #!tu them
     # @staticmethod
     # def resolve_all_partners(root, info, companies_only=False, limit=None, offset=None):

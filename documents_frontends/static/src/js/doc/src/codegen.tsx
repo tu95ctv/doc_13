@@ -64,6 +64,7 @@ export type Query = {
   __typename?: 'Query';
   allDocuments: Array<Document>;
   allFolders: Array<Folder>;
+  allTagCategories: Array<TagCategory>;
   /** Reverse a string */
   reverse: Scalars['String'];
   errorExample?: Maybe<Scalars['String']>;
@@ -89,8 +90,35 @@ export type QueryAllFoldersArgs = {
 };
 
 
+export type QueryAllTagCategoriesArgs = {
+  folderId?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryReverseArgs = {
   word: Scalars['String'];
+};
+
+export type Tag = {
+  __typename?: 'Tag';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type TagCategory = {
+  __typename?: 'TagCategory';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  folderId?: Maybe<Scalars['Int']>;
+  tags: Array<Tag>;
+};
+
+
+export type TagCategoryTagsArgs = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type UploadFilesMutationVariables = Exact<{
