@@ -232,7 +232,7 @@ class Query(graphene.ObjectType):
     def resolve_error_example(root, info):
         raise UserError(_("UserError example"))
 
-
+############MUTATE###############3
 # class CreatePartner(graphene.Mutation):
 #     class Arguments:
 #         name = graphene.String(required=True)
@@ -251,6 +251,34 @@ class Query(graphene.ObjectType):
 #         if raise_after_create:
 #             raise UserError(_("as requested"))
 #         return partner
+
+###mutate document#######
+
+class DocWrite(graphene.Mutation):
+    class Arguments:
+        id = graphene.List(graphene.Int, required=True)
+        name = graphene.String()
+        folder_id = graphene.Int()
+        tags = graphene.List(graphene.Int)
+
+    Output = Document
+
+    @staticmethod
+    def mutate(self, info,id,name=None,tags=None,folder_id=None):
+        env = info.context["env"]
+        doc = env["documents.document"].browse(id)
+        vals = {}
+        if name !=None:
+            vals['name'] = name
+        if tags !=None:
+            vals['tag_ids'] = [(6,0,tags)]
+        if folder_id !=None:
+            vals['folder_id'] = name
+        
+        doc.write(vals) 
+        return doc
+
+
 
 ###uploadM###
 
@@ -294,5 +322,6 @@ class UploadDocM(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     # create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
     upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
+    doc_write = DocWrite.Field(description="Documentation of doc_write")
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
