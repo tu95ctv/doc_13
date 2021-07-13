@@ -82,6 +82,13 @@ class Document(OdooObjectType):
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
+    download_url = graphene.String()
+    
+
+    @staticmethod
+    def resolve_download_url(root, info):
+        return 'documents/content/%s'%root.id
+
     @staticmethod
     def resolve_owner_id(root, info, limit=80, offset=None):
         return root.owner_id
