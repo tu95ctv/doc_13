@@ -59,33 +59,65 @@ class Folder(OdooObjectType):
     def resolve_parent_folder_id(root, info):
         return root.parent_folder_id.id or None
 
+class Tag(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+
+class User(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)   
+
 ##!folder##
 ###docs###
 class Document(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String()
     folder_id = graphene.Field(Folder)
-
-    @staticmethod
-    def resolve_folder_id(root, info):
-        return root.folder_id or None
-
-class Tag(OdooObjectType):
-    id = graphene.Int(required=True)
-    name = graphene.String(required=True)
-    
-
-class TagCategory(OdooObjectType):
-    id = graphene.Int(required=True)
-    name = graphene.String(required=True)
-    folder_id = graphene.Int()
+    owner_id = graphene.Field(User)
+    partner_id = graphene.Int()
+    create_date = graphene.String()
     tags = graphene.List(
         graphene.NonNull(Tag),
         required=True,
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
+    @staticmethod
+    def resolve_owner_id(root, info, limit=80, offset=None):
+        return root.owner_id
+
+    @staticmethod
+    def resolve_folder_id(root, info):
+        return root.folder_id or None
+
     
+    
+    
+    @staticmethod
+    def resolve_tags(root, info, limit=80, offset=None):
+        # return info.context["env"]["documents.tag"].search(
+        #     [('facet_id','=', root.id)], limit=limit, offset=offset
+        # )
+        return root.tag_ids
+    
+
+
+
+class TagCategory(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+    folder_id = graphene.Int()
+   
+    tags = graphene.List(
+        graphene.NonNull(Tag),
+        required=True,
+        limit=graphene.Int(),
+        offset=graphene.Int(),
+    )
+
+    
+        
+
     @staticmethod
     def resolve_tags(root, info, limit=80, offset=None):
         return info.context["env"]["documents.tag"].search(
@@ -107,6 +139,7 @@ class Query(graphene.ObjectType):
     all_documents = graphene.List(
         graphene.NonNull(Document),
         required=True,
+        id =graphene.Int(),
         domain=GenericScalar(),
         search=graphene.String(),
         folder_id=graphene.Int(),
@@ -143,9 +176,11 @@ class Query(graphene.ObjectType):
     error_example = graphene.String()
     #tu them
     @staticmethod
-    def resolve_all_documents(root, info, limit=80,domain=None, folder_id=None, tag_ids=None,
+    def resolve_all_documents(root, info,id=None, limit=80,domain=None, folder_id=None, tag_ids=None,
         search=None,
         offset=None):
+        if id:
+            return info.context["env"]["documents.document"].browse(id)
         print ('**domain**', domain, type(domain))
         domain_new = []
         if domain:
