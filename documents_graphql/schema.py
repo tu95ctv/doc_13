@@ -259,19 +259,19 @@ class DocWrite(graphene.Mutation):
         id = graphene.List(graphene.Int, required=True)
         name = graphene.String()
         folder_id = graphene.Int()
-        tags = graphene.List(graphene.Int)
+        tag_ids = graphene.List(graphene.Int)
 
     Output = Document
 
     @staticmethod
-    def mutate(self, info,id,name=None,tags=None,folder_id=None):
+    def mutate(self, info,id,name=None,tag_ids=None,folder_id=None):
         env = info.context["env"]
         doc = env["documents.document"].browse(id)
         vals = {}
         if name !=None:
             vals['name'] = name
-        if tags !=None:
-            vals['tag_ids'] = [(6,0,tags)]
+        if tag_ids !=None:
+            vals['tag_ids'] = [(6,0,tag_ids)]
         if folder_id !=None:
             vals['folder_id'] = name
         
