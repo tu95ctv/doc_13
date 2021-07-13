@@ -5,14 +5,20 @@ import { useUploadFilesMutation, useGetAllDocumentsQuery } from './codegen'
 import { useAppSelector } from './app/hooks'
 import { selectCurrentFolder } from './features/currentFolder/slice'
 
-const toBase64 = (file: any) =>
-  new Promise((resolve, reject) => {
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
+    reader.onload = () => {
+      let encoded = reader.result.toString().replace(/^data:(.*,)?/, '');
+      if ((encoded.length % 4) > 0) {
+        encoded += '='.repeat(4 - (encoded.length % 4));
+      }
+      resolve(encoded);
+    };
+    reader.onerror = error => reject(error);
   });
-
+}
 const Uploader: React.FC = () => {
   const folderId = useAppSelector(selectCurrentFolder)
   const { refetch } = useGetAllDocumentsQuery({
