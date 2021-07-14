@@ -232,6 +232,9 @@
             <tree >
                 <field name="name" string="Document" required="True"/>
                 <field name="url" optional="hide"/>
+                <field name="mimetype" />
+                <field name="icon_file" />
+                <field name="icon_url" />
                 <field name="tag_ids" />
                 <field name="partner_id"/>
                 <field name="owner_id" />

@@ -9,7 +9,10 @@ from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 import re
 
-
+templates = ['addresses','archive','audio','binary','calendar','certificate','disk','document','font','image','javascript','pdf','presentation','print','script','spreadsheet','text','unknown','vector','video','web_code','web_style']
+templates2 = {
+    'archive':['zip','rar']
+}
 class Document(models.Model):
     _name = 'documents.document'
     _description = 'Document'
@@ -67,10 +70,47 @@ class Document(models.Model):
                                  help="This attachment will only be available for the selected user groups",
                                  related='folder_id.group_ids')
 
+    icon_file = fields.Char(compute='_compute_icon_file')
     _sql_constraints = [
         ('attachment_unique', 'unique (attachment_id)', "This attachment is already a document"),
     ]
 
+    icon_url = fields.Char(compute='_compute_icon_url')
+
+    def _compute_icon_url(self):
+        for r in self:
+            if r.thumbnail:
+                url = 'documents/image/%s?field=thumbnail'%r.id
+            elif r.icon_file:
+                url = '/web/static/src/img/mimetypes/%s.svg'%r.icon_file
+            else:
+                url = False
+            r.icon_url = url
+
+
+
+    def _compute_icon_file(self):
+        for r in self:
+            match = False
+            icon_file = 'unknown'
+            for i in templates:
+                if i in r.mimetype:
+                    match = True
+                    icon_file = i
+                    break
+            
+            if match == False:
+                for k,vs in templates2.items():
+                    for i in vs:
+                        if i in r.mimetype:
+                            match = True
+                            icon_file = k
+                            break
+            r.icon_file = icon_file
+
+
+            
+                
     @api.depends('attachment_id.name')
     def _compute_name(self):
         for record in self:
@@ -114,6 +154,7 @@ class Document(models.Model):
         for record in self:
             try:
                 record.thumbnail = image_process(record.datas, size=(80, 80), crop='center')
+
             except UserError:
                 record.thumbnail = False
 
