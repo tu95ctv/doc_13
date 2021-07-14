@@ -25,6 +25,17 @@ export type Document = {
   id: Scalars['Int'];
   name?: Maybe<Scalars['String']>;
   folderId?: Maybe<Folder>;
+  ownerId?: Maybe<User>;
+  partnerId?: Maybe<Scalars['Int']>;
+  createDate?: Maybe<Scalars['String']>;
+  tags: Array<Tag>;
+  downloadUrl?: Maybe<Scalars['String']>;
+};
+
+
+export type DocumentTagsArgs = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type FileInput = {
@@ -47,11 +58,21 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Documentation of Upload Multiple */
   uploadDocM?: Maybe<Document>;
+  /** Documentation of doc_write */
+  docWrite?: Maybe<Document>;
 };
 
 
 export type MutationUploadDocMArgs = {
   fileObjects: Array<Maybe<FileInput>>;
+};
+
+
+export type MutationDocWriteArgs = {
+  folderId?: Maybe<Scalars['Int']>;
+  id: Array<Maybe<Scalars['Int']>>;
+  name?: Maybe<Scalars['String']>;
+  tagIds?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 export type ParentFolder = {
@@ -72,6 +93,7 @@ export type Query = {
 
 
 export type QueryAllDocumentsArgs = {
+  id?: Maybe<Scalars['Int']>;
   domain?: Maybe<Scalars['GenericScalar']>;
   search?: Maybe<Scalars['String']>;
   folderId?: Maybe<Scalars['Int']>;
@@ -121,6 +143,12 @@ export type TagCategoryTagsArgs = {
   offset?: Maybe<Scalars['Int']>;
 };
 
+export type User = {
+  __typename?: 'User';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type UploadFilesMutationVariables = Exact<{
   fileObjects: Array<Maybe<FileInput>> | Maybe<FileInput>;
 }>;
@@ -143,7 +171,14 @@ export type GetAllDocumentsQuery = (
   { __typename?: 'Query' }
   & { allDocuments: Array<(
     { __typename?: 'Document' }
-    & Pick<Document, 'id' | 'name'>
+    & Pick<Document, 'id' | 'name' | 'createDate' | 'downloadUrl'>
+    & { ownerId?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    )>, tags: Array<(
+      { __typename?: 'Tag' }
+      & Pick<Tag, 'id' | 'name'>
+    )> }
   )> }
 );
 
@@ -218,6 +253,16 @@ export const GetAllDocumentsDocument = gql`
   allDocuments(folderId: $folderId) {
     id
     name
+    ownerId {
+      id
+      name
+    }
+    createDate
+    tags {
+      id
+      name
+    }
+    downloadUrl
   }
 }
     `;

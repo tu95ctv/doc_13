@@ -6,5 +6,15 @@ query getAllDocuments(
   ){
     id
     name
+ownerId{
+      id
+      name
+    }
+    createDate
+    tags{
+      id
+      name
+    }
+    downloadUrl
   }
 }
