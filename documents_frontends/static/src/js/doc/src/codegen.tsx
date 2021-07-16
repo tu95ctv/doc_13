@@ -204,11 +204,11 @@ export type GetAllTagsQuery = (
   & { allTagCategories: Array<(
     { __typename?: 'TagCategory' }
     & Pick<TagCategory, 'id' | 'name'>
-    & { label: TagCategory['name'] }
+    & { key: TagCategory['id'], label: TagCategory['name'] }
     & { children: Array<(
       { __typename?: 'Tag' }
       & Pick<Tag, 'id' | 'name'>
-      & { label: Tag['name'] }
+      & { key: Tag['id'], label: Tag['name'] }
     )> }
   )> }
 );
@@ -336,10 +336,12 @@ export const GetAllTagsDocument = gql`
     query getAllTags($folderId: Int) {
   allTagCategories(folderId: $folderId) {
     id
+    key: id
     name
     label: name
     children: tags {
       id
+      key: id
       name
       label: name
     }
