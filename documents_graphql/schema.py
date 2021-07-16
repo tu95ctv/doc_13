@@ -9,36 +9,10 @@ import graphene
 
 from odoo import _
 from odoo.exceptions import UserError
-
+from odoo.api import call_kw
 from odoo.addons.graphql_base import OdooObjectType
 from graphene.types.generic import GenericScalar
-
-
-# class Country(OdooObjectType):
-#     code = graphene.String(required=True)
-#     name = graphene.String(required=True)
-
-
-# class Partner(OdooObjectType):
-#     name = graphene.String(required=True)
-#     street = graphene.String()
-#     street2 = graphene.String()
-#     city = graphene.String()
-#     zip = graphene.String()
-#     country = graphene.Field(Country)
-#     email = graphene.String()
-#     phone = graphene.String()
-#     is_company = graphene.Boolean(required=True)
-#     contacts = graphene.List(graphene.NonNull(lambda: Partner), required=True)
-
-#     @staticmethod
-#     def resolve_country(root, info):
-#         return root.country_id or None
-
-#     @staticmethod
-#     def resolve_contacts(root, info):
-#         return root.child_ids
-
+from odoo.http import request
 
 ##folder##
 class ParentFolder(OdooObjectType):
@@ -97,20 +71,11 @@ class Document(OdooObjectType):
     @staticmethod
     def resolve_folder_id(root, info):
         return root.folder_id or None
-
-    
-    
     
     @staticmethod
     def resolve_tags(root, info, limit=80, offset=None):
-        # return info.context["env"]["documents.tag"].search(
-        #     [('facet_id','=', root.id)], limit=limit, offset=offset
-        # )
         return root.tag_ids
     
-
-
-
 class TagCategory(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)
@@ -135,19 +100,10 @@ class Share(OdooObjectType):
     action = graphene.String()
     type = graphene.String()
    
-  
-
 ###!docs###
+
 class Query(graphene.ObjectType):
     
-    # all_partners = graphene.List(
-    #     graphene.NonNull(Partner),
-    #     required=True,
-    #     companies_only=graphene.Boolean(),
-    #     limit=graphene.Int(),
-    #     offset=graphene.Int(),
-    # )
-
     all_documents = graphene.List(
         graphene.NonNull(Document),
         required=True,
@@ -160,7 +116,6 @@ class Query(graphene.ObjectType):
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
-
 
     all_folders = graphene.List(
         graphene.NonNull(Folder),
@@ -186,7 +141,7 @@ class Query(graphene.ObjectType):
     )
 
     error_example = graphene.String()
-    #tu them
+    
     @staticmethod
     def resolve_all_documents(root, info,id=None, limit=80,domain=None, folder_id=None, tag_ids=None,
         search=None,
@@ -226,16 +181,7 @@ class Query(graphene.ObjectType):
         return info.context["env"]["documents.facet"].search(
             domain, limit=limit, offset=offset
         )
-    #!tu them
-    # @staticmethod
-    # def resolve_all_partners(root, info, companies_only=False, limit=None, offset=None):
-    #     domain = []
-    #     if companies_only:
-    #         domain.append(("is_company", "=", True))
-    #     return info.context["env"]["res.partner"].search(
-    #         domain, limit=limit, offset=offset
-    #     )
-
+ 
     @staticmethod
     def resolve_reverse(root, info, word):
         return word[::-1]
@@ -244,27 +190,7 @@ class Query(graphene.ObjectType):
     def resolve_error_example(root, info):
         raise UserError(_("UserError example"))
 
-############MUTATE###############3
-# class CreatePartner(graphene.Mutation):
-#     class Arguments:
-#         name = graphene.String(required=True)
-#         email = graphene.String(required=True)
-#         is_company = graphene.Boolean()
-#         raise_after_create = graphene.Boolean()
-
-#     Output = Partner
-
-#     @staticmethod
-#     def mutate(self, info, name, email, is_company=False, raise_after_create=False):
-#         env = info.context["env"]
-#         partner = env["res.partner"].create(
-#             {"name": name, "email": email, "is_company": is_company}
-#         )
-#         if raise_after_create:
-#             raise UserError(_("as requested"))
-#         return partner
-
-###mutate document#######
+##################################MUTATE###################################################
 
 class DocWrite(graphene.Mutation):
     class Arguments:
@@ -289,7 +215,6 @@ class DocWrite(graphene.Mutation):
         
         doc.write(vals) 
         return doc
-#
 
 class MutateShare(graphene.Mutation):#
     class Arguments:
@@ -324,9 +249,6 @@ class MutateShare(graphene.Mutation):#
 
         return doc
 
-
-
-
 ###uploadM###
 
 class FileInput(graphene.InputObjectType):
@@ -349,7 +271,6 @@ class UploadDocM(graphene.Mutation):
         for obj in file_objects:
             name = obj['name']
             folder_id = obj['folder_id']
-            print ('**folder_id**', folder_id)
             data = obj['blob']
             file = data.encode("utf-8")
             mimetype = obj['type']
@@ -368,12 +289,88 @@ class UploadDocM(graphene.Mutation):
             empty_docs = empty_docs|doc
         return doc
 ###!upload###
+####
 
+def _mutate(self, info,id=[],model=None,method=None,args=[], kwargs={}):
+    env = info.context["env"]
+    args = id + args 
+    obj = request.env[model]
+    rs = call_kw(request.env[model],method,args,kwargs)
+    print ('rs', rs)
+    rt = obj.browse(id)[0]
+    return rt
 
+class CallKW(graphene.Mutation):
+    class Arguments:
+        id = graphene.List(graphene.Int)
+        args = graphene.List(graphene.Int)
+        kwargs = GenericScalar()
+        method = graphene.String(required=True)
+        model = graphene.String(required=True)
+
+    Output = Document
+
+    @staticmethod
+    def mutate(self, info,id=[],model=None,method=None,args=[], kwargs={}):
+        rs = _mutate(self, info,id,model,method,args, kwargs)
+        return rs
+
+class CallKWDoc(CallKW):
+    class Arguments:
+        id = graphene.List(graphene.Int)
+        method = graphene.String(required=True)
+        args = graphene.List(graphene.Int)
+        kwargs = GenericScalar()
+
+    Output = Document
+
+    @staticmethod
+    def mutate(self, info,id=[],method=None,args=[], kwargs={}):
+        model = 'documents.document'
+        rs = _mutate(self, info,id,model,method,args, kwargs)
+        return rs
+
+class DocToggleActive(CallKWDoc):
+    class Arguments:
+        id = graphene.List(graphene.Int, required=True)
+
+    @staticmethod
+    def mutate(self, info,id=[]):
+        model = 'documents.document'
+        method = 'toggle_active'
+        rs = _mutate(self, info,id,model,method)
+        return rs
+
+class ReUpload(CallKW):
+    class Arguments:
+        id = graphene.List(graphene.Int, required=True)
+        name = graphene.String(required=True)
+        type = graphene.String(required=True)
+        blob = graphene.String(required=True)
+    Output = Document
+
+    @staticmethod
+    def mutate(self, info,id,name, type, blob):
+        vals = {}
+        vals['name'] = name
+        vals['mimetype'] = type
+        file = blob.encode("utf-8")
+        vals['datas'] = file
+        model = 'documents.document'
+        method = 'write'
+        args=[vals]
+        rs = _mutate(self,info,id,model,method,args)
+        return rs
 
 class Mutation(graphene.ObjectType):
     # create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
     upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
     doc_write = DocWrite.Field(description="Documentation of doc_write")
     share_mutate = MutateShare.Field(description="Documentation of share_mutate")
+    call_kw = CallKW.Field(description="Documentation of call_kw")
+    call_kw_doc = CallKWDoc.Field(description="Documentation of call_kw")
+    doc_toggle_active = DocToggleActive.Field(description="Documentation of doc_toggle_active")
+    reupload = ReUpload.Field(description="Documentation of doc_toggle_active")
+
+
 schema = graphene.Schema(query=Query, mutation=Mutation)
