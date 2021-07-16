@@ -5,19 +5,31 @@ import useCurrentTags from './useCurrentTags';
 import React from 'react'
 const TagsSelector = () => {
     const { currentFolder } = useCurrentFolder()
-    const { setCurrentTags } = useCurrentTags()
+    const { setCurrentTags, currentTags } = useCurrentTags()
     const { data, loading } = useGetAllTagsQuery({
         variables: {
             folderId: currentFolder
         }
     })
-    const [selectedKeys, setSelectedKeys] = React.useState<TreeSelectSelectionKeysType>(null)
+    const defaultTagsKeys = currentTags.reduce((prev, cur) => {
+        return {
+            ...prev,
+            [cur]: true
+        }
+    }, {})
+    const [selectedKeys, setSelectedKeys] = React.useState<TreeSelectSelectionKeysType>(defaultTagsKeys)
 
-
+    React.useEffect(() => {
+        console.log(selectedKeys)
+        const keys = Object.keys(selectedKeys)
+        if (keys.length > 0) {
+            setCurrentTags(keys)
+        }
+    }, [selectedKeys])
     if (loading) return <div>...</div>
     const m = data?.allTagCategories.map((item) => {
         return {
-            key: item.key,
+            key: item.id,
             label: item.label,
             data: item.label,
             children: item.children.map((c: any) => {
@@ -30,7 +42,7 @@ const TagsSelector = () => {
         <TreeSelect 
             value={selectedKeys} 
             options={m} 
-            onChange={console.log} 
+            onChange={e => setSelectedKeys(e.value as TreeSelectSelectionKeysType)} 
             selectionMode="multiple" 
             metaKeySelection={false} 
             placeholder="Select Items"

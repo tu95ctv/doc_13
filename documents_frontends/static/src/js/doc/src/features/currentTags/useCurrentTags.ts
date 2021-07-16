@@ -5,7 +5,7 @@ const useCurrentTags = () => {
     const dispatch = useAppDispatch()
     const currentTags = useAppSelector(selectCurrentTags)
 
-    const _setCurrentTags = (tags: number[]) => {
+    const _setCurrentTags = (tags: string[]) => {
         dispatch(setCurrentTags(tags))
     }
 

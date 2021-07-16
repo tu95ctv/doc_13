@@ -1,8 +1,10 @@
 query getAllDocuments(
-  $folderId:Int
+  $folderId:Int,
+  $tagIds: [Int]
 ){
   allDocuments(
-    folderId:$folderId
+    folderId:$folderId,
+    tagIds: $tagIds
   ){
     id
     name
