@@ -335,6 +335,7 @@ class FileInput(graphene.InputObjectType):
     type = graphene.String(required=True)
     blob = graphene.String(required=True)
     folder_id = graphene.Int(required=True)
+    tag_ids = graphene.List(graphene.Int)
 
 class UploadDocM(graphene.Mutation):
     class Arguments:
@@ -352,12 +353,16 @@ class UploadDocM(graphene.Mutation):
             data = obj['blob']
             file = data.encode("utf-8")
             mimetype = obj['type']
+            tag_ids = obj.get('tag_ids',[])
+            if tag_ids:
+                tag_ids = [(6,0,tag_ids)]
             vals = {
                 'mimetype': mimetype,
                 'name': name,
                 'type': 'binary',
                 'datas': file,
-                'folder_id':folder_id
+                'folder_id':folder_id,
+                'tag_ids':tag_ids
             }
             doc = env["documents.document"].create(vals)
             empty_docs = empty_docs|doc
