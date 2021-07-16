@@ -76,6 +76,7 @@ class Document(OdooObjectType):
     owner_id = graphene.Field(User)
     partner_id = graphene.Int()
     create_date = graphene.String()
+    icon_url = graphene.String()
     tags = graphene.List(
         graphene.NonNull(Tag),
         required=True,
@@ -121,16 +122,20 @@ class TagCategory(OdooObjectType):
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
-
-    
-        
-
     @staticmethod
     def resolve_tags(root, info, limit=80, offset=None):
         return info.context["env"]["documents.tag"].search(
             [('facet_id','=', root.id)], limit=limit, offset=offset
         )
     
+class Share(OdooObjectType):
+    id = graphene.Int(required=True)
+    name = graphene.String(required=True)
+    full_url = graphene.String()
+    action = graphene.String()
+    type = graphene.String()
+   
+  
 
 ###!docs###
 class Query(graphene.ObjectType):
@@ -284,6 +289,41 @@ class DocWrite(graphene.Mutation):
         
         doc.write(vals) 
         return doc
+#
+
+class MutateShare(graphene.Mutation):#
+    class Arguments:
+        id = graphene.List(graphene.Int)
+        folder_id = graphene.Int(required=True)
+        document_ids = graphene.List(graphene.Int)
+        action = graphene.String()#downloadupload
+        type = graphene.String()
+
+    Output = Share
+
+    @staticmethod
+    def mutate(self, info,id=None,folder_id=None,action=None,type=None, document_ids=None):
+        env = info.context["env"]
+        doc = env["documents.share"].browse(id)
+
+        vals = {}
+        if document_ids !=None:
+            vals['document_ids'] = [(6,0,document_ids)]
+        vals['folder_id'] = folder_id
+        # action = downloadupload
+        if action:
+            vals['action'] = action
+        if type:
+            vals['type'] = type
+
+
+        if not doc:
+            doc = doc.create(vals) 
+        else:
+            doc.write(vals)
+
+        return doc
+
 
 
 
@@ -330,5 +370,5 @@ class Mutation(graphene.ObjectType):
     # create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
     upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
     doc_write = DocWrite.Field(description="Documentation of doc_write")
-
+    share_mutate = MutateShare.Field(description="Documentation of share_mutate")
 schema = graphene.Schema(query=Query, mutation=Mutation)

@@ -27,7 +27,7 @@
         # 'data/workflow_data.xml',
         # 'data/files_data.xml',
         # 'data/mail_templates.xml',
-        # 'views/assets.xml',
+        'views/vii_assets.xml',
 
         'views/documents_views.xml',
         'views/documents_configs/documents_folder_views.xml',
@@ -39,7 +39,7 @@
 
         # 'views/documents_configs/res_partner.xml',
 
-        # 'views/templates.xml',
+        'views/vii_templates.xml',
         # 'views/activity_views.xml',
         # 'wizard/request_activity_views.xml',
 

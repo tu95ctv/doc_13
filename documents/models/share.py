@@ -88,7 +88,11 @@ class DocumentShare(models.Model):
             search_ids = set(document_ids)
 
         if self.type == 'domain':
-            record_domain = literal_eval(self.domain)
+            print ("self.domain",self.domain)
+            try:
+                record_domain = literal_eval(self.domain)
+            except:
+                record_domain = []
             domains.append(record_domain)
         else:
             share_ids = limited_self.document_ids.ids
@@ -132,6 +136,11 @@ class DocumentShare(models.Model):
         False if it fails access checks: False always means "no access right", if there are no documents but
         the rights are valid, it still returns an empty recordset.
         """
+        print ('_get_documents_and_check_access', 'operation',operation)
+        print ("self._check_token(access_token)", self._check_token(access_token))
+        documents = self._get_documents(document_ids)
+        print ("self._get_documents(document_ids)", documents)
+        print ("self._get_writable_documents(documents)",self._get_writable_documents(documents))
         self.ensure_one()
         if not self._check_token(access_token):
             return False
@@ -170,18 +179,18 @@ class DocumentShare(models.Model):
         for record in self:
             record.full_url = "%s/document/share/%s/%s" % (base_url, record.id, record.access_token)
 
-    def _alias_get_creation_values(self):
-        values = super(DocumentShare, self)._alias_get_creation_values()
-        values['alias_model_id'] = self.env['ir.model']._get('documents.document').id
-        if self.id:
-            values['alias_defaults'] = defaults = literal_eval(self.alias_defaults or "{}")
-            defaults.update({
-                'tag_ids': [(6, 0, self.tag_ids.ids)],
-                'folder_id': self.folder_id.id,
-                'partner_id': self.partner_id.id,
-                'create_share_id': self.id,
-            })
-        return values
+    # def _alias_get_creation_values(self):
+    #     values = super(DocumentShare, self)._alias_get_creation_values()
+    #     values['alias_model_id'] = self.env['ir.model']._get('documents.document').id
+    #     if self.id:
+    #         values['alias_defaults'] = defaults = literal_eval(self.alias_defaults or "{}")
+    #         defaults.update({
+    #             'tag_ids': [(6, 0, self.tag_ids.ids)],
+    #             'folder_id': self.folder_id.id,
+    #             'partner_id': self.partner_id.id,
+    #             'create_share_id': self.id,
+    #         })
+    #     return values
 
     def send_share_by_mail(self, template_xmlid):
         self.ensure_one()
@@ -193,6 +202,7 @@ class DocumentShare(models.Model):
     def create(self, vals):
         if not vals.get('owner_id'):
             vals['owner_id'] = self.env.uid
+        vals['alias_model_id'] = self.env['ir.model']._get('documents.document').id
         share = super(DocumentShare, self).create(vals)
         return share
 
