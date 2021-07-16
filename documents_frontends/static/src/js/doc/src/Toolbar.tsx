@@ -3,7 +3,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 import Modal from './Modal'
 import SearchButton from './Toolbar/SearchButton';
-import Tags from './Tags/Tags'
+import Tags from './features/currentTags/TreeSelect'
 import { useAppSelector } from './app/hooks'
 import { selectCurrentFolder } from './features/currentFolder/slice'
 

@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { useUploadFilesMutation, useGetAllDocumentsQuery } from './codegen'
-import { useAppSelector } from './app/hooks'
-import { selectCurrentFolder } from './features/currentFolder/slice'
-
+import useCurrentFolder from "./features/currentFolder/useCurrentFolder";
+import useCurrentTags from "./features/currentTags/useCurrentTags";
 function toBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -20,9 +19,12 @@ function toBase64(file) {
   });
 }
 const Uploader: React.FC = () => {
-  const folderId = useAppSelector(selectCurrentFolder)
+  const { currentFolder: folderId } = useCurrentFolder()
+  const { currentTags } = useCurrentTags()
+  const tagIds = currentTags.map(t => parseInt(t))
+
   const { refetch } = useGetAllDocumentsQuery({
-    variables: { folderId },
+    variables: { folderId, tagIds },
   })
   const [mutate, { loading }] = useUploadFilesMutation({
     onCompleted: () => {
@@ -60,6 +62,7 @@ const Uploader: React.FC = () => {
               blob,
               name: file.meta.name,
               type: file.meta.type,
+              tagIds,
             });
             resolve(true);
           })

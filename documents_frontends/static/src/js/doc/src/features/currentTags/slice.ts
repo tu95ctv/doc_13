@@ -1,19 +1,19 @@
 import { RootState } from '../../app/store';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-export interface CurrentFolderState {
-    value: number | null;
+export interface CurrentTagsState {
+    value: string[];
 }
   
-const initialState: CurrentFolderState = {
-    value: null,
+const initialState: CurrentTagsState = {
+    value: [],
 };
 
-export const currentFolderSlice = createSlice({
-    name: 'currentFolder',
+export const currentTagsSlice = createSlice({
+    name: 'currentTags',
     initialState,
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
-      setCurrentFolder: (state, action: PayloadAction<number>) => {
+      setCurrentTags: (state, action: PayloadAction<string[]>) => {
         // Redux Toolkit allows us to write "mutating" logic in reducers. It
         // doesn't actually mutate the state because it uses the Immer library,
         // which detects changes to a "draft state" and produces a brand new
@@ -23,7 +23,7 @@ export const currentFolderSlice = createSlice({
     },
 });
   
-export const { setCurrentFolder } = currentFolderSlice.actions;
+export const { setCurrentTags } = currentTagsSlice.actions;
 /*
 export const incrementIfOdd = (amount: number): AppThunk => (
     dispatch,
@@ -35,5 +35,5 @@ export const incrementIfOdd = (amount: number): AppThunk => (
     }
   };
 */
-export const selectCurrentFolder = (state: RootState) => state.currentFolder.value;
-export default currentFolderSlice.reducer;
+export const selectCurrentTags = (state: RootState) => state.currentTags.value;
+export default currentTagsSlice.reducer;

@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import currentFolderReducer from '../features/currentFolder/slice';
+import currentTagsReducer from '../features/currentTags/slice';
 
 export const store = configureStore({
   reducer: {
     currentFolder: currentFolderReducer,
+    currentTags: currentTagsReducer,
   },
 });
 

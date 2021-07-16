@@ -25,6 +25,18 @@ export type Document = {
   id: Scalars['Int'];
   name?: Maybe<Scalars['String']>;
   folderId?: Maybe<Folder>;
+  ownerId?: Maybe<User>;
+  partnerId?: Maybe<Scalars['Int']>;
+  createDate?: Maybe<Scalars['String']>;
+  iconUrl?: Maybe<Scalars['String']>;
+  tags: Array<Tag>;
+  downloadUrl?: Maybe<Scalars['String']>;
+};
+
+
+export type DocumentTagsArgs = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type FileInput = {
@@ -32,6 +44,7 @@ export type FileInput = {
   type: Scalars['String'];
   blob: Scalars['String'];
   folderId: Scalars['Int'];
+  tagIds?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 export type Folder = {
@@ -47,11 +60,32 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Documentation of Upload Multiple */
   uploadDocM?: Maybe<Document>;
+  /** Documentation of doc_write */
+  docWrite?: Maybe<Document>;
+  /** Documentation of share_mutate */
+  shareMutate?: Maybe<Share>;
 };
 
 
 export type MutationUploadDocMArgs = {
   fileObjects: Array<Maybe<FileInput>>;
+};
+
+
+export type MutationDocWriteArgs = {
+  folderId?: Maybe<Scalars['Int']>;
+  id: Array<Maybe<Scalars['Int']>>;
+  name?: Maybe<Scalars['String']>;
+  tagIds?: Maybe<Array<Maybe<Scalars['Int']>>>;
+};
+
+
+export type MutationShareMutateArgs = {
+  action?: Maybe<Scalars['String']>;
+  documentIds?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  folderId: Scalars['Int'];
+  id?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  type?: Maybe<Scalars['String']>;
 };
 
 export type ParentFolder = {
@@ -72,6 +106,7 @@ export type Query = {
 
 
 export type QueryAllDocumentsArgs = {
+  id?: Maybe<Scalars['Int']>;
   domain?: Maybe<Scalars['GenericScalar']>;
   search?: Maybe<Scalars['String']>;
   folderId?: Maybe<Scalars['Int']>;
@@ -101,6 +136,15 @@ export type QueryReverseArgs = {
   word: Scalars['String'];
 };
 
+export type Share = {
+  __typename?: 'Share';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  fullUrl?: Maybe<Scalars['String']>;
+  action?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
 export type Tag = {
   __typename?: 'Tag';
   id: Scalars['Int'];
@@ -121,6 +165,12 @@ export type TagCategoryTagsArgs = {
   offset?: Maybe<Scalars['Int']>;
 };
 
+export type User = {
+  __typename?: 'User';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type UploadFilesMutationVariables = Exact<{
   fileObjects: Array<Maybe<FileInput>> | Maybe<FileInput>;
 }>;
@@ -136,6 +186,7 @@ export type UploadFilesMutation = (
 
 export type GetAllDocumentsQueryVariables = Exact<{
   folderId?: Maybe<Scalars['Int']>;
+  tagIds?: Maybe<Array<Maybe<Scalars['Int']>> | Maybe<Scalars['Int']>>;
 }>;
 
 
@@ -143,7 +194,14 @@ export type GetAllDocumentsQuery = (
   { __typename?: 'Query' }
   & { allDocuments: Array<(
     { __typename?: 'Document' }
-    & Pick<Document, 'id' | 'name'>
+    & Pick<Document, 'id' | 'name' | 'createDate' | 'downloadUrl'>
+    & { ownerId?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    )>, tags: Array<(
+      { __typename?: 'Tag' }
+      & Pick<Tag, 'id' | 'name'>
+    )> }
   )> }
 );
 
@@ -169,11 +227,11 @@ export type GetAllTagsQuery = (
   & { allTagCategories: Array<(
     { __typename?: 'TagCategory' }
     & Pick<TagCategory, 'id' | 'name'>
-    & { label: TagCategory['name'] }
+    & { key: TagCategory['id'], label: TagCategory['name'] }
     & { children: Array<(
       { __typename?: 'Tag' }
       & Pick<Tag, 'id' | 'name'>
-      & { label: Tag['name'] }
+      & { key: Tag['id'], label: Tag['name'] }
     )> }
   )> }
 );
@@ -214,10 +272,20 @@ export type UploadFilesMutationHookResult = ReturnType<typeof useUploadFilesMuta
 export type UploadFilesMutationResult = Apollo.MutationResult<UploadFilesMutation>;
 export type UploadFilesMutationOptions = Apollo.BaseMutationOptions<UploadFilesMutation, UploadFilesMutationVariables>;
 export const GetAllDocumentsDocument = gql`
-    query getAllDocuments($folderId: Int) {
-  allDocuments(folderId: $folderId) {
+    query getAllDocuments($folderId: Int, $tagIds: [Int]) {
+  allDocuments(folderId: $folderId, tagIds: $tagIds) {
     id
     name
+    ownerId {
+      id
+      name
+    }
+    createDate
+    tags {
+      id
+      name
+    }
+    downloadUrl
   }
 }
     `;
@@ -235,6 +303,7 @@ export const GetAllDocumentsDocument = gql`
  * const { data, loading, error } = useGetAllDocumentsQuery({
  *   variables: {
  *      folderId: // value for 'folderId'
+ *      tagIds: // value for 'tagIds'
  *   },
  * });
  */
@@ -291,10 +360,12 @@ export const GetAllTagsDocument = gql`
     query getAllTags($folderId: Int) {
   allTagCategories(folderId: $folderId) {
     id
+    key: id
     name
     label: name
     children: tags {
       id
+      key: id
       name
       label: name
     }

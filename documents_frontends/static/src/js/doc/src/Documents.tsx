@@ -1,13 +1,14 @@
 // import { useGetAllDocumentsQuery } from "~codegen";
 import React from "react";
 import { useGetAllDocumentsQuery } from "./codegen";
-import { useAppSelector } from './app/hooks'
-import { selectCurrentFolder } from './features/currentFolder/slice'
-
+import useCurrentFolder from "./features/currentFolder/useCurrentFolder";
+import useCurrentTags from "./features/currentTags/useCurrentTags";
 const Documents: React.FC = () => {
-    const folderId = useAppSelector(selectCurrentFolder)
+    const { currentFolder: folderId } = useCurrentFolder()
+    const { currentTags } = useCurrentTags()
+    const tagIds = currentTags.map(tag => parseInt(tag))
     const { data, loading, refetch } = useGetAllDocumentsQuery({
-        variables: { folderId },        
+        variables: { folderId, tagIds },        
     })
 
     if (loading) return <div>...</div>
