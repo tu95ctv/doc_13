@@ -58,7 +58,7 @@ class Document(OdooObjectType):
         offset=graphene.Int(),
     )
     download_url = graphene.String()
-    
+    vii_search_count = graphene.Int()
 
     @staticmethod
     def resolve_download_url(root, info):
@@ -153,12 +153,14 @@ class Query(graphene.ObjectType):
         if domain:
             domain_new += domain
         if folder_id:
-            domain_new +=[('folder_id', '=', folder_id)]
+            domain_new +=[('folder_id', 'child_of', folder_id)]
         if tag_ids:
-            domain_new +=[('tag_ids', '=', tag_ids)]
-        if search:
+            domain_new +=[('tag_ids', 'in', tag_ids)]
+        if search:  
             domain_new +=[('name', 'ilike', search)]
-        return info.context["env"]["documents.document"].search(
+        Doc = info.context["env"]["documents.document"]
+        search_count = Doc.search_count(domain_new)
+        return Doc.with_context(vii_search_count=search_count).search(
             domain_new, limit=limit, offset=offset
         )
 

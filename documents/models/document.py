@@ -76,6 +76,10 @@ class Document(models.Model):
     ]
 
     icon_url = fields.Char(compute='_compute_icon_url')
+    vii_search_count = fields.Integer(compute='_compute_vii_search_count')
+
+    def _compute_vii_search_count(self):
+        self.vii_search_count = self._context['vii_search_count']
 
     def _compute_icon_url(self):
         for r in self:
