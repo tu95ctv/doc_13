@@ -58,7 +58,7 @@ class Document(OdooObjectType):
         offset=graphene.Int(),
     )
     download_url = graphene.String()
-    vii_search_count = graphene.Int()
+    total_count = graphene.Int()
 
     @staticmethod
     def resolve_download_url(root, info):
@@ -159,8 +159,11 @@ class Query(graphene.ObjectType):
         if search:  
             domain_new +=[('name', 'ilike', search)]
         Doc = info.context["env"]["documents.document"]
-        search_count = Doc.search_count(domain_new)
-        return Doc.with_context(vii_search_count=search_count).search(
+        total_count = Doc.search_count(domain_new)
+        context = Doc._context.copy()
+        print ('**context*', context)
+        context['total_count'] = total_count
+        return Doc.with_context(context).search(
             domain_new, limit=limit, offset=offset
         )
 
