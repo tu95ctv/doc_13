@@ -64,6 +64,14 @@ export type Mutation = {
   docWrite?: Maybe<Document>;
   /** Documentation of share_mutate */
   shareMutate?: Maybe<Share>;
+  /** Documentation of call_kw */
+  callKw?: Maybe<Document>;
+  /** Documentation of call_kw */
+  callKwDoc?: Maybe<Document>;
+  /** Documentation of doc_toggle_active */
+  docToggleActive?: Maybe<Document>;
+  /** Documentation of doc_toggle_active */
+  reupload?: Maybe<Document>;
 };
 
 
@@ -86,6 +94,36 @@ export type MutationShareMutateArgs = {
   folderId: Scalars['Int'];
   id?: Maybe<Array<Maybe<Scalars['Int']>>>;
   type?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationCallKwArgs = {
+  args?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  id?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  kwargs?: Maybe<Scalars['GenericScalar']>;
+  method: Scalars['String'];
+  model: Scalars['String'];
+};
+
+
+export type MutationCallKwDocArgs = {
+  args?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  id?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  kwargs?: Maybe<Scalars['GenericScalar']>;
+  method: Scalars['String'];
+};
+
+
+export type MutationDocToggleActiveArgs = {
+  id: Array<Maybe<Scalars['Int']>>;
+};
+
+
+export type MutationReuploadArgs = {
+  blob: Scalars['String'];
+  id: Array<Maybe<Scalars['Int']>>;
+  name: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type ParentFolder = {
@@ -201,6 +239,9 @@ export type GetAllDocumentsQuery = (
     )>, tags: Array<(
       { __typename?: 'Tag' }
       & Pick<Tag, 'id' | 'name'>
+    )>, folderId?: Maybe<(
+      { __typename?: 'Folder' }
+      & Pick<Folder, 'id' | 'name'>
     )> }
   )> }
 );
@@ -282,6 +323,10 @@ export const GetAllDocumentsDocument = gql`
     }
     createDate
     tags {
+      id
+      name
+    }
+    folderId {
       id
       name
     }

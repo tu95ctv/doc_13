@@ -3,7 +3,7 @@ import DropdownTreeSelect from "react-dropdown-tree-select";
 import 'react-dropdown-tree-select/dist/styles.css'
 import { useGetAllTagsQuery } from '../codegen'
 import useCurrentFolder from "../features/currentFolder/useCurrentFolder";
-
+import useCurrentTags from "../features/currentTags/useCurrentTags";
 const onChange = (currentNode: any, selectedNodes: any) => {
   console.log("path::", currentNode.path);
 };
@@ -30,6 +30,7 @@ const OrganizationSelector = () => {
     return {
       label: item.label,
       value: false,
+      type: 'category',
       children: item.children,
     }
   }) || null
