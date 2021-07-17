@@ -4,11 +4,11 @@ import { Button } from 'primereact/button';
 import Modal from './Modal'
 import SearchButton from './Toolbar/SearchButton';
 import Tags from './features/currentTags/TreeSelect'
-import { useAppSelector } from './app/hooks'
-import { selectCurrentFolder } from './features/currentFolder/slice'
-
+import useCurrentFolder from './features/currentFolder/useCurrentFolder';
+import useCurrentTags from './features/currentTags/useCurrentTags';
 const ToolbarDemo: React.FC<{}> = () => {
-    const folderId = useAppSelector(selectCurrentFolder)
+    const { currentFolder: folderId } = useCurrentFolder() 
+    const { setCurrentTags } = useCurrentTags()
     const items = [
         {
             label: 'Update',
@@ -45,7 +45,7 @@ const ToolbarDemo: React.FC<{}> = () => {
     const rightContents = (
         <React.Fragment>
             <SearchButton />
-            <Button icon="pi pi-times" className="p-button-danger" />
+            <Button icon="pi pi-times" className="p-button-danger" onClick={() => setCurrentTags([])} />
         </React.Fragment>
     );
 

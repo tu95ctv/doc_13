@@ -17,6 +17,10 @@ ownerId{
       id
       name
     }
+    folderId {
+      id
+      name
+    }
     downloadUrl
   }
 }

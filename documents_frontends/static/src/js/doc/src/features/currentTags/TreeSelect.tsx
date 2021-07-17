@@ -1,4 +1,4 @@
-import { TreeSelect, TreeSelectSelectionKeys, TreeSelectSelectionKeysType } from 'primereact/treeselect';
+import { TreeSelect, TreeSelectSelectionKeysType } from 'primereact/treeselect';
 import { useGetAllTagsQuery } from '../../codegen'
 import useCurrentFolder from "../../features/currentFolder/useCurrentFolder";
 import useCurrentTags from './useCurrentTags';
@@ -17,21 +17,14 @@ const TagsSelector = () => {
             [cur]: true
         }
     }, {})
-    const [selectedKeys, setSelectedKeys] = React.useState<TreeSelectSelectionKeysType>(defaultTagsKeys)
 
-    React.useEffect(() => {
-        console.log(selectedKeys)
-        const keys = Object.keys(selectedKeys)
-        if (keys.length > 0) {
-            setCurrentTags(keys)
-        }
-    }, [selectedKeys])
     if (loading) return <div>...</div>
     const m = data?.allTagCategories.map((item) => {
         return {
-            key: item.id,
+            key: `category-${item.id}`,
             label: item.label,
             data: item.label,
+            type: 'category',
             children: item.children.map((c: any) => {
                 c.children = []
                 return c
@@ -40,12 +33,16 @@ const TagsSelector = () => {
     }) || null
     return (
         <TreeSelect 
-            value={selectedKeys} 
+            value={defaultTagsKeys} 
             options={m} 
-            onChange={e => setSelectedKeys(e.value as TreeSelectSelectionKeysType)} 
+            onChange={e => {
+                const keys = Object.keys(e.value)
+                const selected = keys.filter((v) => !v.includes('category'))
+                setCurrentTags(selected)
+            }} 
             selectionMode="multiple" 
             metaKeySelection={false} 
-            placeholder="Select Items"
+            placeholder={'Chọn tags'}
         />
     )
 }
