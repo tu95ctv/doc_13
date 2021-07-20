@@ -24,12 +24,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
-        # 'data/digest_data.xml',
         'data/documents_data.xml',
-        # 'data/workflow_data.xml',
-        # 'data/files_data.xml',
-        # 'data/mail_templates.xml',
-
         'views/documents_views.xml',
         'views/documents_configs/documents_folder_views.xml',
         'views/documents_configs/res_config_settings_views.xml',
