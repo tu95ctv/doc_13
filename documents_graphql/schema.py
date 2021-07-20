@@ -6,15 +6,15 @@
 # pylint: disable=E0602
 
 import graphene
-
 from odoo import _
 from odoo.exceptions import UserError
 from odoo.api import call_kw
 from odoo.addons.graphql_base import OdooObjectType
-from graphene.types.generic import GenericScalar
 from odoo.http import request
 
-##folder##
+from graphene.types.generic import GenericScalar
+
+## Folder ##
 class ParentFolder(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)
@@ -41,8 +41,9 @@ class User(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)   
 
-##!folder##
-###docs###
+## Folder ##
+
+## Doc ##
 class Document(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String()
@@ -58,7 +59,6 @@ class Document(OdooObjectType):
         offset=graphene.Int(),
     )
     download_url = graphene.String()
-    total_count = graphene.Int()
 
     @staticmethod
     def resolve_download_url(root, info):
@@ -75,7 +75,9 @@ class Document(OdooObjectType):
     @staticmethod
     def resolve_tags(root, info, limit=80, offset=None):
         return root.tag_ids
-    
+
+## !Doc ##  
+
 class TagCategory(OdooObjectType):
     id = graphene.Int(required=True)
     name = graphene.String(required=True)
@@ -99,20 +101,68 @@ class Share(OdooObjectType):
     full_url = graphene.String()
     action = graphene.String()
     type = graphene.String()
-   
+
+##
+from graphene.types.scalars import Scalar
+class ObjectField(Scalar):
+
+    @staticmethod
+    def serialize(dt):
+        return dt
+
+    @staticmethod
+    def parse_literal(node):
+        return node.value
+
+    @staticmethod
+    def parse_value(value):
+        return value
+
+
 ###!docs###
 
 class Query(graphene.ObjectType):
-    
-    all_documents = graphene.List(
-        graphene.NonNull(Document),
-        required=True,
+    # -graphene.List  sẽ trả về GraphQLList
+    total_doc_count = graphene.Int(
         id =graphene.Int(),
         domain=GenericScalar(),
         search=graphene.String(),
         folder_id=graphene.Int(),
         tag_ids=graphene.List(graphene.Int),
-        companies_only=graphene.Boolean(),
+        limit=graphene.Int(),
+        offset=graphene.Int(),
+    )   
+
+    @staticmethod
+    def gen_new_domain(domain=None, folder_id=None, tag_ids=None,search=None):
+        
+        domain_new = []
+        if domain:
+            domain_new += domain
+        if folder_id:
+            domain_new +=[('folder_id', 'child_of', folder_id)]
+        if tag_ids:
+            domain_new +=[('tag_ids', 'in', tag_ids)]
+        if search:  
+            domain_new +=[('name', 'ilike', search)]
+        return domain_new
+
+    def resolve_total_doc_count(root,info, domain=None, folder_id=None, tag_ids=None,search=None):
+        domain_new = Query.gen_new_domain(domain=domain,folder_id=folder_id, tag_ids=tag_ids,search=search)
+        Doc = info.context["env"]["documents.document"]
+        total_count = Doc.search_count(domain_new) 
+        return total_count
+
+
+    all_documents = graphene.List(Document,
+        
+        # graphene.NonNull(Document),
+        # required=True,
+        id =graphene.Int(),
+        domain=GenericScalar(),
+        search=graphene.String(),
+        folder_id=graphene.Int(),
+        tag_ids=graphene.List(graphene.Int),
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
@@ -121,7 +171,6 @@ class Query(graphene.ObjectType):
         graphene.NonNull(Folder),
         required=True,
         parent_folder_id=graphene.Int(),
-        companies_only=graphene.Boolean(),
         limit=graphene.Int(),
         offset=graphene.Int(),
     )
@@ -141,31 +190,20 @@ class Query(graphene.ObjectType):
     )
 
     error_example = graphene.String()
-    
+    # execute(graphql\execution\executor.py)->execute_operation -> execute_fields -> resolve_field -> complete_value_catching_error
+    # -> complete_value
     @staticmethod
-    def resolve_all_documents(root, info,id=None, limit=80,domain=None, folder_id=None, tag_ids=None,
-        search=None,
-        offset=None):
+    def resolve_all_documents(root, info, id=None, limit=80,domain=None, folder_id=None, tag_ids=None,search=None,offset=0):
         if id:
             return info.context["env"]["documents.document"].browse(id)
-        print ('**domain**', domain, type(domain))
-        domain_new = []
-        if domain:
-            domain_new += domain
-        if folder_id:
-            domain_new +=[('folder_id', 'child_of', folder_id)]
-        if tag_ids:
-            domain_new +=[('tag_ids', 'in', tag_ids)]
-        if search:  
-            domain_new +=[('name', 'ilike', search)]
+        domain_new = Query.gen_new_domain(domain=domain,folder_id=folder_id, tag_ids=tag_ids,search=search)
         Doc = info.context["env"]["documents.document"]
-        total_count = Doc.search_count(domain_new)
         context = Doc._context.copy()
-        print ('**context*', context)
-        context['total_count'] = total_count
-        return Doc.with_context(context).search(
-            domain_new, limit=limit, offset=offset
-        )
+        return Doc.search(domain_new, offset=offset, limit=limit)
+        # return Doc.web_search_read(domain_new, ['id','name'], offset=offset, limit=limit)
+        # return Doc.with_context(context).search(
+        #     domain_new, limit=limit, offset=offset
+        # )
 
     @staticmethod
     def resolve_all_folders(root, info, parent_folder_id = None, limit=80, offset=None):
@@ -234,7 +272,7 @@ class MutateShare(graphene.Mutation):#
     @staticmethod
     def mutate(self, info,id=None,folder_id=None,action=None,type=None, document_ids=None):
         env = info.context["env"]
-        doc = env["documents.share"].browse(id)
+        share = env["documents.share"].browse(id)
 
         vals = {}
         if document_ids !=None:
@@ -247,10 +285,10 @@ class MutateShare(graphene.Mutation):#
             vals['type'] = type
 
 
-        if not doc:
-            doc = doc.create(vals) 
+        if not share:
+            doc = share.create(vals) 
         else:
-            doc.write(vals)
+            share.write(vals)
 
         return doc
 
@@ -296,7 +334,7 @@ class UploadDocM(graphene.Mutation):
 ###!upload###
 ####
 
-def _mutate(self, info,id=[],model=None,method=None,args=[], kwargs={}):
+def _call_kw_mutate(self, info,id=[],model=None,method=None,args=[], kwargs={}):
     env = info.context["env"]
     args = id + args 
     obj = request.env[model]
@@ -317,7 +355,7 @@ class CallKW(graphene.Mutation):
 
     @staticmethod
     def mutate(self, info,id=[],model=None,method=None,args=[], kwargs={}):
-        rs = _mutate(self, info,id,model,method,args, kwargs)
+        rs = _call_kw_mutate(self, info,id,model,method,args, kwargs)
         return rs
 
 class CallKWDoc(CallKW):
@@ -332,7 +370,7 @@ class CallKWDoc(CallKW):
     @staticmethod
     def mutate(self, info,id=[],method=None,args=[], kwargs={}):
         model = 'documents.document'
-        rs = _mutate(self, info,id,model,method,args, kwargs)
+        rs = _call_kw_mutate(self, info,id,model,method,args, kwargs)
         return rs
 
 class DocToggleActive(CallKWDoc):
@@ -343,7 +381,7 @@ class DocToggleActive(CallKWDoc):
     def mutate(self, info,id=[]):
         model = 'documents.document'
         method = 'toggle_active'
-        rs = _mutate(self, info,id,model,method)
+        rs = _call_kw_mutate(self, info,id,model,method)
         return rs
 
 class ReUpload(CallKW):
@@ -364,7 +402,7 @@ class ReUpload(CallKW):
         model = 'documents.document'
         method = 'write'
         args=[vals]
-        rs = _mutate(self,info,id,model,method,args)
+        rs = _call_kw_mutate(self,info,id,model,method,args)
         return rs
 
 class Mutation(graphene.ObjectType):
