@@ -13,7 +13,7 @@
                      data-string="Documents"
                      string="Documents"
                      data-key="documents"
-                     groups="documents.group_documents_manager"
+                     groups="vii_document.group_documents_manager"
                      invisible="1">
                     <h2>Files Centralization</h2>
                 </div>

@@ -4,7 +4,7 @@ from odoo.tests.common import TransactionCase
 class TestTags(TransactionCase):
 
     def test_create_tag(self):
-        marketing_assets = self.ref('documents.documents_marketing_assets')
+        marketing_assets = self.ref('vii_document.documents_marketing_assets')
         tag = self.env['documents.tag'].create({
             'name': 'Foo',
             'facet_id': marketing_assets,
@@ -14,10 +14,10 @@ class TestTags(TransactionCase):
         self.assertTrue(tag.sequence > 0, 'should have a non-zero sequence')
 
     def test_get_tags(self):
-        folder_id = self.ref('documents.documents_marketing_folder')
-        facet_assets = self.env['documents.facet'].browse(self.ref('documents.documents_marketing_assets'))
-        tag_assets_ads = self.env['documents.tag'].browse(self.ref('documents.documents_marketing_assets_ads'))
-        tag_assets_videos = self.env['documents.tag'].browse(self.ref('documents.documents_marketing_assets_Videos'))
+        folder_id = self.ref('vii_document.documents_marketing_folder')
+        facet_assets = self.env['documents.facet'].browse(self.ref('vii_document.documents_marketing_assets'))
+        tag_assets_ads = self.env['documents.tag'].browse(self.ref('vii_document.documents_marketing_assets_ads'))
+        tag_assets_videos = self.env['documents.tag'].browse(self.ref('vii_document.documents_marketing_assets_Videos'))
 
         domain = [('folder_id', '=', folder_id)]
         folder_ids = self.env['documents.folder'].search([('parent_folder_id', 'parent_of', folder_id)]).ids
@@ -52,10 +52,10 @@ class TestTags(TransactionCase):
         self.assertEqual(tags[-1], last_record, 'last record should match')
 
     def test_get_tags_reordered(self):
-        folder_id = self.ref('documents.documents_marketing_folder')
-        facet_assets = self.env['documents.facet'].browse(self.ref('documents.documents_marketing_assets'))
-        tag_assets_images = self.env['documents.tag'].browse(self.ref('documents.documents_marketing_assets_images'))
-        tag_assets_videos = self.env['documents.tag'].browse(self.ref('documents.documents_marketing_assets_Videos'))
+        folder_id = self.ref('vii_document.documents_marketing_folder')
+        facet_assets = self.env['documents.facet'].browse(self.ref('vii_document.documents_marketing_assets'))
+        tag_assets_images = self.env['documents.tag'].browse(self.ref('vii_document.documents_marketing_assets_images'))
+        tag_assets_videos = self.env['documents.tag'].browse(self.ref('vii_document.documents_marketing_assets_Videos'))
 
         tag_assets_images.sequence = 1
 
@@ -93,11 +93,11 @@ class TestTags(TransactionCase):
     def test_get_tags_empty_folder(self):
         empty_folder_id = self.env['documents.folder'].create({
             'name': 'Empty Folder',
-            'parent_folder_id': self.env.ref('documents.documents_marketing_folder').id,
+            'parent_folder_id': self.env.ref('vii_document.documents_marketing_folder').id,
         }).id
-        facet_assets = self.env['documents.facet'].browse(self.ref('documents.documents_marketing_assets'))
-        tag_assets_ads = self.env['documents.tag'].browse(self.ref('documents.documents_marketing_assets_ads'))
-        tag_assets_videos = self.env['documents.tag'].browse(self.ref('documents.documents_marketing_assets_Videos'))
+        facet_assets = self.env['documents.facet'].browse(self.ref('vii_document.documents_marketing_assets'))
+        tag_assets_ads = self.env['documents.tag'].browse(self.ref('vii_document.documents_marketing_assets_ads'))
+        tag_assets_videos = self.env['documents.tag'].browse(self.ref('vii_document.documents_marketing_assets_Videos'))
 
         domain = [('folder_id', '=', empty_folder_id)]
         folder_ids = self.env['documents.folder'].search([('parent_folder_id', 'parent_of', empty_folder_id)]).ids

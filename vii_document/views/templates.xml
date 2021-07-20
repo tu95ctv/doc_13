@@ -3,13 +3,13 @@
 
     <!-- ====  Direct sharing - Main layout ==== -->
 
-    <template id="documents.not_available">
-        <t t-call="documents.public_page_layout">
+    <template id="vii_document.not_available">
+        <t t-call="vii_document.public_page_layout">
             <h2 class="o_documents_portal_central_message text-center mt160 text-white">This link has expired</h2>
         </t>
     </template>
 
-    <template id="documents.public_page_layout" name="Documents public pages main layout">
+    <template id="vii_document.public_page_layout" name="Documents public pages main layout">
         <t t-call="web.layout">
             <t t-set="head">
                 <script type="text/javascript">
@@ -72,8 +72,8 @@
     </template>
 
     <!-- ====  Multiple files - direct sharing ==== -->
-    <template id="documents.share_page" name="Multiple Documents Share">
-        <t t-call="documents.public_page_layout">
+    <template id="vii_document.share_page" name="Multiple Documents Share">
+        <t t-call="vii_document.public_page_layout">
             <t t-set="shareType" t-value="'o_share_multiple'"/>
             <t t-set="zip_URL" t-value="base_url + '/document/download/all/' + share_id + '/' + token"/>
 
@@ -127,7 +127,7 @@
                                     <time><b t-field="document.write_date" t-options="{'format':'MMM d, yyyy'}"/></time> •
                                     <small class="mb0">
                                         <b>
-                                            <t t-if="document.type == 'binary'" t-call="documents.format_file_size"/>
+                                            <t t-if="document.type == 'binary'" t-call="vii_document.format_file_size"/>
                                             <t t-elif="document_request"><span title="Requested Document">Requested Document</span></t>
                                             <t t-else="">URL</t>
                                         </b>
@@ -159,8 +159,8 @@
     </template>
 
     <!-- ====  Single file - direct sharing ==== -->
-    <template id="documents.share_single" name="Documents Share Single File">
-        <t t-call="documents.public_page_layout">
+    <template id="vii_document.share_single" name="Documents Share Single File">
+        <t t-call="vii_document.public_page_layout">
             <t t-set="file_URL" t-value="base_url + '/document/download/' + share_id + '/' + token + '/' + str(document.id)"/>
             <t t-set="file_token" t-value="'share_token=' + token + '&amp;share_id=' + share_id + '&amp;'"/>
             <t t-set="preview_URL" t-value="base_url + '/documents/image/' + str(document.id) + '/600x500?'"/>
@@ -181,7 +181,7 @@
                 <img class="img-responsive" t-att-alt="document.name" t-att-title="document.name" t-attf-src="#{document.mimetype and 'gif' in document.mimetype and normal_preview_URL + file_token or preview_URL + file_token}"/>
                 <div class="o_docs_single_actions col-sm-12 row no-gutters justify-content-between flex-row flex-wrap align-items-baseline text-left mt68">
                     <figcaption class="mb8">
-                        <span t-if="'url' not in document.type"><b t-esc="document.name"/> • <small><t t-call="documents.format_file_size"/></small></span>
+                        <span t-if="'url' not in document.type"><b t-esc="document.name"/> • <small><t t-call="vii_document.format_file_size"/></small></span>
                         <span t-else="">URL</span>
                     </figcaption>
                     <a t-att-href="file_URL" target="new" t-att-title="'Download ' + document.name" class="btn o_docs_btn">
@@ -215,7 +215,7 @@
                         </header>
                         <div class="o_card_footer">
                             <b>
-                                <t t-if="document.type == 'binary'" t-call="documents.format_file_size"/>
+                                <t t-if="document.type == 'binary'" t-call="vii_document.format_file_size"/>
                                 <t t-elif="document.type == 'url'">URL</t>
                                 <t t-else="">Requested</t>
                                 ∙ <time t-field="document.write_date" t-options="{'format':'MMM d, yyyy'}"/>
@@ -235,7 +235,7 @@
     </template>
 
     <!-- Utils -->
-    <template id="documents.format_file_size" name="Format file size">
+    <template id="vii_document.format_file_size" name="Format file size">
         <t t-set="G" t-value="int(document.file_size/1000000000)"/>
         <t t-set="M" t-value="int(document.file_size/1000000) - G*1000"/>
         <t t-set="K" t-value="int(document.file_size/1000) - M*1000 - G*1000000"/>

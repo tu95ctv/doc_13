@@ -15,7 +15,7 @@ ActivityMenu.include({
      */
     async willStart() {
         await this._super(...arguments);
-        this.hasDocumentUserGroup = await session.user_has_group('documents.group_documents_user');
+        this.hasDocumentUserGroup = await session.user_has_group('vii_document.group_documents_user');
     },
 
     //--------------------------------------------------------------------------

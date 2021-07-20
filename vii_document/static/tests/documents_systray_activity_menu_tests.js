@@ -35,8 +35,8 @@ QUnit.module('documents', {}, function () {
             },
             session: {
                 async user_has_group(group) {
-                    if (group === 'documents.group_documents_user') {
-                        assert.step('user_has_group:documents.group_documents_user');
+                    if (group === 'vii_document.group_documents_user') {
+                        assert.step('user_has_group:vii_document.group_documents_user');
                         return true;
                     }
                     return this._super(...arguments);
@@ -48,7 +48,7 @@ QUnit.module('documents', {}, function () {
         await activityMenu.appendTo($('#qunit-fixture'));
 
         await testUtils.dom.click(activityMenu.$('> .dropdown-toggle'));
-        assert.verifySteps(['user_has_group:documents.group_documents_user']);
+        assert.verifySteps(['user_has_group:vii_document.group_documents_user']);
         assert.containsOnce(activityMenu, '.o_sys_documents_request');
         await testUtils.dom.click(activityMenu.$('.o_sys_documents_request'));
 

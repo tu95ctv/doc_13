@@ -25,7 +25,7 @@ class TestCaseSecurity(TransactionCase):
             'name': "documents test documents user",
             'login': "dtdu",
             'email': "dtdu@yourcompany.com",
-            'groups_id': [(6, 0, [self.ref('documents.group_documents_user')])]
+            'groups_id': [(6, 0, [self.ref('vii_document.group_documents_user')])]
         })
         self.test_group_user = self.env['res.users'].create({
             'name': "documents test group user",
@@ -43,7 +43,7 @@ class TestCaseSecurity(TransactionCase):
             'name': "documents test documents manager",
             'login': "dtdm",
             'email': "dtdm@yourcompany.com",
-            'groups_id': [(6, 0, [self.ref('documents.group_documents_manager')])]
+            'groups_id': [(6, 0, [self.ref('vii_document.group_documents_manager')])]
         })
 
     def test_documents_access_default(self):
@@ -85,7 +85,7 @@ class TestCaseSecurity(TransactionCase):
 
         folder_a = self.env['documents.folder'].create({
             'name': 'folder A',
-            'group_ids': [(6, 0, [self.ref('documents.group_documents_manager')])],
+            'group_ids': [(6, 0, [self.ref('vii_document.group_documents_manager')])],
         })
 
         document_a = self.env['documents.document'].create({
@@ -276,7 +276,7 @@ class TestCaseSecurity(TransactionCase):
         available_documents = test_share._get_documents_and_check_access(test_share.access_token, operation='read')
         self.assertEqual(len(available_documents), 1,
                          'This method should indicate that the create_uid has access to the folder')
-        folder_share.write({'group_ids': [(6, 0, [self.ref('documents.group_documents_manager')])]})
+        folder_share.write({'group_ids': [(6, 0, [self.ref('vii_document.group_documents_manager')])]})
         available_documents = test_share._get_documents_and_check_access(test_share.access_token, operation='read')
         self.assertEqual(len(available_documents), 0,
                          'This method should indicate that the create_uid doesnt have access to the folder anymore')
@@ -289,7 +289,7 @@ class TestCaseSecurity(TransactionCase):
         TEXT = base64.b64encode(bytes("TEST", 'utf-8'))
         folder_share = self.env['documents.folder'].create({
             'name': 'folder share',
-            'read_group_ids': [(6, 0, [self.ref('documents.group_documents_user')])]
+            'read_group_ids': [(6, 0, [self.ref('vii_document.group_documents_user')])]
         })
         document_a = self.env['documents.document'].create({
             'datas': b"R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=",

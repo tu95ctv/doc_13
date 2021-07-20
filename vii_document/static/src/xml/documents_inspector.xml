@@ -11,13 +11,13 @@
                     <div class="o_inspector_folder_description"><t t-if="widget.currentFolder.description" t-raw="widget.currentFolder.description"/></div>
                 </t>
             </div>
-            <t t-else="" t-call="documents.DocumentsInspector.previews"/>
+            <t t-else="" t-call="vii_document.DocumentsInspector.previews"/>
         </div>
         <div class="o_documents_inspector_info">
-            <t t-if="nbPreviews === 0" t-call="documents.DocumentsInspector.globalInfo"/>
+            <t t-if="nbPreviews === 0" t-call="vii_document.DocumentsInspector.globalInfo"/>
             <t t-else="">
-                <t t-call="documents.DocumentsInspector.buttons"/>
-                <t t-call="documents.DocumentsInspector.documentsInfo"/>
+                <t t-call="vii_document.DocumentsInspector.buttons"/>
+                <t t-call="vii_document.DocumentsInspector.documentsInfo"/>
             </t>
         </div>
     </div>
@@ -79,11 +79,11 @@
     <div class="o_inspector_info_columns">
         <table class="o_inspector_table">
             <tbody>
-                <t t-call="documents.DocumentsInspector.infoRow">
+                <t t-call="vii_document.DocumentsInspector.infoRow">
                     <t t-set="label">Documents</t>
                     <t t-set="value" t-value="widget.nbDocuments"/>
                 </t>
-                <t t-call="documents.DocumentsInspector.infoRow">
+                <t t-call="vii_document.DocumentsInspector.infoRow">
                     <t t-set="label">Size</t>
                     <t t-set="value"><t t-esc="widget.size"/> MB</t>
                 </t>
@@ -173,7 +173,7 @@
         <div class="btn-group">
             <button class="btn fa fa-download o_inspector_button o_inspector_download" title="Download"/>
             <t t-if="widget.records[0].data.active">
-                <button t-if="widget.currentFolder" class="btn fa fa-share-alt o_inspector_button o_inspector_share" title="Share this selection" groups="documents.group_documents_user"/>
+                <button t-if="widget.currentFolder" class="btn fa fa-share-alt o_inspector_button o_inspector_share" title="Share this selection" groups="vii_document.group_documents_user"/>
                 <t t-if="nbPreviews === 1">
                     <button t-if="widget.records[0].data.type !== 'url'" class="btn fa fa-retweet o_inspector_button o_inspector_replace" title="Replace"/>
                     <button t-att-class="'btn fa o_inspector_button o_inspector_lock' + (widget.records[0].data.lock_uid ? ' o_locked fa-lock' : ' fa-unlock-alt')" title="Lock"/>
@@ -229,7 +229,7 @@
                 selected
             </span>
         </summary>
-        <t t-call="documents.DocumentsInspector"/>
+        <t t-call="vii_document.DocumentsInspector"/>
     </details>
 </t>
 
