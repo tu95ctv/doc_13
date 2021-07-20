@@ -25,8 +25,6 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/documents_data.xml',
-        'views/vii_assets.xml',
-
         'views/documents_views.xml',
         'views/documents_configs/documents_folder_views.xml',
         'views/documents_configs/res_config_settings_views.xml',
@@ -35,7 +33,6 @@
         'views/documents_configs/documents_facet_views.xml',
         'views/documents_configs/documents_tag_views.xml',
         # 'views/documents_configs/res_partner.xml',
-        'views/vii_templates.xml',
         # 'views/activity_views.xml',
         # 'wizard/request_activity_views.xml',
         'views/menu.xml',
