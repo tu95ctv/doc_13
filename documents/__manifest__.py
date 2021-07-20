@@ -21,7 +21,7 @@
     'currency': 'EUR',
     'license': 'OPL-1',
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'portal', 'web', 'attachment_indexation', 'digest'],
+    'depends': ['base', 'mail', 'portal', 'web', 'attachment_indexation', 'digest','graphql_base'],
 
     # always loaded
     'data': [
@@ -62,4 +62,13 @@
         # 'demo/demo.xml',
     ],
     'license': 'OEEL-1',
+
+    'external_dependencies': {
+        'bin': [
+        ],
+        'python': [
+            'graphene',
+        ],
+    },
+
 }

@@ -9,10 +9,12 @@ Documents Managers
     """,  # Supports reStructuredText(RST) format
     'author': "Dung",
     'version': '13.0.1',
-    'depends': ['base','documents','documents_graphql'],
+    'depends': ['base','documents'],
     'data': [        
         'views/documents_manager.xml',        
         'views/menu.xml',
     ],
     'qweb': ["static/src/xml/documents_manager.xml"],
+
+    
 }
