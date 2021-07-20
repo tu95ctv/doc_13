@@ -38,7 +38,6 @@
         'views/documents_configs/documents_facet_views.xml',
         'views/documents_configs/documents_tag_views.xml',
         # 'views/documents_configs/res_partner.xml',
-        'views/vii_templates.xml',
         # 'views/activity_views.xml',
         # 'wizard/request_activity_views.xml',
         'views/menu.xml',
