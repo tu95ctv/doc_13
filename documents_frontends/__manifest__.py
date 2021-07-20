@@ -9,7 +9,7 @@ Documents Managers
     """,  # Supports reStructuredText(RST) format
     'author': "Dung",
     'version': '13.0.1',
-    'depends': ['base','documents'],
+    'depends': ['base','vii_document'],
     'data': [        
         'views/documents_manager.xml',        
         'views/menu.xml',
