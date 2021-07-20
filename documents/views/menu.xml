@@ -7,8 +7,8 @@
 
     <!-- Top bar menus -->
 
-        <menuitem name="Documents" id="documents.dashboard" parent="documents.menu_root" action="document_action" groups="documents.group_documents_user" sequence="0"/>
-         <menuitem name="Configuration" id="documents.Config" parent="documents.menu_root" sequence="1"/>
+        <menuitem name="Documents" id="documents.dashboard" parent="documents.menu_root" action="document_action" groups="documents.group_documents_user" sequence="1"/>
+         <menuitem name="Configuration" id="documents.Config" parent="documents.menu_root" sequence="2"/>
 
             <menuitem name="Settings" id="documents.settings_menu" parent="documents.Config" action="configuration_action" groups="base.group_system" sequence="0"/>
             <menuitem name="Workspaces" id="documents.folder_menu" parent="documents.Config" action="folder_action" groups="documents.group_documents_manager" sequence="1"/>

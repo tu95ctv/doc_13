@@ -1,20 +1,25 @@
 # -*- coding: utf-8 -*-
 {
     'name': "ViinDoo Documents",
-
+    'name_vi_VN':'Quản lý tài liệu',
     'summary': "ViinDoo Document management",
-
+    'summary_vi_VN':'Quản lý tài liệu',
     'description': """
         App to upload and manage your documents.
     """,
-
     'author': "ViinDoo",
     'category': 'Productivity/Documents',
     'sequence': 80,
-    'version': '1.0',
+    'version': '0.1.0',
+    'installable':True,
     'application': True,
-    'website': '',
-
+    'auto_install':False,
+    'website': 'https://viindoo.com',
+    'live_test_url':'',
+    'support': 'apps.support@viindoo.com',
+    'price': 99.9,
+    'currency': 'EUR',
+    'license': 'OPL-1',
     # any module necessary for this one to work correctly
     'depends': ['base', 'mail', 'portal', 'web', 'attachment_indexation', 'digest'],
 

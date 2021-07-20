@@ -7,8 +7,9 @@
 
 <menuitem
         id="menu_documents_manager_root"
+        parent="documents.menu_root"
         name="Documents Manager"
         action="action_documents_manager"
         groups="base.group_user"
-        sequence="1"/>
+        sequence="0"/>
 </odoo>
