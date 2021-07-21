@@ -19,7 +19,7 @@ class DocumentShare(models.Model):
     folder_id = fields.Many2one('documents.folder', string="Workspace", required=True)
     name = fields.Char(string="Name")
 
-    access_token = fields.Char(required=True, default=lambda x: str(uuid.uuid4()), groups="vii_document.group_documents_user")
+    access_token = fields.Char(required=True, default=lambda x: str(uuid.uuid4()), groups="vii_document.vii_document_group_user")
     full_url = fields.Char(string="URL", compute='_compute_full_url')
     date_deadline = fields.Date(string="Valid Until")
     state = fields.Selection([
