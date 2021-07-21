@@ -19,6 +19,10 @@ class Document(models.Model):
     _inherit = ['mail.thread.cc', 'mail.activity.mixin']
     _order = 'id desc'
 
+    _sql_constraints = [
+        ('attachment_unique', 'unique (attachment_id)', "This attachment is already a document"),
+    ]
+
     # Attachment
     attachment_id = fields.Many2one('ir.attachment', ondelete='cascade', auto_join=True, copy=False)
     attachment_name = fields.Char('Attachment Name', related='attachment_id.name', readonly=False)
@@ -71,16 +75,7 @@ class Document(models.Model):
                                  related='folder_id.group_ids')
 
     icon_file = fields.Char(compute='_compute_icon_file')
-    _sql_constraints = [
-        ('attachment_unique', 'unique (attachment_id)', "This attachment is already a document"),
-    ]
-
     icon_url = fields.Char(compute='_compute_icon_url')
-    total_count = fields.Integer(compute='_compute_total_count')
-
-    def _compute_total_count(self):
-        self.total_count = self._context['total_count']
-
     def _compute_icon_url(self):
         for r in self:
             if r.thumbnail:
@@ -91,8 +86,6 @@ class Document(models.Model):
                 url = False
             r.icon_url = url
 
-
-
     def _compute_icon_file(self):
         for r in self:
             match = False
@@ -102,7 +95,6 @@ class Document(models.Model):
                     match = True
                     icon_file = i
                     break
-            
             if match == False:
                 for k,vs in templates2.items():
                     for i in vs:
