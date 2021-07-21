@@ -62,9 +62,6 @@
                                             <field name="alias_name" class="oe_inline"/>@<field name="alias_domain" class="oe_inline" readonly="1"/>
                                         </div>
                                     </div>
-                                    <div class="content-group" attrs="{'invisible': [('alias_domain', '!=', False)]}">
-                                        <a type="action" name='%(settings_action)d' class="btn btn-sm btn-link" role="button"><i class="fa fa-fw o_button_icon fa-arrow-right"/> Configure Email Servers</a>
-                                    </div>
                                 </div>
                                 </div>
                             </div>
@@ -140,9 +137,6 @@
                                         <div class="oe_edit_only oe_inline" name="edit_alias" style="display: inline;">
                                             <field name="alias_name" class="oe_inline"/>@<field name="alias_domain" class="oe_inline" readonly="1"/>
                                         </div>
-                                    </div>
-                                    <div class="content-group" attrs="{'invisible': [('alias_domain', '!=', False)]}">
-                                        <a type="action" name='%(settings_action)d' class="btn btn-sm btn-link" role="button"><i class="fa fa-fw o_button_icon fa-arrow-right"/> Configure Email Servers</a>
                                     </div>
                                 </div>
                             </div>

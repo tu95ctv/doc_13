@@ -22,32 +22,21 @@
     'license': 'OPL-1',
     'depends': ['base', 'mail', 'portal', 'web', 'attachment_indexation', 'digest','graphql_base'],
     'data': [
+        #security
         'security/security.xml',
         'security/ir.model.access.csv',
+        #data
         'data/documents_data.xml',
+        #view
         'views/documents_views.xml',
         'views/documents_configs/documents_folder_views.xml',
-        'views/documents_configs/res_config_settings_views.xml',
         'views/documents_configs/documents_share_views.xml',
         'views/documents_configs/documents_workflow_rule_views.xml',
         'views/documents_configs/documents_facet_views.xml',
         'views/documents_configs/documents_tag_views.xml',
-        # 'views/documents_configs/res_partner.xml',
-        # 'views/activity_views.xml',
-        # 'wizard/request_activity_views.xml',
         'views/menu.xml',
     ],
-    'qweb': [
-        # "static/src/xml/*.xml",
-        # "static/src/owl/components/pdf_manager/pdf_manager.xml",
-        # "static/src/owl/components/pdf_page/pdf_page.xml",
-        # "static/src/owl/components/pdf_group_name/pdf_group_name.xml",
-    ],
-    'demo': [
-        # 'demo/demo.xml',
-    ],
     'license': 'OEEL-1',
-
     'external_dependencies': {
         'bin': [
         ],
