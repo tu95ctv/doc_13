@@ -26,7 +26,7 @@ class Document(models.Model):
     # Attachment
     attachment_id = fields.Many2one('ir.attachment', ondelete='cascade', auto_join=True, copy=False)
     # attachment_name = fields.Char('Attachment Name', related='attachment_id.name', readonly=False)
-    attachment_type = fields.Selection(string='Attachment Type', related='attachment_id.type', readonly=False)
+    # attachment_type = fields.Selection(string='Attachment Type', related='attachment_id.type', readonly=False)
     datas = fields.Binary(related='attachment_id.datas', related_sudo=True, readonly=False) #rt3
     file_size = fields.Integer(related='attachment_id.file_size', store=True)
     checksum = fields.Char(related='attachment_id.checksum')
@@ -79,21 +79,88 @@ class Document(models.Model):
     #             record.attachment_name = record.name
     active = fields.Boolean(default=True, string="Active")
     thumbnail = fields.Binary(readonly=1, store=True, attachment=True, compute='_compute_thumbnail')
-    url = fields.Char('URL', index=True, size=1024, tracking=True)
+
+    @api.depends('checksum')
+    def _compute_thumbnail(self):
+        for record in self:
+            try:
+                record.thumbnail = image_process(record.datas, size=(80, 80), crop='center')
+
+            except UserError:
+                record.thumbnail = False
+    url = fields.Char('URL', index=True, size=1024, tracking=True) #rt
     res_model_name = fields.Char(compute='_compute_res_model_name', index=True)
     type = fields.Selection([('url', 'URL'), ('binary', 'File'), ('empty', 'Request')],
                             string='Type', required=True, store=True, default='empty', change_default=True,
-                            compute='_compute_type')
-    favorited_ids = fields.Many2many('res.users', string="Favorite of")
-    is_favorited = fields.Boolean(compute='_compute_is_favorited')
-    tag_ids = fields.Many2many('documents.tag', 'document_tag_rel', string="Tags")
-    partner_id = fields.Many2one('res.partner', string="Contact", tracking=True)
+                            compute='_compute_type') #rt
+    
+    @api.depends('attachment_id', 'url')
+    def _compute_type(self):
+        for record in self:
+            record.type = 'empty'
+            if record.attachment_id:
+                record.type = 'binary'
+            elif record.url:
+                record.type = 'url'
+    # favorited_ids = fields.Many2many('res.users', string="Favorite of")
+    # is_favorited = fields.Boolean(compute='_compute_is_favorited')
+
+    # @api.depends('favorited_ids')
+    # @api.depends_context('uid')
+    # def _compute_is_favorited(self):
+    #     favorited = self.filtered(lambda d: self.env.user in d.favorited_ids)
+    #     favorited.is_favorited = True
+    #     (self - favorited).is_favorited = False
+    tag_ids = fields.Many2many('documents.tag', 'document_tag_rel', string="Tags") #rt
+    partner_id = fields.Many2one('res.partner', string="Contact", tracking=True) #rt
     owner_id = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Owner",
-                               tracking=True)
+                               tracking=True) #rt
     available_rule_ids = fields.Many2many('documents.workflow.rule', compute='_compute_available_rules',
                                           string='Available Rules')
-    lock_uid = fields.Many2one('res.users', string="Locked by")
-    is_locked = fields.Boolean(compute="_compute_is_locked", string="Locked")
+    @api.depends('folder_id')
+    def _compute_available_rules(self):
+        """
+        loads the rules that can be applied to the attachment.
+
+        """
+        self.available_rule_ids = False
+        folder_ids = self.mapped('folder_id.id')
+        rule_domain = [('domain_folder_id', 'parent_of', folder_ids)] if folder_ids else []
+        # searching rules with sudo as rules are inherited from parent folders and should be available even
+        # when they come from a restricted folder.
+        rules = self.env['documents.workflow.rule'].sudo().search(rule_domain)
+        for rule in rules:
+            domain = []
+            if rule.condition_type == 'domain':
+                domain = literal_eval(rule.domain) if rule.domain else []
+            else:
+                if rule.criteria_partner_id:
+                    domain = expression.AND([[['partner_id', '=', rule.criteria_partner_id.id]], domain])
+                if rule.criteria_owner_id:
+                    domain = expression.AND([[['owner_id', '=', rule.criteria_owner_id.id]], domain])
+                if rule.create_model:
+                    domain = expression.AND([[['type', '=', 'binary']], domain])
+                if rule.required_tag_ids:
+                    domain = expression.AND([[['tag_ids', 'in', rule.required_tag_ids.ids]], domain])
+                if rule.excluded_tag_ids:
+                    domain = expression.AND([[['tag_ids', 'not in', rule.excluded_tag_ids.ids]], domain])
+
+            folder_domain = [['folder_id', 'child_of', rule.domain_folder_id.id]]
+            subset = expression.AND([[['id', 'in', self.ids]], domain, folder_domain])
+            document_ids = self.env['documents.document'].search(subset)
+            for document in document_ids:
+                document.available_rule_ids = [(4, rule.id, False)]
+
+
+    lock_uid = fields.Many2one('res.users', string="Locked by") #rt
+    is_locked = fields.Boolean(compute="_compute_is_locked", string="Locked") #rt
+
+    def _compute_is_locked(self):
+        for record in self:
+            record.is_locked = record.lock_uid and not (
+                    self.env.user == record.lock_uid or
+                    self.env.is_admin() or
+                    self.user_has_groups('documents.group_document_manager'))
     create_share_id = fields.Many2one('documents.share', help='Share used to create this document')
     request_activity_id = fields.Many2one('mail.activity')
 
@@ -109,17 +176,7 @@ class Document(models.Model):
                                  help="This attachment will only be available for the selected user groups",
                                  related='folder_id.group_ids')
 
-    icon_file = fields.Char(compute='_compute_icon_file')
-    icon_url = fields.Char(compute='_compute_icon_url')
-    def _compute_icon_url(self):
-        for r in self:
-            if r.thumbnail:
-                url = 'documents/image/%s?field=thumbnail'%r.id
-            elif r.icon_file:
-                url = '/web/static/src/img/mimetypes/%s.svg'%r.icon_file
-            else:
-                url = False
-            r.icon_url = url
+    icon_file = fields.Char(compute='_compute_icon_file') #rt
 
     def _compute_icon_file(self):
         for r in self:
@@ -138,6 +195,17 @@ class Document(models.Model):
                             icon_file = k
                             break
             r.icon_file = icon_file
+    icon_url = fields.Char(compute='_compute_icon_url') #rt
+
+    def _compute_icon_url(self):
+        for r in self:
+            if r.thumbnail:
+                url = 'documents/image/%s?field=thumbnail'%r.id
+            elif r.icon_file:
+                url = '/web/static/src/img/mimetypes/%s.svg'%r.icon_file
+            else:
+                url = False
+            r.icon_url = url
 
     @api.onchange('url')
     def _onchange_url(self):
@@ -146,23 +214,9 @@ class Document(models.Model):
             if not self.name and not is_youtube:
                 self.name = self.url.rsplit('/')[-1]
 
-    @api.depends('checksum')
-    def _compute_thumbnail(self):
-        for record in self:
-            try:
-                record.thumbnail = image_process(record.datas, size=(80, 80), crop='center')
+    
 
-            except UserError:
-                record.thumbnail = False
-
-    @api.depends('attachment_type', 'url')
-    def _compute_type(self):
-        for record in self:
-            record.type = 'empty'
-            if record.attachment_id:
-                record.type = 'binary'
-            elif record.url:
-                record.type = 'url'
+    
 
     def _get_models(self, domain):
         """
@@ -200,12 +254,7 @@ class Document(models.Model):
                 })
         return sorted(models, key=lambda m: m['display_name']) + not_attached + not_a_file
 
-    @api.depends('favorited_ids')
-    @api.depends_context('uid')
-    def _compute_is_favorited(self):
-        favorited = self.filtered(lambda d: self.env.user in d.favorited_ids)
-        favorited.is_favorited = True
-        (self - favorited).is_favorited = False
+    
 
     @api.depends('res_model')
     def _compute_res_model_name(self):
@@ -218,40 +267,6 @@ class Document(models.Model):
                     record.res_model_name = False
             else:
                 record.res_model_name = False
-
-    @api.depends('folder_id')
-    def _compute_available_rules(self):
-        """
-        loads the rules that can be applied to the attachment.
-
-        """
-        self.available_rule_ids = False
-        folder_ids = self.mapped('folder_id.id')
-        rule_domain = [('domain_folder_id', 'parent_of', folder_ids)] if folder_ids else []
-        # searching rules with sudo as rules are inherited from parent folders and should be available even
-        # when they come from a restricted folder.
-        rules = self.env['documents.workflow.rule'].sudo().search(rule_domain)
-        for rule in rules:
-            domain = []
-            if rule.condition_type == 'domain':
-                domain = literal_eval(rule.domain) if rule.domain else []
-            else:
-                if rule.criteria_partner_id:
-                    domain = expression.AND([[['partner_id', '=', rule.criteria_partner_id.id]], domain])
-                if rule.criteria_owner_id:
-                    domain = expression.AND([[['owner_id', '=', rule.criteria_owner_id.id]], domain])
-                if rule.create_model:
-                    domain = expression.AND([[['type', '=', 'binary']], domain])
-                if rule.required_tag_ids:
-                    domain = expression.AND([[['tag_ids', 'in', rule.required_tag_ids.ids]], domain])
-                if rule.excluded_tag_ids:
-                    domain = expression.AND([[['tag_ids', 'not in', rule.excluded_tag_ids.ids]], domain])
-
-            folder_domain = [['folder_id', 'child_of', rule.domain_folder_id.id]]
-            subset = expression.AND([[['id', 'in', self.ids]], domain, folder_domain])
-            document_ids = self.env['documents.document'].search(subset)
-            for document in document_ids:
-                document.available_rule_ids = [(4, rule.id, False)]
 
     @api.model
     def message_new(self, msg_dict, custom_values=None):
@@ -392,12 +407,7 @@ class Document(models.Model):
         else:
             self.lock_uid = self.env.uid
 
-    def _compute_is_locked(self):
-        for record in self:
-            record.is_locked = record.lock_uid and not (
-                    self.env.user == record.lock_uid or
-                    self.env.is_admin() or
-                    self.user_has_groups('documents.group_document_manager'))
+    
 
 
     @api.model
