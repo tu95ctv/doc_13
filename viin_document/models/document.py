@@ -25,14 +25,37 @@ class Document(models.Model):
 
     # Attachment
     attachment_id = fields.Many2one('ir.attachment', ondelete='cascade', auto_join=True, copy=False)
-    attachment_name = fields.Char('Attachment Name', related='attachment_id.name', readonly=False)
+    # attachment_name = fields.Char('Attachment Name', related='attachment_id.name', readonly=False)
     attachment_type = fields.Selection(string='Attachment Type', related='attachment_id.type', readonly=False)
-    datas = fields.Binary(related='attachment_id.datas', related_sudo=True, readonly=False)
+    datas = fields.Binary(related='attachment_id.datas', related_sudo=True, readonly=False) #rt3
     file_size = fields.Integer(related='attachment_id.file_size', store=True)
     checksum = fields.Char(related='attachment_id.checksum')
-    mimetype = fields.Char(related='attachment_id.mimetype', default='application/octet-stream')
-    res_model = fields.Char('Resource Model', compute="_compute_res_record", inverse="_inverse_res_model", store=True)
-    res_id = fields.Integer('Resource ID', compute="_compute_res_record", inverse="_inverse_res_id", store=True)
+    mimetype = fields.Char(related='attachment_id.mimetype', default='application/octet-stream') #rt2
+    # res_model = fields.Char('Resource Model', compute="_compute_res_record", inverse="_inverse_res_model", store=True)
+    # @api.depends('attachment_id', 'attachment_id.res_model', 'attachment_id.res_id')
+    # def _compute_res_record(self):
+    #     for record in self:
+    #         attachment = record.attachment_id
+    #         if attachment:
+    #             record.res_model = attachment.res_model
+    #             record.res_id = attachment.res_id
+
+    
+    # def _inverse_res_model(self):
+    #     for record in self:
+    #         attachment = record.attachment_id.with_context(no_document=True)
+    #         if attachment:
+    #             attachment.res_model = record.res_model
+
+    # res_id = fields.Integer('Resource ID', compute="_compute_res_record", inverse="_inverse_res_id", store=True)
+    # def _inverse_res_id(self):
+    #     for record in self:
+    #         attachment = record.attachment_id.with_context(no_document=True)
+    #         if attachment:
+    #             attachment.res_id = record.res_id
+    # res_name = fields.Char('Resource Name', related='attachment_id.res_name')
+    res_model = fields.Char(related='attachment_id.res_model', store=True)
+    res_id = fields.Many2oneReference(related='attachment_id.res_id', store=True)
     res_name = fields.Char('Resource Name', related='attachment_id.res_name')
     index_content = fields.Text(related='attachment_id.index_content')
     description = fields.Text('Attachment Description', related='attachment_id.description', readonly=False)
@@ -41,7 +64,19 @@ class Document(models.Model):
     previous_attachment_ids = fields.Many2many('ir.attachment', string="History")
 
     # Document
-    name = fields.Char('Name', copy=True, store=True, compute='_compute_name', inverse='_inverse_name')
+    name = fields.Char(related='attachment_id.name', copy=True, store=True) #rt1
+    # name = fields.Char('Name', copy=True, store=True, compute='_compute_name', inverse='_inverse_name') #rt1
+    
+    # @api.depends('attachment_id.name')
+    # def _compute_name(self):
+    #     for record in self:
+    #         if record.attachment_name:
+    #             record.name = record.attachment_name
+
+    # def _inverse_name(self):
+    #     for record in self:
+    #         if record.attachment_id:
+    #             record.attachment_name = record.name
     active = fields.Boolean(default=True, string="Active")
     thumbnail = fields.Binary(readonly=1, store=True, attachment=True, compute='_compute_thumbnail')
     url = fields.Char('URL', index=True, size=1024, tracking=True)
@@ -103,40 +138,6 @@ class Document(models.Model):
                             icon_file = k
                             break
             r.icon_file = icon_file
-
-
-            
-                
-    @api.depends('attachment_id.name')
-    def _compute_name(self):
-        for record in self:
-            if record.attachment_name:
-                record.name = record.attachment_name
-
-    def _inverse_name(self):
-        for record in self:
-            if record.attachment_id:
-                record.attachment_name = record.name
-
-    @api.depends('attachment_id', 'attachment_id.res_model', 'attachment_id.res_id')
-    def _compute_res_record(self):
-        for record in self:
-            attachment = record.attachment_id
-            if attachment:
-                record.res_model = attachment.res_model
-                record.res_id = attachment.res_id
-
-    def _inverse_res_id(self):
-        for record in self:
-            attachment = record.attachment_id.with_context(no_document=True)
-            if attachment:
-                attachment.res_id = record.res_id
-
-    def _inverse_res_model(self):
-        for record in self:
-            attachment = record.attachment_id.with_context(no_document=True)
-            if attachment:
-                attachment.res_model = record.res_model
 
     @api.onchange('url')
     def _onchange_url(self):
