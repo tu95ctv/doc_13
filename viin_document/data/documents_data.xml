@@ -6,18 +6,18 @@
 
         <record id="mail_documents_activity_data_Inbox" model="mail.activity.type">
             <field name="name">Inbox</field>
-            <field name="res_model_id" ref="vii_document.model_documents_document"/>
+            <field name="res_model_id" ref="viin_document.model_documents_document"/>
         </record>
 
         <record id="mail_documents_activity_data_tv" model="mail.activity.type">
             <field name="name">To validate</field>
-            <field name="res_model_id" ref="vii_document.model_documents_document"/>
+            <field name="res_model_id" ref="viin_document.model_documents_document"/>
         </record>
 
         <record id="mail_documents_activity_data_md" model="mail.activity.type">
             <field name="name">Requested Document</field>
             <field name="category">upload_file</field>
-            <field name="res_model_id" ref="vii_document.model_documents_document"/>
+            <field name="res_model_id" ref="viin_document.model_documents_document"/>
         </record>
 
         <!-- Folders -->
@@ -29,7 +29,7 @@
                 <p>Incoming letters sent to inbox email alias will be added to your inbox automatically.</p>
             </field>
             <field name="sequence">1</field>
-            <!-- <field name="​alias_model_id" ref="vii_document.model_documents_document"/> -->
+            <!-- <field name="​alias_model_id" ref="viin_document.model_documents_document"/> -->
 
         </record>
 
@@ -41,7 +41,7 @@
                 </center>
             </field>
             <field name="sequence">11</field>
-            <!-- <field name="​alias_model_id" ref="vii_document.model_documents_document"/> -->
+            <!-- <field name="​alias_model_id" ref="viin_document.model_documents_document"/> -->
         </record>
 
         <record id="documents_marketing_folder" model="documents.folder">
@@ -280,7 +280,7 @@
             <field name="activity_type_id" ref="mail_documents_activity_data_Inbox"/>
             <field name="activity_date_deadline_range">7</field>
             <field name="activity_date_deadline_range_type">days</field>
-            <field name="alias_model_id" ref="vii_document.model_documents_share"/>
+            <field name="alias_model_id" ref="viin_document.model_documents_share"/>
         </record>
 
         <record id="share_internal_folder" model="documents.share">
@@ -295,7 +295,7 @@
             <field name="activity_type_id" ref="mail_documents_activity_data_Inbox"/>
             <field name="activity_date_deadline_range">7</field>
             <field name="activity_date_deadline_range_type">days</field>
-            <field name="alias_model_id" ref="vii_document.model_documents_share"/>
+            <field name="alias_model_id" ref="viin_document.model_documents_share"/>
         </record>
     </data>
 </odoo>

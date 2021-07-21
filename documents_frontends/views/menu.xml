@@ -7,7 +7,7 @@
 
 <menuitem
         id="menu_documents_manager_root"
-        parent="vii_document.menu_root"
+        parent="viin_document.menu_root"
         name="Documents Manager"
         action="action_documents_manager"
         groups="base.group_user"

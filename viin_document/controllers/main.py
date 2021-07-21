@@ -479,12 +479,12 @@ class ShareRoute(http.Controller):
             }
             if share.type == 'ids' and len(available_documents) == 1:
                 options.update(document=available_documents[0], request_upload=True)
-                return request.render('vii_document.share_single', options)
+                return request.render('viin_document.share_single', options)
             else:
                 options.update(all_button='binary' in [document.type for document in available_documents],
                                document_ids=available_documents,
                                request_upload=share.action == 'downloadupload' or share.type == 'ids')
-                return request.render('vii_document.share_page', options)
+                return request.render('viin_document.share_page', options)
         except Exception:
             logger.exception("Failed to generate the multi file share portal")
         return request.not_found()

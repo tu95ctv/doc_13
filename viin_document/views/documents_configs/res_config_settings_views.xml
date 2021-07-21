@@ -13,7 +13,7 @@
                      data-string="Documents"
                      string="Documents"
                      data-key="documents"
-                     groups="vii_document.vii_document_group_manager"
+                     groups="viin_document.viin_document_group_manager"
                      invisible="1">
                     <h2>Files Centralization</h2>
                 </div>

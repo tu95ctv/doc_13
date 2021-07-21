@@ -2,6 +2,6 @@
 
 from . import main
 from . import schema
-from . import vii_doc_graphql
+from . import viin_doc_graphql
 
 

@@ -55,7 +55,7 @@
         <field name="model">documents.facet</field>
         <field name="priority" eval="1"/>
         <field name="mode">primary</field>
-        <field name="inherit_id" ref="vii_document.facet_view_form"/>
+        <field name="inherit_id" ref="viin_document.facet_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('oe_title')]" position="after">
                 <group>
@@ -83,8 +83,8 @@
       <field name="context">{'simple_name': True}</field>
       <field name="view_mode">tree,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('vii_document.facet_view_tree')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('vii_document.facet_view_form_with_folder')})]"/>
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('viin_document.facet_view_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('viin_document.facet_view_form_with_folder')})]"/>
     </record>
 
 </odoo>

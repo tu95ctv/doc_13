@@ -6,23 +6,23 @@
             <field name="sequence">1</field>
         </record> -->
 
-        <record id="vii_document_group_user" model="res.groups">
+        <record id="viin_document_group_user" model="res.groups">
             <field name="name">User</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <!-- <field name="category_id" ref="module_category_document"/> -->
         </record>
 
-        <record id="vii_document_group_manager" model="res.groups">
+        <record id="viin_document_group_manager" model="res.groups">
             <field name="name">Administrator</field>
             <!-- <field name="category_id" ref="module_category_document"/> -->
-            <field name="implied_ids" eval="[(4, ref('vii_document_group_user'))]"/>
+            <field name="implied_ids" eval="[(4, ref('viin_document_group_user'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 
         <!-- folder rules -->
         <data noupdate="1">
 
-        <record id="vii_document_folder_rule_company" model="ir.rule">
+        <record id="viin_document_folder_rule_company" model="ir.rule">
             <field name="name">Documents.folder: company</field>
             <field name="model_id" ref="model_documents_folder"/>
             <field name="domain_force">['|',
@@ -30,8 +30,8 @@
                 ('company_id',  'in', company_ids)]</field>
         </record>
 
-        <record id="vii_document_folder_rule_user" model="ir.rule">
-            <field name="name">vii_documents.folder: user rule</field>
+        <record id="viin_document_folder_rule_user" model="ir.rule">
+            <field name="name">viin_documents.folder: user rule</field>
             <field name="model_id" ref="model_documents_folder"/>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[
@@ -44,16 +44,16 @@
                 ]</field>
         </record>
 
-        <record id="vii_document_folder_rule_manager" model="ir.rule">
-            <field name="name">vii_documents.folder: manager rule</field>
+        <record id="viin_document_folder_rule_manager" model="ir.rule">
+            <field name="name">viin_documents.folder: manager rule</field>
             <field name="model_id" ref="model_documents_folder"/>
-            <field name="groups" eval="[(4, ref('vii_document.vii_document_group_manager'))]"/>
+            <field name="groups" eval="[(4, ref('viin_document.viin_document_group_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 
         <!-- documents rules -->
 
-        <record id="vii_document_document_rule_company" model="ir.rule">
+        <record id="viin_document_document_rule_company" model="ir.rule">
             <field name="name">Documents.document: global</field>
             <field name="model_id" ref="model_documents_document"/>
             <field name="domain_force">['|',
@@ -62,11 +62,11 @@
         </record>
 
         <!--
-            The two following rule apply to base.group_user (instead of vii_document_group_user) so users can access
+            The two following rule apply to base.group_user (instead of viin_document_group_user) so users can access
             documents on which they have an activity scheduled for them.
         -->
-        <record id="vii_document_document_rule_user_read" model="ir.rule">
-            <field name="name">vii_document.document: read rule</field>
+        <record id="viin_document_document_rule_user_read" model="ir.rule">
+            <field name="name">viin_document.document: read rule</field>
             <field name="model_id" ref="model_documents_document"/>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[
@@ -82,8 +82,8 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <record id="vii_document_document_rule_user_write" model="ir.rule">
-            <field name="name">vii_document.document: write rule</field>
+        <record id="viin_document_document_rule_user_write" model="ir.rule">
+            <field name="name">viin_document.document: write rule</field>
             <field name="model_id" ref="model_documents_document"/>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[
@@ -99,16 +99,16 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <record id="vii_document_document_rule_manager" model="ir.rule">
+        <record id="viin_document_document_rule_manager" model="ir.rule">
             <field name="name">Documents.document: manager rule</field>
             <field name="model_id" ref="model_documents_document"/>
-            <field name="groups" eval="[(4, ref('vii_document.vii_document_group_manager'))]"/>
+            <field name="groups" eval="[(4, ref('viin_document.viin_document_group_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 
         <!-- share links rules -->
 
-        <record id="vii_document_share_rule_company" model="ir.rule">
+        <record id="viin_document_share_rule_company" model="ir.rule">
             <field name="name">Documents.share: company</field>
             <field name="model_id" ref="model_documents_share"/>
             <field name="domain_force">['|',
@@ -116,17 +116,17 @@
                 ('folder_id.company_id', 'in', company_ids)]</field>
         </record>
 
-        <record id="vii_document_share_rule_user" model="ir.rule">
-            <field name="name">vii_documents.share: user</field>
+        <record id="viin_document_share_rule_user" model="ir.rule">
+            <field name="name">viin_documents.share: user</field>
             <field name="model_id" ref="model_documents_share"/>
-            <field name="groups" eval="[(4, ref('vii_document_group_user'))]"/>
+            <field name="groups" eval="[(4, ref('viin_document_group_user'))]"/>
             <field name="domain_force">[('create_uid', '=', user.id)]</field>
         </record>
 
-        <record id="vii_document_share_rule_manager" model="ir.rule">
-            <field name="name">vii_documents.share: manager</field>
+        <record id="viin_document_share_rule_manager" model="ir.rule">
+            <field name="name">viin_documents.share: manager</field>
             <field name="model_id" ref="model_documents_share"/>
-            <field name="groups" eval="[(4, ref('vii_document_group_manager'))]"/>
+            <field name="groups" eval="[(4, ref('viin_document_group_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 

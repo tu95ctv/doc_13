@@ -261,7 +261,7 @@
       <field name="view_mode">kanban,tree,form</field>
       <field name="domain">[]</field>
       <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'kanban', 'view_id': ref('vii_document.document_view_kanban')}),
+        (0, 0, {'view_mode': 'kanban', 'view_id': ref('viin_document.document_view_kanban')}),
         (0, 0, {'view_mode': 'tree', 'view_id': False}),
         (0, 0, {'view_mode': 'form', 'view_id': False})
         ]"/>
