@@ -122,16 +122,8 @@
     <record id="document_action" model="ir.actions.act_window">
       <field name="name">Documents</field>
       <field name="res_model">documents.document</field>
-      <field name="view_mode">kanban,tree,form</field>
+      <field name="view_mode">tree,form</field>
       <field name="domain">[]</field>
-      <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'kanban', 'view_id': ref('viin_document.document_view_kanban')}),
-        (0, 0, {'view_mode': 'tree', 'view_id': False}),
-        (0, 0, {'view_mode': 'form', 'view_id': False})
-        ]"/>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_smiling_face">Upload <span class="font-weight-normal">a file or</span> drag <span class="font-weight-normal">it here.</span></p>
-      </field>
     </record>
     
 
