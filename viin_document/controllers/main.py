@@ -206,7 +206,7 @@ class ShareRoute(http.Controller):
         return response
 
     @http.route(['/documents/content/<int:id>'], type='http', auth='user')
-    def documents_content(self, id):
+    def documents_content(self, id): #rt
         return self._get_file_response(id)
 
     @http.route(['/documents/image/<int:id>',
@@ -373,6 +373,7 @@ class ShareRoute(http.Controller):
                  "/document/upload/<int:share_id>/<token>/<int:document_id>"],
                 type='http', auth='public', methods=['POST'], csrf=False)
     def upload_attachment(self, share_id, token, document_id=None, **kwargs):
+        #reupload trong này luôn.
         """
         Allows public upload if provided with the right token and share_Link.
 

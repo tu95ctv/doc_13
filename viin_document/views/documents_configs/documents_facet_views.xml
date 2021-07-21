@@ -39,9 +39,6 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Tooltip" name="tooltip">
-                            <field name="tooltip"/>
-                        </page>
                     </notebook>
                 </sheet>
             </form>

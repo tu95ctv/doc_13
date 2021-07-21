@@ -135,7 +135,6 @@ class Query(graphene.ObjectType):
 
     @staticmethod
     def gen_new_domain(domain=None, folder_id=None, tag_ids=None,search=None):
-        
         domain_new = []
         if domain:
             domain_new += domain
@@ -153,9 +152,7 @@ class Query(graphene.ObjectType):
         total_count = Doc.search_count(domain_new) 
         return total_count
 
-
     all_documents = graphene.List(Document,
-        
         # graphene.NonNull(Document),
         # required=True,
         id =graphene.Int(),
