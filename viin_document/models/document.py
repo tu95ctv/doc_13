@@ -31,33 +31,11 @@ class Document(models.Model):
     file_size = fields.Integer(related='attachment_id.file_size', store=True)
     checksum = fields.Char(related='attachment_id.checksum')
     mimetype = fields.Char(related='attachment_id.mimetype', default='application/octet-stream') #rt2
-    # res_model = fields.Char('Resource Model', compute="_compute_res_record", inverse="_inverse_res_model", store=True)
-    # @api.depends('attachment_id', 'attachment_id.res_model', 'attachment_id.res_id')
-    # def _compute_res_record(self):
-    #     for record in self:
-    #         attachment = record.attachment_id
-    #         if attachment:
-    #             record.res_model = attachment.res_model
-    #             record.res_id = attachment.res_id
-
-    
-    # def _inverse_res_model(self):
-    #     for record in self:
-    #         attachment = record.attachment_id.with_context(no_document=True)
-    #         if attachment:
-    #             attachment.res_model = record.res_model
-
-    # res_id = fields.Integer('Resource ID', compute="_compute_res_record", inverse="_inverse_res_id", store=True)
-    # def _inverse_res_id(self):
-    #     for record in self:
-    #         attachment = record.attachment_id.with_context(no_document=True)
-    #         if attachment:
-    #             attachment.res_id = record.res_id
-    # res_name = fields.Char('Resource Name', related='attachment_id.res_name')
+   
     res_model = fields.Char(related='attachment_id.res_model', store=True)
     res_id = fields.Many2oneReference(related='attachment_id.res_id', store=True)
-    res_name = fields.Char('Resource Name', related='attachment_id.res_name')
-    index_content = fields.Text(related='attachment_id.index_content')
+    # res_name = fields.Char('Resource Name', related='attachment_id.res_name')
+    # index_content = fields.Text(related='attachment_id.index_content')
     description = fields.Text('Attachment Description', related='attachment_id.description', readonly=False)
 
     # Versioning
@@ -65,18 +43,7 @@ class Document(models.Model):
 
     # Document
     name = fields.Char(related='attachment_id.name', copy=True, store=True) #rt1
-    # name = fields.Char('Name', copy=True, store=True, compute='_compute_name', inverse='_inverse_name') #rt1
-    
-    # @api.depends('attachment_id.name')
-    # def _compute_name(self):
-    #     for record in self:
-    #         if record.attachment_name:
-    #             record.name = record.attachment_name
-
-    # def _inverse_name(self):
-    #     for record in self:
-    #         if record.attachment_id:
-    #             record.attachment_name = record.name
+   
     active = fields.Boolean(default=True, string="Active")
     thumbnail = fields.Binary(readonly=1, store=True, attachment=True, compute='_compute_thumbnail')
 
@@ -114,15 +81,7 @@ class Document(models.Model):
                 record.type = 'binary'
             elif record.url:
                 record.type = 'url'
-    # favorited_ids = fields.Many2many('res.users', string="Favorite of")
-    # is_favorited = fields.Boolean(compute='_compute_is_favorited')
-
-    # @api.depends('favorited_ids')
-    # @api.depends_context('uid')
-    # def _compute_is_favorited(self):
-    #     favorited = self.filtered(lambda d: self.env.user in d.favorited_ids)
-    #     favorited.is_favorited = True
-    #     (self - favorited).is_favorited = False
+   
     tag_ids = fields.Many2many('documents.tag', 'document_tag_rel', string="Tags") #rt
     partner_id = fields.Many2one('res.partner', string="Contact", tracking=True) #rt
     owner_id = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Owner",
@@ -173,7 +132,7 @@ class Document(models.Model):
                     self.env.user == record.lock_uid or
                     self.env.is_admin() or
                     self.user_has_groups('documents.group_document_manager'))
-    create_share_id = fields.Many2one('documents.share', help='Share used to create this document')
+    # create_share_id = fields.Many2one('documents.share', help='Share used to create this document')
     # request_activity_id = fields.Many2one('mail.activity')
 
     # Folder
@@ -227,139 +186,7 @@ class Document(models.Model):
 
     
 
-    
-
-    # def _get_models(self, domain):
-    #     """
-    #     Return the names of the models to which the attachments are attached.
-
-    #     :param domain: the domain of the read_group on documents.
-    #     :return: a list of model data, the latter being a dict with the keys
-    #         'id' (technical name),
-    #         'name' (display name) and
-    #         '__count' (how many attachments with that domain).
-    #     """
-    #     not_a_file = []
-    #     not_attached = []
-    #     models = []
-    #     groups = self.read_group(domain, ['res_model'], ['res_model'], lazy=True)
-    #     for group in groups:
-    #         res_model = group['res_model']
-    #         if not res_model:
-    #             not_a_file.append({
-    #                 'id': res_model,
-    #                 'display_name': _('Not a file'),
-    #                 '__count': group['res_model_count'],
-    #             })
-    #         elif res_model == 'documents.document':
-    #             not_attached.append({
-    #                 'id': res_model,
-    #                 'display_name': _('Not attached'),
-    #                 '__count': group['res_model_count'],
-    #             })
-    #         else:
-    #             models.append({
-    #                 'id': res_model,
-    #                 'display_name': self.env['ir.model']._get(res_model).display_name,
-    #                 '__count': group['res_model_count'],
-    #             })
-    #     return sorted(models, key=lambda m: m['display_name']) + not_attached + not_a_file
-
-    
-
-    
-
-    # @api.model
-    # def message_new(self, msg_dict, custom_values=None):
-    #     """
-    #     creates a new attachment from any email sent to the alias.
-    #     The values defined in the share link upload settings are included
-    #     in the custom values (via the alias defaults, synchronized on update)
-    #     """
-    #     subject = msg_dict.get('subject', '')
-    #     if custom_values is None:
-    #         custom_values = {}
-    #     defaults = {
-    #         'name': "Mail: %s" % subject,
-    #         'active': False,
-    #     }
-    #     defaults.update(custom_values)
-
-    #     return super(Document, self).message_new(msg_dict, defaults)
-
-    # @api.returns('mail.message', lambda value: value.id)
-    # def message_post(self, *, message_type='notification', **kwargs):
-    #     if message_type == 'email' and self.create_share_id:
-    #         self = self.with_context(no_document=True)
-    #     return super(Document, self).message_post(message_type=message_type, **kwargs)
-
-    # @api.model
-    # def _message_post_after_hook(self, message, msg_vals):
-    #     """
-    #     If the res model was an attachment and a mail, adds all the custom values of the share link
-    #         settings to the attachments of the mail.
-
-    #     """
-    #     m2m_commands = msg_vals['attachment_ids']
-    #     share = self.create_share_id
-    #     if share:
-    #         attachments = self.env['ir.attachment'].browse([x[1] for x in m2m_commands])
-    #         for attachment in attachments:
-    #             document = self.env['documents.document'].create({
-    #                 'name': attachment.name,
-    #                 'attachment_id': attachment.id,
-    #                 'folder_id': share.folder_id.id,
-    #                 'owner_id': share.owner_id.id if share.owner_id else share.create_uid.id,
-    #                 'partner_id': share.partner_id.id if share.partner_id else False,
-    #                 'tag_ids': [(6, 0, share.tag_ids.ids if share.tag_ids else [])],
-    #             })
-    #             attachment.write({
-    #                 'res_model': 'documents.document',
-    #                 'res_id': document.id,
-    #             })
-    #             document.message_post(body=msg_vals.get('body', ''), subject=self.name)
-    #             if share.activity_option:
-    #                 document.documents_set_activity(settings_record=share)
-
-    #     return super(Document, self)._message_post_after_hook(message, msg_vals)
-
-    # def documents_set_activity(self, settings_record=None):
-    #     """
-    #     Generate an activity based on the fields of settings_record.
-
-    #     :param settings_record: the record that contains the activity fields.
-    #                 settings_record.activity_type_id (required)
-    #                 settings_record.activity_summary
-    #                 settings_record.activity_note
-    #                 settings_record.activity_date_deadline_range
-    #                 settings_record.activity_date_deadline_range_type
-    #                 settings_record.activity_user_id
-    #     """
-    #     if settings_record and settings_record.activity_type_id:
-    #         for record in self:
-    #             activity_vals = {
-    #                 'activity_type_id': settings_record.activity_type_id.id,
-    #                 'summary': settings_record.activity_summary or '',
-    #                 'note': settings_record.activity_note or '',
-    #             }
-    #             if settings_record.activity_date_deadline_range > 0:
-    #                 activity_vals['date_deadline'] = fields.Date.context_today(settings_record) + relativedelta(
-    #                     **{settings_record.activity_date_deadline_range_type: settings_record.activity_date_deadline_range})
-    #             if settings_record._fields.get('has_owner_activity') and settings_record.has_owner_activity and record.owner_id:
-    #                 user = record.owner_id
-    #             elif settings_record._fields.get('activity_user_id') and settings_record.activity_user_id:
-    #                 user = settings_record.activity_user_id
-    #             elif settings_record._fields.get('user_id') and settings_record.user_id:
-    #                 user = settings_record.user_id
-    #             else:
-    #                 user = self.env.user
-    #             if user:
-    #                 activity_vals['user_id'] = user.id
-    #             record.activity_schedule(**activity_vals)
-
-    def toggle_favorited(self):
-        self.ensure_one()
-        self.write({'favorited_ids': [(3 if self.env.user in self[0].favorited_ids else 4, self.env.user.id)]})
+ 
 
     def access_content(self):
         self.ensure_one()
@@ -373,25 +200,15 @@ class Document(models.Model):
             action['url'] = '/documents/content/%s' % self.id
         return action
 
-    def create_share(self):
-        self.ensure_one()
-        vals = {
-            'type': 'ids',
-            'document_ids': [(6, 0, self.ids)],
-            'folder_id': self.folder_id.id,
-        }
-        return self.env['documents.share'].create_share(vals)
-
-    # def open_resource(self):
+    # def create_share(self):
     #     self.ensure_one()
-    #     if self.res_model and self.res_id:
-    #         view_id = self.env[self.res_model].get_formview_id(self.res_id)
-    #         return {
-    #             'res_id': self.res_id,
-    #             'res_model': self.res_model,
-    #             'type': 'ir.actions.act_window',
-    #             'views': [[view_id, 'form']],
-    #         }
+    #     vals = {
+    #         'type': 'ids',
+    #         'document_ids': [(6, 0, self.ids)],
+    #         'folder_id': self.folder_id.id,
+    #     }
+    #     return self.env['documents.share'].create_share(vals)
+
 
     def toggle_lock(self):
         """
@@ -420,175 +237,4 @@ class Document(models.Model):
         attachment.write({'res_model': 'documents.document', 'res_id': new_record.id})
         return new_record
 
-    # @api.model
-    # def create(self, vals):
-    #     keys = [key for key in vals if
-    #             self._fields[key].related and self._fields[key].related[0] == 'attachment_id']
-    #     attachment_dict = {key: vals.pop(key) for key in keys if key in vals}
-    #     attachment = self.env['ir.attachment'].browse(vals.get('attachment_id'))
-
-    #     if attachment and attachment_dict:
-    #         attachment.write(attachment_dict)
-    #     elif attachment_dict:
-    #         attachment_dict.setdefault('name', vals.get('name', 'unnamed'))
-    #         attachment = self.env['ir.attachment'].create(attachment_dict)
-    #         vals['attachment_id'] = attachment.id
-    #     new_record = super(Document, self).create(vals)
-
-    #     # this condition takes precedence during forward-port.
-    #     if (attachment and not attachment.res_id and (not attachment.res_model or attachment.res_model == 'documents.document')):
-    #         attachment.with_context(no_document=True).write({'res_model': 'documents.document', 'res_id': new_record.id})
-    #     return new_record
-
-    # def write(self, vals):
-    #     attachment_id = vals.get('attachment_id')
-    #     if attachment_id:
-    #         self.ensure_one()
-    #     for record in self:
-
-    #         if record.type == 'empty' and ('datas' in vals or 'url' in vals):
-    #             body = _("Document Request: %s Uploaded by: %s") % (record.name, self.env.user.name)
-    #             record.message_post(body=body)
-
-    #         if record.attachment_id:
-    #             # versioning
-    #             if attachment_id:
-    #                 if attachment_id in record.previous_attachment_ids.ids:
-    #                     record.previous_attachment_ids = [(3, attachment_id, False)]
-    #                 record.previous_attachment_ids = [(4, record.attachment_id.id, False)]
-    #             if 'datas' in vals:
-    #                 old_attachment = record.attachment_id.copy()
-    #                 record.previous_attachment_ids = [(4, old_attachment.id, False)]
-    #         elif vals.get('datas') and not vals.get('attachment_id'):
-    #             res_model = vals.get('res_model', record.res_model or 'documents.document')
-    #             res_id = vals.get('res_id') if vals.get('res_model') else record.res_id if record.res_model else record.id
-    #             if res_model and res_model != 'documents.document' and not self.env[res_model].browse(res_id).exists():
-    #                 record.res_model = res_model = 'documents.document'
-    #                 record.res_id = res_id = record.id
-    #             attachment = self.env['ir.attachment'].with_context(no_document=True).create({
-    #                 'name': vals.get('name', record.name),
-    #                 'res_model': res_model,
-    #                 'res_id': res_id
-    #             })
-    #             record.attachment_id = attachment.id #reupload
-    #             # record._process_activities(attachment.id)
-
-    #     # pops the datas and/or the mimetype key(s) to explicitly write them in batch on the ir.attachment
-    #     # so the mimetype is properly set. The reason was because the related keys are not written in batch
-    #     # and because mimetype is readonly on `ir.attachment` (which prevents writing through the related).
-    #     attachment_dict = {key: vals.pop(key) for key in ['datas', 'mimetype'] if key in vals}
-
-    #     write_result = super(Document, self).write(vals)
-    #     if attachment_dict:
-    #         self.mapped('attachment_id').write(attachment_dict)
-
-    #     return write_result
-
-    # def _process_activities(self, attachment_id):
-    #     self.ensure_one()
-    #     if attachment_id and self.request_activity_id:
-    #         feedback = _("Document Request: %s Uploaded by: %s") % (self.name, self.env.user.name)
-    #         self.request_activity_id.action_feedback(feedback=feedback, attachment_ids=[attachment_id])
-
-    # @api.model
-    # def _pdf_split(self, new_files=None, open_files=None, vals=None):
-    #     vals = vals or {}
-    #     new_attachments = self.env['ir.attachment']._pdf_split(new_files=new_files, open_files=open_files)
-
-    #     return self.create([
-    #         dict(vals, attachment_id=attachment.id) for attachment in new_attachments
-    #     ])
-
-    # @api.model
-    # def search_panel_select_range(self, field_name, **kwargs):
-    #     if field_name == 'folder_id':
-    #         enable_counters = kwargs.get('enable_counters', False)
-    #         fields = ['display_name', 'description', 'parent_folder_id']
-    #         available_folders = self.env['documents.folder'].search([])
-    #         folder_domain = expression.OR([[('parent_folder_id', 'parent_of', available_folders.ids)], [('id', 'in', available_folders.ids)]])
-    #         # also fetches the ancestors of the available folders to display the complete folder tree for all available folders.
-    #         DocumentFolder = self.env['documents.folder'].sudo().with_context(hierarchical_naming=False)
-    #         records = DocumentFolder.search_read(folder_domain, fields)
-
-    #         domain_image = {}
-    #         if enable_counters:
-    #             model_domain = expression.AND([
-    #                 kwargs.get('search_domain', []),
-    #                 kwargs.get('category_domain', []),
-    #                 kwargs.get('filter_domain', []),
-    #                 [(field_name, '!=', False)]
-    #             ])
-    #             domain_image = self._search_panel_domain_image(field_name, model_domain, enable_counters)
-
-    #         values_range = OrderedDict()
-    #         for record in records:
-    #             record_id = record['id']
-    #             if enable_counters:
-    #                 image_element  = domain_image.get(record_id)
-    #                 record['__count'] = image_element['__count'] if image_element else 0
-    #             value = record['parent_folder_id']
-    #             record['parent_folder_id'] = value and value[0]
-    #             values_range[record_id] = record
-
-    #         if enable_counters:
-    #             self._search_panel_global_counters(values_range, 'parent_folder_id')
-
-    #         return {
-    #             'parent_field': 'parent_folder_id',
-    #             'values': list(values_range.values()),
-    #         }
-
-    #     return super(Document, self).search_panel_select_range(field_name)
-
-    # def _get_processed_tags(self, domain, folder_id):
-    #     """
-    #     sets a group color to the tags based on the order of the facets (group_id)
-    #     recomputed each time the search_panel fetches the tags as the colors depend on the order and
-    #     amount of tag categories. If the amount of categories exceeds the amount of colors, the color
-    #     loops back to the first one.
-    #     """
-    #     tags = self.env['documents.tag']._get_tags(domain, folder_id)
-    #     facets = list(OrderedDict.fromkeys([tag['group_id'] for tag in tags]))
-    #     facet_colors = self.env['documents.facet'].FACET_ORDER_COLORS
-    #     for tag in tags:
-    #         color_index = facets.index(tag['group_id']) % len(facet_colors)
-    #         tag['group_hex_color'] = facet_colors[color_index]
-
-    #     return tags
-
-    # search_panel_select_multi_range
-    # @api.model
-    # def search_panel_select_multi_range(self, field_name, **kwargs):
-    #     search_domain = kwargs.get('search_domain', [])
-    #     category_domain = kwargs.get('category_domain', [])
-    #     filter_domain = kwargs.get('filter_domain', [])
-
-    #     if field_name == 'tag_ids':
-    #         folder_id = category_domain[0][2] if len(category_domain) else False
-    #         if folder_id:
-    #             domain = expression.AND([
-    #                 search_domain, category_domain, filter_domain,
-    #                 [(field_name, '!=', False)],
-    #             ])
-    #             return {'values': self._get_processed_tags(domain, folder_id)}
-    #         else:
-    #             return {'values': []}
-
-    #     elif field_name == 'res_model':
-    #         domain = expression.AND([search_domain, category_domain])
-    #         model_values = self._get_models(domain)
-
-    #         if filter_domain:
-    #             # fetch new counters
-    #             domain = expression.AND([search_domain, category_domain, filter_domain])
-    #             model_count = {
-    #                 model['id']: model['__count']
-    #                 for model in self._get_models(domain)
-    #             }
-    #             # update result with new counters
-    #             for model in model_values:
-    #                 model['__count'] = model_count.get(model['id'], 0)
-
-    #         return {'values': model_values}
-
-    #     return super(Document, self).search_panel_select_multi_range(field_name, **kwargs)
+    

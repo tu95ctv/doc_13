@@ -208,7 +208,8 @@ class ShareRoute(http.Controller):
     @http.route(['/documents/content/<int:id>'], type='http', auth='user')
     def documents_content(self, id): #rt
         return self._get_file_response(id)
-
+    
+    #share_id thừa rồi
     @http.route(['/documents/image/<int:id>',
                  '/documents/image/<int:id>/<int:width>x<int:height>',
                  ], type='http', auth="public")
