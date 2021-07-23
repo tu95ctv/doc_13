@@ -5,7 +5,7 @@
 
     <record id="folder_view_search" model="ir.ui.view">
         <field name="name">Workspace search</field>
-        <field name="model">documents.folder</field>
+        <field name="model">viin_document.folder</field>
         <field name="arch" type="xml">
         <search>
             <field name="name"/>
@@ -17,7 +17,7 @@
 
     <record id="folder_view_tree" model="ir.ui.view">
         <field name="name">Workspace tree</field>
-        <field name="model">documents.folder</field>
+        <field name="model">viin_document.folder</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="sequence" widget="handle"/>
@@ -32,7 +32,7 @@
 
     <record id="folder_view_form" model="ir.ui.view">
         <field name="name">Workspace form</field>
-        <field name="model">documents.folder</field>
+        <field name="model">viin_document.folder</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -104,7 +104,7 @@
 
     <record id="folder_action" model="ir.actions.act_window">
       <field name="name">Workspaces</field>
-      <field name="res_model">documents.folder</field>
+      <field name="res_model">viin_document.folder</field>
       <field name="view_mode">tree,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('viin_document.folder_view_tree')}),

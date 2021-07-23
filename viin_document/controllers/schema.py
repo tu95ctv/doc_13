@@ -208,7 +208,7 @@ class Query(graphene.ObjectType):
         if parent_folder_id:
             domain +=[('parent_folder_id','=', parent_folder_id)]
 
-        return info.context["env"]["documents.folder"].search(
+        return info.context["env"]["viin_document.folder"].search(
             domain, limit=limit, offset=offset
         )
 

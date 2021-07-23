@@ -22,7 +22,7 @@
 
         <!-- Folders -->
 
-        <record id="documents_internal_folder" model="documents.folder">
+        <record id="documents_internal_folder" model="viin_document.folder">
             <field name="name">Internal</field>
             <field name="description" type="html">
                 <p>Categorize, share and keep track of all your internal documents.</p>
@@ -33,7 +33,7 @@
 
         </record>
 
-        <record id="documents_finance_folder" model="documents.folder">
+        <record id="documents_finance_folder" model="viin_document.folder">
             <field name="name">Finance</field>
             <field name="description" type="html">
                 <center>
@@ -44,7 +44,7 @@
             <!-- <field name="​alias_model_id" ref="viin_document.model_viin_document_document"/> -->
         </record>
 
-        <record id="documents_marketing_folder" model="documents.folder">
+        <record id="documents_marketing_folder" model="viin_document.folder">
             <field name="name">Marketing</field>
             <field name="sequence">13</field>
         </record>

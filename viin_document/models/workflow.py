@@ -9,7 +9,7 @@ class WorkflowActionRule(models.Model):
     _description = "A set of condition and actions which will be available to all attachments matching the conditions"
     _order = "sequence"
 
-    domain_folder_id = fields.Many2one('documents.folder', string="Related Workspace", required=True, ondelete='cascade')
+    domain_folder_id = fields.Many2one('viin_document.folder', string="Related Workspace", required=True, ondelete='cascade')
     name = fields.Char(required=True, string="Action Button Name", translate=True)
     note = fields.Char(string="Tooltip")
     sequence = fields.Integer('Sequence', default=10)
@@ -34,7 +34,7 @@ class WorkflowActionRule(models.Model):
     partner_id = fields.Many2one('res.partner', string="Set Contact")
     user_id = fields.Many2one('res.users', string="Set Owner")
     tag_action_ids = fields.One2many('documents.workflow.action', 'workflow_rule_id', string='Set Tags')
-    folder_id = fields.Many2one('documents.folder', string="Move to Workspace")
+    folder_id = fields.Many2one('viin_document.folder', string="Move to Workspace")
     has_business_option = fields.Boolean(compute='_get_business')
     create_model = fields.Selection([], string="Create")
 

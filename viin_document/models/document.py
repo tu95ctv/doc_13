@@ -136,7 +136,7 @@ class Document(models.Model):
     # request_activity_id = fields.Many2one('mail.activity')
 
     # Folder
-    folder_id = fields.Many2one('documents.folder',
+    folder_id = fields.Many2one('viin_document.folder',
                                 string="Workspace",
                                 ondelete="restrict",
                                 tracking=True,

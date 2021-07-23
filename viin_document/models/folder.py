@@ -4,7 +4,7 @@ from odoo.exceptions import ValidationError
 
 
 class DocumentFolder(models.Model):
-    _name = 'documents.folder'
+    _name = 'viin_document.folder'
     _description = 'Documents Workspace'
     _parent_name = 'parent_folder_id'
     _order = 'sequence'
@@ -34,13 +34,13 @@ class DocumentFolder(models.Model):
 
     company_id = fields.Many2one('res.company', 'Company',
                                  help="This workspace will only be available to the selected company")
-    parent_folder_id = fields.Many2one('documents.folder',
+    parent_folder_id = fields.Many2one('viin_document.folder',
                                        string="Parent Workspace",
                                        ondelete="cascade",
                                        help="A workspace will inherit the tags of its parent workspace")
     name = fields.Char(required=True, translate=True)
     description = fields.Html(string="Description", translate=True)
-    children_folder_ids = fields.One2many('documents.folder', 'parent_folder_id', string="Sub workspaces")
+    children_folder_ids = fields.One2many('viin_document.folder', 'parent_folder_id', string="Sub workspaces")
     document_ids = fields.One2many('viin_document.document', 'folder_id', string="Documents")
     sequence = fields.Integer('Sequence', default=10)
     share_link_ids = fields.One2many('documents.share', 'folder_id', string="Share Links")
@@ -49,7 +49,7 @@ class DocumentFolder(models.Model):
                                 help="Tag categories defined for this workspace")
     group_ids = fields.Many2many('res.groups',
         string="Write Groups", help='Groups able to see the workspace and read/create/edit its documents.')
-    read_group_ids = fields.Many2many('res.groups', 'documents_folder_read_groups',
+    read_group_ids = fields.Many2many('res.groups', 'viin_document_folder_read_groups',
         string="Read Groups", help='Groups able to see the workspace and read its documents without create/edit rights.')
 
     user_specific = fields.Boolean(string="Own Documents Only",
