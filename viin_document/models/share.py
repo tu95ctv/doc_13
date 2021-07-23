@@ -206,21 +206,21 @@ class DocumentShare(models.Model):
         share = super(DocumentShare, self).create(vals)
         return share
 
-    # @api.model
-    # def create_share(self, vals):
-    #     """
-    #     creates a share link and returns a view.
-    #     :return: a form action that opens the share window to display the URL and the settings.
-    #     """
+    @api.model
+    def create_share(self, vals):
+        """
+        creates a share link and returns a view.
+        :return: a form action that opens the share window to display the URL and the settings.
+        """
 
-    #     share = self.create(vals)
-    #     view_id = self.env.ref('viin_document.share_view_form_popup').id
-    #     return {
-    #         'context': self._context,
-    #         'res_model': 'documents.share',
-    #         'target': 'new',
-    #         'name': _('Share selected records') if vals.get('type') == 'ids' else _('Share domain'),
-    #         'res_id': share.id,
-    #         'type': 'ir.actions.act_window',
-    #         'views': [[view_id, 'form']],
-    #     }
+        share = self.create(vals)
+        view_id = self.env.ref('viin_document.share_view_form_popup').id
+        return {
+            'context': self._context,
+            'res_model': 'documents.share',
+            'target': 'new',
+            'name': _('Share selected records') if vals.get('type') == 'ids' else _('Share domain'),
+            'res_id': share.id,
+            'type': 'ir.actions.act_window',
+            'views': [[view_id, 'form']],
+        }

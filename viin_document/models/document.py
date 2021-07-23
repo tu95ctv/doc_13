@@ -86,41 +86,41 @@ class Document(models.Model):
     partner_id = fields.Many2one('res.partner', string="Contact", tracking=True) #rt
     owner_id = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Owner",
                                tracking=True) #rt
-    available_rule_ids = fields.Many2many('documents.workflow.rule', compute='_compute_available_rules',
-                                          string='Available Rules')
-    @api.depends('folder_id')
-    def _compute_available_rules(self):
-        """
-        loads the rules that can be applied to the attachment.
+    # available_rule_ids = fields.Many2many('documents.workflow.rule', compute='_compute_available_rules',
+    #                                       string='Available Rules')
+    # @api.depends('folder_id')
+    # def _compute_available_rules(self):
+    #     """
+    #     loads the rules that can be applied to the attachment.
 
-        """
-        self.available_rule_ids = False
-        folder_ids = self.mapped('folder_id.id')
-        rule_domain = [('domain_folder_id', 'parent_of', folder_ids)] if folder_ids else []
-        # searching rules with sudo as rules are inherited from parent folders and should be available even
-        # when they come from a restricted folder.
-        rules = self.env['documents.workflow.rule'].sudo().search(rule_domain)
-        for rule in rules:
-            domain = []
-            if rule.condition_type == 'domain':
-                domain = literal_eval(rule.domain) if rule.domain else []
-            else:
-                if rule.criteria_partner_id:
-                    domain = expression.AND([[['partner_id', '=', rule.criteria_partner_id.id]], domain])
-                if rule.criteria_owner_id:
-                    domain = expression.AND([[['owner_id', '=', rule.criteria_owner_id.id]], domain])
-                if rule.create_model:
-                    domain = expression.AND([[['type', '=', 'binary']], domain])
-                if rule.required_tag_ids:
-                    domain = expression.AND([[['tag_ids', 'in', rule.required_tag_ids.ids]], domain])
-                if rule.excluded_tag_ids:
-                    domain = expression.AND([[['tag_ids', 'not in', rule.excluded_tag_ids.ids]], domain])
+    #     """
+    #     self.available_rule_ids = False
+    #     folder_ids = self.mapped('folder_id.id')
+    #     rule_domain = [('domain_folder_id', 'parent_of', folder_ids)] if folder_ids else []
+    #     # searching rules with sudo as rules are inherited from parent folders and should be available even
+    #     # when they come from a restricted folder.
+    #     rules = self.env['documents.workflow.rule'].sudo().search(rule_domain)
+    #     for rule in rules:
+    #         domain = []
+    #         if rule.condition_type == 'domain':
+    #             domain = literal_eval(rule.domain) if rule.domain else []
+    #         else:
+    #             if rule.criteria_partner_id:
+    #                 domain = expression.AND([[['partner_id', '=', rule.criteria_partner_id.id]], domain])
+    #             if rule.criteria_owner_id:
+    #                 domain = expression.AND([[['owner_id', '=', rule.criteria_owner_id.id]], domain])
+    #             if rule.create_model:
+    #                 domain = expression.AND([[['type', '=', 'binary']], domain])
+    #             if rule.required_tag_ids:
+    #                 domain = expression.AND([[['tag_ids', 'in', rule.required_tag_ids.ids]], domain])
+    #             if rule.excluded_tag_ids:
+    #                 domain = expression.AND([[['tag_ids', 'not in', rule.excluded_tag_ids.ids]], domain])
 
-            folder_domain = [['folder_id', 'child_of', rule.domain_folder_id.id]]
-            subset = expression.AND([[['id', 'in', self.ids]], domain, folder_domain])
-            document_ids = self.env['documents.document'].search(subset)
-            for document in document_ids:
-                document.available_rule_ids = [(4, rule.id, False)]
+    #         folder_domain = [['folder_id', 'child_of', rule.domain_folder_id.id]]
+    #         subset = expression.AND([[['id', 'in', self.ids]], domain, folder_domain])
+    #         document_ids = self.env['documents.document'].search(subset)
+    #         for document in document_ids:
+    #             document.available_rule_ids = [(4, rule.id, False)]
 
 
     lock_uid = fields.Many2one('res.users', string="Locked by") #rt
@@ -128,10 +128,10 @@ class Document(models.Model):
 
     def _compute_is_locked(self):
         for record in self:
-            record.is_locked = record.lock_uid and not (
-                    self.env.user == record.lock_uid or
+            is_permit_user = (self.env.user == record.lock_uid or
                     self.env.is_admin() or
-                    self.user_has_groups('documents.group_document_manager'))
+                    self.user_has_groups('viin_document.viin_document_group_manager'))
+            record.is_locked = record.lock_uid and not is_permit_user
     # create_share_id = fields.Many2one('documents.share', help='Share used to create this document')
     # request_activity_id = fields.Many2one('mail.activity')
 
@@ -147,6 +147,12 @@ class Document(models.Model):
                                  help="This attachment will only be available for the selected user groups",
                                  related='folder_id.group_ids')
 
+    download_url = fields.Char(compute='_compute_download_url')
+    
+    def _compute_download_url(self):
+        for r in self:
+            r.download_url = '/documents/content/%s' % r.id if r.type == 'binary' else False
+    
     icon_file = fields.Char(compute='_compute_icon_file') #rt
 
     def _compute_icon_file(self):
@@ -169,6 +175,7 @@ class Document(models.Model):
                             icon_file = k
                             break
             r.icon_file = icon_file
+
     icon_url = fields.Char(compute='_compute_icon_url') #rt
 
     def _compute_icon_url(self):
@@ -181,15 +188,7 @@ class Document(models.Model):
                 url = False
             r.icon_url = url
 
-    @api.onchange('url')
-    def _onchange_url(self):
-        if self.url:
-            if not self.name:
-                self.name = self.url.rsplit('/')[-1]
-
-    
-
- 
+    ### button ####
 
     def access_content(self):
         self.ensure_one()
@@ -203,15 +202,14 @@ class Document(models.Model):
             action['url'] = '/documents/content/%s' % self.id
         return action
 
-    # def create_share(self):
-    #     self.ensure_one()
-    #     vals = {
-    #         'type': 'ids',
-    #         'document_ids': [(6, 0, self.ids)],
-    #         'folder_id': self.folder_id.id,
-    #     }
-    #     return self.env['documents.share'].create_share(vals)
-
+    def create_share(self):
+        self.ensure_one()
+        vals = {
+            'type': 'ids',
+            'document_ids': [(6, 0, self.ids)],
+            'folder_id': self.folder_id.id,
+        }
+        return self.env['documents.share'].create_share(vals)
 
     def toggle_lock(self):
         """
@@ -228,16 +226,27 @@ class Document(models.Model):
         else:
             self.lock_uid = self.env.uid
 
+    # Onchange
+    @api.onchange('url')
+    def _onchange_url(self):
+        if self.url:
+            if not self.name:
+                self.name = self.url.rsplit('/')[-1]
+
+    # Function
     
     @api.model
     def create(self, vals):
-        keys = [key for key in vals if
-                self._fields[key].related and self._fields[key].related[0] == 'attachment_id']
-        attachment_dict = {key: vals.pop(key) for key in keys if key in vals}
-        attachment = self.env['ir.attachment'].create(attachment_dict)
-        vals['attachment_id'] = attachment.id
+        attachment = False
+        if vals.get('datas') and not vals.get('attachment_id'):
+            keys = [key for key in vals if
+                    self._fields[key].related and self._fields[key].related[0] == 'attachment_id']
+            attachment_dict = {key: vals.pop(key) for key in keys if key in vals}
+            attachment = self.env['ir.attachment'].create(attachment_dict)
+            vals['attachment_id'] = attachment.id
         new_record = super(Document, self).create(vals)
-        attachment.write({'res_model': 'documents.document', 'res_id': new_record.id})
+        if attachment:
+            attachment.write({'res_model': 'documents.document', 'res_id': new_record.id})
         return new_record
 
     

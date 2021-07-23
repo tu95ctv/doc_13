@@ -111,105 +111,105 @@ class ShareRoute(http.Controller):
 
     # Download & upload routes #####################################################################
 
-    # @http.route('/documents/upload_attachment', type='http', methods=['POST'], auth="user")
-    # def upload_document(self, folder_id, ufile, document_id=False, partner_id=False, owner_id=False):
-    #     files = request.httprequest.files.getlist('ufile')
-    #     result = {'success': _("All files uploaded")}
-    #     if document_id:
-    #         document = request.env['documents.document'].browse(int(document_id))
-    #         ufile = files[0]
-    #         try:
-    #             data = base64.encodebytes(ufile.read())
-    #             mimetype = ufile.content_type
-    #             document.write({
-    #                 'name': ufile.filename,
-    #                 'datas': data,
-    #                 'mimetype': mimetype,
-    #             })
-    #         except Exception as e:
-    #             logger.exception("Fail to upload document %s" % ufile.filename)
-    #             result = {'error': str(e)}
-    #     else:
-    #         vals_list = []
-    #         for ufile in files:
-    #             try:
-    #                 mimetype = ufile.content_type
-    #                 datas = base64.encodebytes(ufile.read())
-    #                 vals = {
-    #                     'name': ufile.filename,
-    #                     'mimetype': mimetype,
-    #                     'datas': datas,
-    #                     'folder_id': int(folder_id),
-    #                     'partner_id': int(partner_id)
-    #                 }
-    #                 if owner_id:
-    #                     vals['owner_id'] = int(owner_id)
-    #                 vals_list.append(vals)
-    #             except Exception as e:
-    #                 logger.exception("Fail to upload document %s" % ufile.filename)
-    #                 result = {'error': str(e)}
-    #         documents = request.env['documents.document'].create(vals_list)
-    #         result['ids'] = documents.ids
+    @http.route('/documents/upload_attachment', type='http', methods=['POST'], auth="user")
+    def upload_document(self, folder_id, ufile, document_id=False, partner_id=False, owner_id=False):
+        files = request.httprequest.files.getlist('ufile')
+        result = {'success': _("All files uploaded")}
+        if document_id:
+            document = request.env['documents.document'].browse(int(document_id))
+            ufile = files[0]
+            try:
+                data = base64.encodebytes(ufile.read())
+                mimetype = ufile.content_type
+                document.write({
+                    'name': ufile.filename,
+                    'datas': data,
+                    'mimetype': mimetype,
+                })
+            except Exception as e:
+                logger.exception("Fail to upload document %s" % ufile.filename)
+                result = {'error': str(e)}
+        else:
+            vals_list = []
+            for ufile in files:
+                try:
+                    mimetype = ufile.content_type
+                    datas = base64.encodebytes(ufile.read())
+                    vals = {
+                        'name': ufile.filename,
+                        'mimetype': mimetype,
+                        'datas': datas,
+                        'folder_id': int(folder_id),
+                        'partner_id': int(partner_id)
+                    }
+                    if owner_id:
+                        vals['owner_id'] = int(owner_id)
+                    vals_list.append(vals)
+                except Exception as e:
+                    logger.exception("Fail to upload document %s" % ufile.filename)
+                    result = {'error': str(e)}
+            documents = request.env['documents.document'].create(vals_list)
+            result['ids'] = documents.ids
 
-    #     return json.dumps(result)
+        return json.dumps(result)
 
-    # @http.route('/documents/pdf_split', type='http', methods=['POST'], auth="user")
-    # def pdf_split(self, new_files=None, ufile=None, archive=False, vals=None):
-    #     """Used to split and/or merge pdf documents.
+    @http.route('/documents/pdf_split', type='http', methods=['POST'], auth="user")
+    def pdf_split(self, new_files=None, ufile=None, archive=False, vals=None):
+        """Used to split and/or merge pdf documents.
 
-    #     The data can come from different sources: multiple existing documents
-    #     (at least one must be provided) and any number of extra uploaded files.
+        The data can come from different sources: multiple existing documents
+        (at least one must be provided) and any number of extra uploaded files.
 
-    #     :param new_files: the array that represents the new pdf structure:
-    #         [{
-    #             'name': 'New File Name',
-    #             'new_pages': [{
-    #                 'old_file_type': 'document' or 'file',
-    #                 'old_file_index': document_id or index in ufile,
-    #                 'old_page_number': 5,
-    #             }],
-    #         }]
-    #     :param ufile: extra uploaded files that are not existing documents
-    #     :param archive: whether to archive the original documents
-    #     :param vals: values for the create of the new documents.
-    #     """
-    #     vals = json.loads(vals)
-    #     new_files = json.loads(new_files)
-    #     # find original documents
-    #     document_ids = set()
-    #     for new_file in new_files:
-    #         for page in new_file['new_pages']:
-    #             if page['old_file_type'] == 'document':
-    #                 document_ids.add(page['old_file_index'])
-    #     documents = request.env['documents.document'].browse(document_ids)
+        :param new_files: the array that represents the new pdf structure:
+            [{
+                'name': 'New File Name',
+                'new_pages': [{
+                    'old_file_type': 'document' or 'file',
+                    'old_file_index': document_id or index in ufile,
+                    'old_page_number': 5,
+                }],
+            }]
+        :param ufile: extra uploaded files that are not existing documents
+        :param archive: whether to archive the original documents
+        :param vals: values for the create of the new documents.
+        """
+        vals = json.loads(vals)
+        new_files = json.loads(new_files)
+        # find original documents
+        document_ids = set()
+        for new_file in new_files:
+            for page in new_file['new_pages']:
+                if page['old_file_type'] == 'document':
+                    document_ids.add(page['old_file_index'])
+        documents = request.env['documents.document'].browse(document_ids)
 
-    #     with ExitStack() as stack:
-    #         files = request.httprequest.files.getlist('ufile')
-    #         open_files = [stack.enter_context(io.BytesIO(file.read())) for file in files]
+        with ExitStack() as stack:
+            files = request.httprequest.files.getlist('ufile')
+            open_files = [stack.enter_context(io.BytesIO(file.read())) for file in files]
 
-    #         # merge together data from existing documents and from extra uploads
-    #         document_id_index_map = {}
-    #         current_index = len(open_files)
-    #         for document in documents:
-    #             open_files.append(stack.enter_context(io.BytesIO(base64.b64decode(document.datas))))
-    #             document_id_index_map[document.id] = current_index
-    #             current_index += 1
+            # merge together data from existing documents and from extra uploads
+            document_id_index_map = {}
+            current_index = len(open_files)
+            for document in documents:
+                open_files.append(stack.enter_context(io.BytesIO(base64.b64decode(document.datas))))
+                document_id_index_map[document.id] = current_index
+                current_index += 1
 
-    #         # update new_files structure with the new indices from documents
-    #         for new_file in new_files:
-    #             for page in new_file['new_pages']:
-    #                 if page.pop('old_file_type') == 'document':
-    #                     page['old_file_index'] = document_id_index_map[page['old_file_index']]
+            # update new_files structure with the new indices from documents
+            for new_file in new_files:
+                for page in new_file['new_pages']:
+                    if page.pop('old_file_type') == 'document':
+                        page['old_file_index'] = document_id_index_map[page['old_file_index']]
 
-    #         # apply the split/merge
-    #         new_documents = documents._pdf_split(new_files=new_files, open_files=open_files, vals=vals)
+            # apply the split/merge
+            new_documents = documents._pdf_split(new_files=new_files, open_files=open_files, vals=vals)
 
-    #     # archive original documents if needed
-    #     if archive == 'true':
-    #         documents.write({'active': False})
+        # archive original documents if needed
+        if archive == 'true':
+            documents.write({'active': False})
 
-    #     response = request.make_response(json.dumps(new_documents.ids), [('Content-Type', 'application/json')])
-    #     return response
+        response = request.make_response(json.dumps(new_documents.ids), [('Content-Type', 'application/json')])
+        return response
 
     @http.route(['/documents/content/<int:id>'], type='http', auth='user')
     def documents_content(self, id):
