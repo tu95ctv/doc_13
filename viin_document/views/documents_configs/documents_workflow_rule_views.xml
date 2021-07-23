@@ -45,7 +45,7 @@
                                     </group>
                                     <group/>
                                 </group>
-                                <field name="domain" string="Domain" nolabel="1" widget="domain" colspan="2" options="{'model':'documents.document'}" attrs="{ 'invisible' : [('condition_type', '=', 'criteria')]}"/>
+                                <field name="domain" string="Domain" nolabel="1" widget="domain" colspan="2" options="{'model':'viin_document.document'}" attrs="{ 'invisible' : [('condition_type', '=', 'criteria')]}"/>
                                 <group attrs="{ 'invisible' : [('condition_type', '=', 'domain')]}">
                                     <group string="Tags">
                                         <field name="required_tag_ids"

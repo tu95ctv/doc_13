@@ -14,7 +14,7 @@ templates2 = {
     'archive':['zip','rar']
 }
 class Document(models.Model):
-    _name = 'documents.document'
+    _name = 'viin_document.document'
     _description = 'Document'
     _inherit = ['mail.thread.cc', 'mail.activity.mixin']
     _order = 'id desc'
@@ -118,7 +118,7 @@ class Document(models.Model):
 
     #         folder_domain = [['folder_id', 'child_of', rule.domain_folder_id.id]]
     #         subset = expression.AND([[['id', 'in', self.ids]], domain, folder_domain])
-    #         document_ids = self.env['documents.document'].search(subset)
+    #         document_ids = self.env['viin_document.document'].search(subset)
     #         for document in document_ids:
     #             document.available_rule_ids = [(4, rule.id, False)]
 
@@ -246,7 +246,7 @@ class Document(models.Model):
             vals['attachment_id'] = attachment.id
         new_record = super(Document, self).create(vals)
         if attachment:
-            attachment.write({'res_model': 'documents.document', 'res_id': new_record.id})
+            attachment.write({'res_model': 'viin_document.document', 'res_id': new_record.id})
         return new_record
 
     

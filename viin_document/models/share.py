@@ -33,7 +33,7 @@ class DocumentShare(models.Model):
         ('domain', "Domain"),
     ], default='ids', string="Share type")
     # type == 'ids'
-    document_ids = fields.Many2many('documents.document', string='Shared Documents')
+    document_ids = fields.Many2many('viin_document.document', string='Shared Documents')
     # type == 'domain'
     domain = fields.Char()
 
@@ -77,7 +77,7 @@ class DocumentShare(models.Model):
         """
         self.ensure_one()
         limited_self = self.with_user(self.create_uid)
-        Documents = limited_self.env['documents.document']
+        Documents = limited_self.env['viin_document.document']
 
         search_ids = set()
         domains = [[('folder_id', '=', self.folder_id.id)]]
@@ -132,7 +132,7 @@ class DocumentShare(models.Model):
         :param str access_token: the access_token to be checked with the share link access_token
         :param list[int] document_ids: limit to the list of documents to fetch and check from the share link.
         :param str operation: access right to check on documents (read/write).
-        :return: Recordset[documents.document]: all the accessible requested documents
+        :return: Recordset[viin_document.document]: all the accessible requested documents
         False if it fails access checks: False always means "no access right", if there are no documents but
         the rights are valid, it still returns an empty recordset.
         """
@@ -181,7 +181,7 @@ class DocumentShare(models.Model):
 
     # def _alias_get_creation_values(self):
     #     values = super(DocumentShare, self)._alias_get_creation_values()
-    #     values['alias_model_id'] = self.env['ir.model']._get('documents.document').id
+    #     values['alias_model_id'] = self.env['ir.model']._get('viin_document.document').id
     #     if self.id:
     #         values['alias_defaults'] = defaults = literal_eval(self.alias_defaults or "{}")
     #         defaults.update({
@@ -202,7 +202,7 @@ class DocumentShare(models.Model):
     def create(self, vals):
         if not vals.get('owner_id'):
             vals['owner_id'] = self.env.uid
-        vals['alias_model_id'] = self.env['ir.model']._get('documents.document').id
+        vals['alias_model_id'] = self.env['ir.model']._get('viin_document.document').id
         share = super(DocumentShare, self).create(vals)
         return share
 
@@ -223,4 +223,4 @@ class DocumentShare(models.Model):
             'res_id': share.id,
             'type': 'ir.actions.act_window',
             'views': [[view_id, 'form']],
-        }
+        }   

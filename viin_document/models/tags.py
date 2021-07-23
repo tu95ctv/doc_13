@@ -52,7 +52,7 @@ class Tags(models.Model):
     #     """
     #     fetches the tag and facet ids for the document selector (custom left sidebar of the kanban view)
     #     """
-    #     documents = self.env['documents.document'].search(domain)
+    #     documents = self.env['viin_document.document'].search(domain)
     #     # folders are searched with sudo() so we fetch the tags and facets from all the folder hierarchy (as tags
     #     # and facets are inherited from ancestor folders).
     #     folders = self.env['documents.folder'].sudo().search([('parent_folder_id', 'parent_of', folder_id)])

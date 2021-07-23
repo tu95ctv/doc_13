@@ -95,7 +95,7 @@ class WorkflowActionRule(models.Model):
         :return: if the action was to create a new business object, returns an action to open the view of the
                 newly created object, else returns True.
         """
-        documents = self.env['documents.document'].browse(document_ids)
+        documents = self.env['viin_document.document'].browse(document_ids)
 
         # partner/owner/share_link/folder changes
         document_dict = {}

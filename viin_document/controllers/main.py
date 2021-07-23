@@ -25,7 +25,7 @@ class ShareRoute(http.Controller):
     def binary_content(self, id, env=None, field='datas', share_id=None, share_token=None,
                        download=False, unique=False, filename_field='name'):
         env = env or request.env
-        record = env['documents.document'].browse(int(id))
+        record = env['viin_document.document'].browse(int(id))
         print ('binary_content ***record', record,'share_id', share_id)
         filehash = None
 
@@ -83,7 +83,7 @@ class ShareRoute(http.Controller):
         """returns zip files for the Document Inspector and the portal.
 
         :param name: the name to give to the zip file.
-        :param documents: files (documents.document) to be zipped.
+        :param documents: files (viin_document.document) to be zipped.
         :return: a http response to download a zip file.
         """
         stream = io.BytesIO()
@@ -116,7 +116,7 @@ class ShareRoute(http.Controller):
     #     files = request.httprequest.files.getlist('ufile')
     #     result = {'success': _("All files uploaded")}
     #     if document_id:
-    #         document = request.env['documents.document'].browse(int(document_id))
+    #         document = request.env['viin_document.document'].browse(int(document_id))
     #         ufile = files[0]
     #         try:
     #             data = base64.encodebytes(ufile.read())
@@ -148,7 +148,7 @@ class ShareRoute(http.Controller):
     #             except Exception as e:
     #                 logger.exception("Fail to upload document %s" % ufile.filename)
     #                 result = {'error': str(e)}
-    #         documents = request.env['documents.document'].create(vals_list)
+    #         documents = request.env['viin_document.document'].create(vals_list)
     #         result['ids'] = documents.ids
 
     #     return json.dumps(result)
@@ -181,7 +181,7 @@ class ShareRoute(http.Controller):
     #         for page in new_file['new_pages']:
     #             if page['old_file_type'] == 'document':
     #                 document_ids.add(page['old_file_index'])
-    #     documents = request.env['documents.document'].browse(document_ids)
+    #     documents = request.env['viin_document.document'].browse(document_ids)
 
     #     with ExitStack() as stack:
     #         files = request.httprequest.files.getlist('ufile')
@@ -244,7 +244,7 @@ class ShareRoute(http.Controller):
         """
         ids_list = [int(x) for x in file_ids.split(',')]
         env = request.env
-        response = self._make_zip(zip_name, env['documents.document'].browse(ids_list))
+        response = self._make_zip(zip_name, env['viin_document.document'].browse(ids_list))
         if token:
             response.set_cookie('fileToken', token)
         return response
@@ -393,7 +393,7 @@ class ShareRoute(http.Controller):
                         'owner_id': share.owner_id.id,
                         'folder_id': folder_id,
                     }
-                    document = request.env['documents.document'].with_user(share.create_uid).with_context(binary_field_real_user=http.request.env.user).create(document_dict)
+                    document = request.env['viin_document.document'].with_user(share.create_uid).with_context(binary_field_real_user=http.request.env.user).create(document_dict)
                     document.message_post(body=chatter_message)
                     if share.activity_option:
                         document.documents_set_activity(settings_record=share)

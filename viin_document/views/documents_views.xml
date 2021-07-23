@@ -2,7 +2,7 @@
 <odoo>
     <record id="document_view_form" model="ir.ui.view">
         <field name="name">documents form</field>
-        <field name="model">documents.document</field>
+        <field name="model">viin_document.document</field>
         <field name="priority" eval="1"/>
         <field name="arch" type="xml">
             <form >
@@ -17,7 +17,7 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="open_resource" type="object" class="oe_stat_button" icon="fa-external-link" attrs="{'invisible': ['|', ('res_id', '=', False), ('res_model', 'in', [False, 'documents.document'])]}">
+                        <button name="open_resource" type="object" class="oe_stat_button" icon="fa-external-link" attrs="{'invisible': ['|', ('res_id', '=', False), ('res_model', 'in', [False, 'viin_document.document'])]}">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">Related <br/> Record</span>
                             </div>
@@ -72,7 +72,7 @@
     
     <record id="documents_view_list" model="ir.ui.view">
         <field name="name">documents list</field>
-        <field name="model">documents.document</field>
+        <field name="model">viin_document.document</field>
         <field name="arch" type="xml">
             <tree >
                 <field name="name" string="Document" required="True"/>
@@ -94,7 +94,7 @@
 
     <record id="document_action" model="ir.actions.act_window">
       <field name="name">Documents</field>
-      <field name="res_model">documents.document</field>
+      <field name="res_model">viin_document.document</field>
       <field name="view_mode">tree,form</field>
       <field name="domain">[]</field>
     </record>

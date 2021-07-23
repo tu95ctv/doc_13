@@ -148,7 +148,7 @@ class Query(graphene.ObjectType):
 
     def resolve_total_doc_count(root,info, domain=None, folder_id=None, tag_ids=None,search=None):
         domain_new = Query.gen_new_domain(domain=domain,folder_id=folder_id, tag_ids=tag_ids,search=search)
-        Doc = info.context["env"]["documents.document"]
+        Doc = info.context["env"]["viin_document.document"]
         total_count = Doc.search_count(domain_new) 
         return total_count
 
@@ -192,9 +192,9 @@ class Query(graphene.ObjectType):
     @staticmethod
     def resolve_all_documents(root, info, id=None, limit=80,domain=None, folder_id=None, tag_ids=None,search=None,offset=0):
         if id:
-            return info.context["env"]["documents.document"].browse(id)
+            return info.context["env"]["viin_document.document"].browse(id)
         domain_new = Query.gen_new_domain(domain=domain,folder_id=folder_id, tag_ids=tag_ids,search=search)
-        Doc = info.context["env"]["documents.document"]
+        Doc = info.context["env"]["viin_document.document"]
         context = Doc._context.copy()
         return Doc.search(domain_new, offset=offset, limit=limit)
         # return Doc.web_search_read(domain_new, ['id','name'], offset=offset, limit=limit)
@@ -244,7 +244,7 @@ class DocWrite(graphene.Mutation):
     @staticmethod
     def mutate(self, info,id,name=None,tag_ids=None,folder_id=None):
         env = info.context["env"]
-        doc = env["documents.document"].browse(id)
+        doc = env["viin_document.document"].browse(id)
         vals = {}
         if name !=None:
             vals['name'] = name
@@ -307,7 +307,7 @@ class UploadDocM(graphene.Mutation):
     @staticmethod
     def mutate(self, info, file_objects):
         env = info.context["env"]
-        empty_docs = env["documents.document"]
+        empty_docs = env["viin_document.document"]
         for obj in file_objects:
             name = obj['name']
             folder_id = obj['folder_id']
@@ -325,7 +325,7 @@ class UploadDocM(graphene.Mutation):
                 'folder_id':folder_id,
                 'tag_ids':tag_ids
             }
-            doc = env["documents.document"].create(vals)
+            doc = env["viin_document.document"].create(vals)
             empty_docs = empty_docs|doc
         return doc
 ###!upload###
@@ -366,7 +366,7 @@ class CallKWDoc(CallKW):
 
     @staticmethod
     def mutate(self, info,id=[],method=None,args=[], kwargs={}):
-        model = 'documents.document'
+        model = 'viin_document.document'
         rs = _call_kw_mutate(self, info,id,model,method,args, kwargs)
         return rs
 
@@ -376,7 +376,7 @@ class DocToggleActive(CallKWDoc):
 
     @staticmethod
     def mutate(self, info,id=[]):
-        model = 'documents.document'
+        model = 'viin_document.document'
         method = 'toggle_active'
         rs = _call_kw_mutate(self, info,id,model,method)
         return rs
@@ -396,7 +396,7 @@ class ReUpload(CallKW):
         vals['mimetype'] = type
         file = blob.encode("utf-8")
         vals['datas'] = file
-        model = 'documents.document'
+        model = 'viin_document.document'
         method = 'write'
         args=[vals]
         rs = _call_kw_mutate(self,info,id,model,method,args)

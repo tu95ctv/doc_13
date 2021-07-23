@@ -1,20 +1,19 @@
 <odoo>
-<!-- 
         <record id="module_category_document" model="ir.module.category">
             <field name="name">Documents</field>
             <field name="description">Allows you to manage your documents.</field>
             <field name="sequence">1</field>
-        </record> -->
+        </record>
 
         <record id="viin_document_group_user" model="res.groups">
             <field name="name">User</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <!-- <field name="category_id" ref="module_category_document"/> -->
+            <field name="category_id" ref="module_category_document"/>
         </record>
 
         <record id="viin_document_group_manager" model="res.groups">
             <field name="name">Administrator</field>
-            <!-- <field name="category_id" ref="module_category_document"/> -->
+            <field name="category_id" ref="module_category_document"/>
             <field name="implied_ids" eval="[(4, ref('viin_document_group_user'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
@@ -54,8 +53,8 @@
         <!-- documents  -->
 
         <record id="viin_document_document_rule_company" model="ir.rule">
-            <field name="name">Documents.document: global</field>
-            <field name="model_id" ref="model_documents_document"/>
+            <field name="name">viin_document.document: global</field>
+            <field name="model_id" ref="model_viin_document_document"/>
             <field name="domain_force">['|',
                 ('folder_id.company_id', '=', False),
                 ('folder_id.company_id', 'in', company_ids)]</field>
@@ -63,7 +62,7 @@
     
         <record id="viin_document_document_rule_user_read" model="ir.rule">
             <field name="name">viin_document.document: read rule</field>
-            <field name="model_id" ref="model_documents_document"/>
+            <field name="model_id" ref="model_viin_document_document"/>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[
                 '&amp;',
@@ -80,7 +79,7 @@
 
         <record id="viin_document_document_rule_user_write" model="ir.rule">
             <field name="name">viin_document.document: write rule</field>
-            <field name="model_id" ref="model_documents_document"/>
+            <field name="model_id" ref="model_viin_document_document"/>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[
                 '|',
@@ -96,8 +95,8 @@
         </record>
 
         <record id="viin_document_document_rule_manager" model="ir.rule">
-            <field name="name">Documents.document: manager rule</field>
-            <field name="model_id" ref="model_documents_document"/>
+            <field name="name">viin_document.document: manager rule</field>
+            <field name="model_id" ref="model_viin_document_document"/>
             <field name="groups" eval="[(4, ref('viin_document.viin_document_group_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>

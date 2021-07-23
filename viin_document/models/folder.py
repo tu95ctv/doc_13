@@ -41,7 +41,7 @@ class DocumentFolder(models.Model):
     name = fields.Char(required=True, translate=True)
     description = fields.Html(string="Description", translate=True)
     children_folder_ids = fields.One2many('documents.folder', 'parent_folder_id', string="Sub workspaces")
-    document_ids = fields.One2many('documents.document', 'folder_id', string="Documents")
+    document_ids = fields.One2many('viin_document.document', 'folder_id', string="Documents")
     sequence = fields.Integer('Sequence', default=10)
     share_link_ids = fields.One2many('documents.share', 'folder_id', string="Share Links")
     facet_ids = fields.One2many('documents.facet', 'folder_id',
@@ -83,7 +83,7 @@ class DocumentFolder(models.Model):
         }
 
     def _compute_document_count(self):
-        read_group_var = self.env['documents.document'].read_group(
+        read_group_var = self.env['viin_document.document'].read_group(
             [('folder_id', 'in', self.ids)],
             fields=['folder_id'],
             groupby=['folder_id'])
@@ -97,7 +97,7 @@ class DocumentFolder(models.Model):
         return {
             'name': _('Documents'),
             'domain': domain,
-            'res_model': 'documents.document',
+            'res_model': 'viin_document.document',
             'type': 'ir.actions.act_window',
             'views': [(False, 'list'), (False, 'form')],
             'view_mode': 'tree,form',
