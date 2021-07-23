@@ -33,7 +33,7 @@ class WorkflowActionRule(models.Model):
     # Actions
     partner_id = fields.Many2one('res.partner', string="Set Contact")
     user_id = fields.Many2one('res.users', string="Set Owner")
-    tag_action_ids = fields.One2many('documents.workflow.action', 'workflow_rule_id', string='Set Tags')
+    tag_action_ids = fields.One2many('viin_document.action.tag', 'workflow_rule_id', string='Set Tags')
     folder_id = fields.Many2one('viin_document.folder', string="Move to Workspace")
     has_business_option = fields.Boolean(compute='_get_business')
     create_model = fields.Selection([], string="Create")
@@ -128,7 +128,7 @@ class WorkflowActionRule(models.Model):
 
 
 class WorkflowTagAction(models.Model):
-    _name = "documents.workflow.action"
+    _name = "viin_document.action.tag"
     _description = "Document Workflow Tag Action"
 
     workflow_rule_id = fields.Many2one('documents.workflow.rule', ondelete='cascade')
