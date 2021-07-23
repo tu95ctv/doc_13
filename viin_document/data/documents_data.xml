@@ -51,19 +51,19 @@
 
         <!-- Facets internal -->
 
-        <record id="documents_internal_status" model="documents.facet">
+        <record id="documents_internal_status" model="viin_document.tag.cate">
             <field name="name">Status</field>
             <field name="sequence">1</field>
             <!-- <field name="folder_id" ref="documents_internal_folder"/> -->
         </record>
 
-        <record id="documents_internal_knowledge" model="documents.facet">
+        <record id="documents_internal_knowledge" model="viin_document.tag.cate">
             <field name="name">Knowledge</field>
             <field name="sequence">6</field>
             <field name="folder_id" ref="documents_internal_folder"/>
         </record>
 
-        <record id="documents_internal_template" model="documents.facet">
+        <record id="documents_internal_template" model="viin_document.tag.cate">
             <field name="name">Templates</field>
             <field name="sequence">6</field>
             <field name="folder_id" ref="documents_internal_folder"/>
@@ -71,19 +71,19 @@
 
         <!-- Facets finance -->
 
-        <record id="documents_finance_status" model="documents.facet">
+        <record id="documents_finance_status" model="viin_document.tag.cate">
             <field name="name">Status</field>
             <field name="sequence">1</field>
             <field name="folder_id" ref="documents_finance_folder"/>
         </record>
 
-        <record id="documents_finance_documents" model="documents.facet">
+        <record id="documents_finance_documents" model="viin_document.tag.cate">
             <field name="name">Documents</field>
             <field name="sequence">5</field>
             <field name="folder_id" ref="documents_finance_folder"/>
         </record>
 
-        <record id="documents_finance_fiscal_year" model="documents.facet">
+        <record id="documents_finance_fiscal_year" model="viin_document.tag.cate">
             <field name="name">Fiscal years</field>
             <field name="sequence">5</field>
             <field name="folder_id" ref="documents_finance_folder"/>
@@ -92,7 +92,7 @@
 
         <!-- Facets marketing -->
 
-        <record id="documents_marketing_assets" model="documents.facet">
+        <record id="documents_marketing_assets" model="viin_document.tag.cate">
             <field name="name">Assets</field>
             <field name="sequence">5</field>
             <field name="folder_id" ref="documents_marketing_folder"/>

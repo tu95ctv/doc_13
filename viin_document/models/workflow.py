@@ -139,7 +139,7 @@ class WorkflowTagAction(models.Model):
         ('remove', "Remove"),
     ], default='add', required=True)
 
-    facet_id = fields.Many2one('documents.facet', string="Category")
+    facet_id = fields.Many2one('viin_document.tag.cate', string="Category")
     tag_id = fields.Many2one('documents.tag', string="Tag")
 
     def execute_tag_action(self, document):

@@ -218,7 +218,7 @@ class Query(graphene.ObjectType):
         if folder_id:
             domain +=[('folder_id','=', folder_id)]
 
-        return info.context["env"]["documents.facet"].search(
+        return info.context["env"]["viin_document.tag.cate"].search(
             domain, limit=limit, offset=offset
         )
  

@@ -65,7 +65,7 @@
                     <notebook>
                         <page string="Tags" name="tags">
                             <field name="facet_ids" context="{
-                                'form_view_ref' : 'documents.facet_view_form',
+                                'form_view_ref' : 'viin_document.tag_cate_view_form',
                                 'documents_view_from_folder' : True,
                                 'default_folder_id' : id,
                                 'simple_name': True
