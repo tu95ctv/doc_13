@@ -4,7 +4,7 @@
 
     <record id="tag_view_form" model="ir.ui.view">
         <field name="name">tag form view</field>
-        <field name="model">documents.tag</field>
+        <field name="model">viin_document.tag</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -22,7 +22,7 @@
     
     <record id="tag_view_search" model="ir.ui.view">
         <field name="name">tag search</field>
-        <field name="model">documents.tag</field>
+        <field name="model">viin_document.tag</field>
         <field name="arch" type="xml">
         <search>
             <field name="name" string="Tag"/>

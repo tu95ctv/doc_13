@@ -61,7 +61,7 @@ odoo.define("documents/static/src/js/documents_search_panel_model_extension", fu
         }
 
         /**
-         * Returns a description of each tag (record of documents.tag).
+         * Returns a description of each tag (record of viin_document.tag).
          * @returns {Object[]}
          */
         getTags() {

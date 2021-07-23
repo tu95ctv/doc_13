@@ -41,7 +41,7 @@ class DocumentShare(models.Model):
         ('download', "Download"),
         ('downloadupload', "Download and Upload"),
     ], default='download', string="Allows to")
-    tag_ids = fields.Many2many('documents.tag', string="Shared Tags")
+    tag_ids = fields.Many2many('viin_document.tag', string="Shared Tags")
     partner_id = fields.Many2one('res.partner', string="Contact")
     owner_id = fields.Many2one('res.users', string="Document Owner")
     email_drop = fields.Boolean(string='Upload by Email')

@@ -16,7 +16,7 @@ class TagsCategories(models.Model):
 
     folder_id = fields.Many2one('viin_document.folder', string="Workspace", ondelete="cascade")
     name = fields.Char(required=True, translate=True)
-    tag_ids = fields.One2many('documents.tag', 'facet_id')
+    tag_ids = fields.One2many('viin_document.tag', 'facet_id')
     sequence = fields.Integer('Sequence', default=10)
 
     _sql_constraints = [
@@ -25,7 +25,7 @@ class TagsCategories(models.Model):
 
 
 class Tags(models.Model):
-    _name = "documents.tag"
+    _name = "viin_document.tag"
     _description = "Tag"
     _order = "sequence, name"
 
@@ -62,16 +62,16 @@ class Tags(models.Model):
     #         SELECT  facet.sequence AS group_sequence,
     #                 facet.id AS group_id,
     #                 facet.tooltip AS group_tooltip,
-    #                 documents_tag.sequence AS sequence,
-    #                 documents_tag.id AS id,
+    #                 viin_document_tag.sequence AS sequence,
+    #                 viin_document_tag.id AS id,
     #                 COUNT(rel.documents_document_id) AS __count
-    #         FROM documents_tag
-    #             JOIN documents_facet facet ON documents_tag.facet_id = facet.id
+    #         FROM viin_document_tag
+    #             JOIN documents_facet facet ON viin_document_tag.facet_id = facet.id
     #                 AND facet.folder_id = ANY(%s)
-    #             LEFT JOIN document_tag_rel rel ON documents_tag.id = rel.documents_tag_id
+    #             LEFT JOIN document_tag_rel rel ON viin_document_tag.id = rel.viin_document_tag_id
     #                 AND rel.documents_document_id = ANY(%s)
-    #         GROUP BY facet.sequence, facet.name, facet.id, facet.tooltip, documents_tag.sequence, documents_tag.name, documents_tag.id
-    #         ORDER BY facet.sequence, facet.name, facet.id, facet.tooltip, documents_tag.sequence, documents_tag.name, documents_tag.id
+    #         GROUP BY facet.sequence, facet.name, facet.id, facet.tooltip, viin_document_tag.sequence, viin_document_tag.name, viin_document_tag.id
+    #         ORDER BY facet.sequence, facet.name, facet.id, facet.tooltip, viin_document_tag.sequence, viin_document_tag.name, viin_document_tag.id
     #     """
     #     params = [
     #         list(folders.ids),
@@ -84,7 +84,7 @@ class Tags(models.Model):
     #     groups = self.env['viin_document.tag.cate'].browse({r['group_id'] for r in result})
     #     group_names = {group['id']: group['name'] for group in groups}
 
-    #     tags = self.env['documents.tag'].browse({r['id'] for r in result})
+    #     tags = self.env['viin_document.tag'].browse({r['id'] for r in result})
     #     tags_names = {tag['id']: tag['name'] for tag in tags}
 
     #     for r in result:

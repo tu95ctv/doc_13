@@ -451,7 +451,7 @@ const DocumentsInspector = Widget.extend({
                    resIds: records.map(record => record.id),
                 },
             }),
-            res_model: 'documents.tag',
+            res_model: 'viin_document.tag',
             title: _t('Select tags'),
         }).open();
     },
@@ -465,7 +465,7 @@ const DocumentsInspector = Widget.extend({
         let results;
         if (value) {
             results = await this._rpc({
-                model: 'documents.tag',
+                model: 'viin_document.tag',
                 method: 'search_read',
                 fields: ['id'],
                 domain: ['&', '&',

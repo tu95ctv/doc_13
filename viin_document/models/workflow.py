@@ -26,8 +26,8 @@ class WorkflowActionRule(models.Model):
     # Criteria
     criteria_partner_id = fields.Many2one('res.partner', string="Contact")
     criteria_owner_id = fields.Many2one('res.users', string="Owner")
-    required_tag_ids = fields.Many2many('documents.tag', 'required_tag_ids_rule_table', string="Required Tags")
-    excluded_tag_ids = fields.Many2many('documents.tag', 'excluded_tag_ids_rule_table', string="Excluded Tags")
+    required_tag_ids = fields.Many2many('viin_document.tag', 'required_tag_ids_rule_table', string="Required Tags")
+    excluded_tag_ids = fields.Many2many('viin_document.tag', 'excluded_tag_ids_rule_table', string="Excluded Tags")
     limited_to_single_record = fields.Boolean(string="One record limit", compute='_compute_limited_to_single_record')
 
     # Actions
@@ -140,13 +140,13 @@ class WorkflowTagAction(models.Model):
     ], default='add', required=True)
 
     facet_id = fields.Many2one('viin_document.tag.cate', string="Category")
-    tag_id = fields.Many2one('documents.tag', string="Tag")
+    tag_id = fields.Many2one('viin_document.tag', string="Tag")
 
     def execute_tag_action(self, document):
         if self.action == 'add' and self.tag_id.id:
             return document.write({'tag_ids': [(4, self.tag_id.id, False)]})
         elif self.action == 'replace' and self.facet_id.id:
-            faceted_tags = self.env['documents.tag'].search([('facet_id', '=', self.facet_id.id)])
+            faceted_tags = self.env['viin_document.tag'].search([('facet_id', '=', self.facet_id.id)])
             if faceted_tags.ids:
                 for tag in faceted_tags:
                     document.write({'tag_ids': [(3, tag.id, False)]})
@@ -155,6 +155,6 @@ class WorkflowTagAction(models.Model):
             if self.tag_id.id:
                 return document.write({'tag_ids': [(3, self.tag_id.id, False)]})
             elif self.facet_id:
-                faceted_tags = self.env['documents.tag'].search([('facet_id', '=', self.facet_id.id)])
+                faceted_tags = self.env['viin_document.tag'].search([('facet_id', '=', self.facet_id.id)])
                 for tag in faceted_tags:
                     return document.write({'tag_ids': [(3, tag.id, False)]})

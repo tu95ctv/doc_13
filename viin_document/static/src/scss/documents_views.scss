@@ -99,7 +99,7 @@ $o-dms-progress-bar-height: 15px;
         color: $o-dms-color-folder;
     }
 
-    .o_documents_tag_color {
+    .o_viin_document_tag_color {
         color: $o-dms-color-tag;
     }
 
@@ -406,7 +406,7 @@ $o-dms-progress-bar-height: 15px;
                     @include o-text-overflow($max-width: 40%);
                 }
 
-                .o_documents_tag_name {
+                .o_viin_document_tag_name {
                     @include o-text-overflow($max-width: 40%);
                 }
 

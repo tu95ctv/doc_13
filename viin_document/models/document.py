@@ -82,7 +82,7 @@ class Document(models.Model):
             elif record.url:
                 record.type = 'url'
    
-    tag_ids = fields.Many2many('documents.tag', 'document_tag_rel', string="Tags") #rt
+    tag_ids = fields.Many2many('viin_document.tag', 'document_tag_rel', string="Tags") #rt
     partner_id = fields.Many2one('res.partner', string="Contact", tracking=True) #rt
     owner_id = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Owner",
                                tracking=True) #rt

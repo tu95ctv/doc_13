@@ -91,7 +91,7 @@ class TagCategory(OdooObjectType):
     )
     @staticmethod
     def resolve_tags(root, info, limit=80, offset=None):
-        return info.context["env"]["documents.tag"].search(
+        return info.context["env"]["viin_document.tag"].search(
             [('facet_id','=', root.id)], limit=limit, offset=offset
         )
     
