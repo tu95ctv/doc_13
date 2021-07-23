@@ -26,6 +26,7 @@ class ShareRoute(http.Controller):
                        download=False, unique=False, filename_field='name'):
         env = env or request.env
         record = env['documents.document'].browse(int(id))
+        print ('binary_content ***record', record,'share_id', share_id)
         filehash = None
 
         if share_id:
@@ -38,6 +39,7 @@ class ShareRoute(http.Controller):
         try:
             last_update = record['__last_update']
         except AccessError:
+            #access right
             return (404, [], None)
 
         mimetype = False
@@ -47,9 +49,12 @@ class ShareRoute(http.Controller):
             status = 301
             content = module_resource_path
         else:
+            print ('else')
             status, content, filename, mimetype, filehash = env['ir.http']._binary_record_content(
                 record, field=field, filename=None, filename_field=filename_field,
                 default_mimetype='application/octet-stream')
+        print ('**status**', status)
+        print ('***filename', filename)
         status, headers, content = env['ir.http']._binary_set_headers(
             status, content, filename, mimetype, unique, filehash=filehash, download=download)
 
@@ -206,10 +211,9 @@ class ShareRoute(http.Controller):
         return response
 
     @http.route(['/documents/content/<int:id>'], type='http', auth='user')
-    def documents_content(self, id): #rt
+    def documents_content(self, id):
         return self._get_file_response(id)
-    
-    #share_id thừa rồi
+
     @http.route(['/documents/image/<int:id>',
                  '/documents/image/<int:id>/<int:width>x<int:height>',
                  ], type='http', auth="public")
@@ -322,59 +326,12 @@ class ShareRoute(http.Controller):
             logger.exception("Failed to download document %s" % id)
 
         return request.not_found()
-    
-
-    # Upload file(s) route.
-    @http.route(['/document/upload1/'],
-                type='http', auth='public', methods=['POST'], csrf=False)
-    def upload_attachment1(self,**kwargs):
-
-        # ad = 'admin:admin'
-        # rs = base64.b64encode(ad.encode("utf-8"))
-        # self.env['documents.document'].create({'name':'1', 'folder_id':1,'datas':rs})
-        # self._cr.commit() 
-
-        print ('**kwargs', kwargs)
-        print ('**request.httprequest.files**', request.httprequest.files)
-        requestFile = kwargs['requestFile']
-        requestFile = requestFile.split(';base64,',1)
-        data = requestFile[1]
-        file = data.encode("utf-8")
-        mimetype = requestFile[0].split(':')[1]
-
-        # file= base64.b64encode(requestFile.encode("utf-8"))# code gốc
-        # file_data = base64.urlsafe_b64decode(requestFile.encode('UTF-8'))# code trên mạng đối chiệu
-        # file = request.httprequest.files.getlist('requestFile')[0]
-        # data = file.read()#code gốc
-        # mimetype = file.content_type
-
-        ###########
-        #code trên mạng
-        # file_data = base64.urlsafe_b64decode(requestFile.encode('UTF-8'))
-
-        ###########
-        # mimetype = 'text/plain'
-
-        write_vals = {
-            'mimetype': mimetype,
-            'name': mimetype,
-            'type': 'binary',
-            # 'datas': base64.b64encode(data),#cooe gốc
-            'datas': file,
-            'folder_id':1
-        }
-        request.env['documents.document'].with_user(1).create(write_vals)
-        return {'res':'OK'}
-
-
-
 
     # Upload file(s) route.
     @http.route(["/document/upload/<int:share_id>/<token>/",
                  "/document/upload/<int:share_id>/<token>/<int:document_id>"],
                 type='http', auth='public', methods=['POST'], csrf=False)
     def upload_attachment(self, share_id, token, document_id=None, **kwargs):
-        #reupload trong này luôn.
         """
         Allows public upload if provided with the right token and share_Link.
 

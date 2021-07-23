@@ -256,7 +256,7 @@ class DocWrite(graphene.Mutation):
         doc.write(vals) 
         return doc
 
-class MutateShare(graphene.Mutation):#
+class ShareMutate(graphene.Mutation):#
     class Arguments:
         id = graphene.List(graphene.Int)
         folder_id = graphene.Int(required=True)
@@ -406,7 +406,7 @@ class Mutation(graphene.ObjectType):
     # create_partner = CreatePartner.Field(description="Documentation of CreatePartner")
     upload_doc_m = UploadDocM.Field(description="Documentation of Upload Multiple")
     doc_write = DocWrite.Field(description="Documentation of doc_write")
-    share_mutate = MutateShare.Field(description="Documentation of share_mutate")
+    share_mutate = ShareMutate.Field(description="Documentation of share_mutate")
     call_kw = CallKW.Field(description="Documentation of call_kw")
     call_kw_doc = CallKWDoc.Field(description="Documentation of call_kw")
     doc_toggle_active = DocToggleActive.Field(description="Documentation of doc_toggle_active")

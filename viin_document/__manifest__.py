@@ -29,6 +29,8 @@
         'data/documents_data.xml',
         #view
         'views/documents_views.xml',
+        'views/vii_templates.xml',
+        'views/vii_assets.xml',
         'views/documents_configs/documents_folder_views.xml',
         'views/documents_configs/documents_share_views.xml',
         'views/documents_configs/documents_workflow_rule_views.xml',
