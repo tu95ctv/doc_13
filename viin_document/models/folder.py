@@ -60,7 +60,7 @@ class DocumentFolder(models.Model):
     document_count = fields.Integer('Document Count', compute='_compute_document_count')
 
     def _compute_action_count(self):
-        read_group_var = self.env['documents.workflow.rule'].read_group(
+        read_group_var = self.env['viin_document.action'].read_group(
             [('domain_folder_id', 'in', self.ids)],
             fields=['domain_folder_id'],
             groupby=['domain_folder_id'])
@@ -72,7 +72,7 @@ class DocumentFolder(models.Model):
     def action_see_actions(self):
         return {
             'name': _('Actions'),
-            'res_model': 'documents.workflow.rule',
+            'res_model': 'viin_document.action',
             'type': 'ir.actions.act_window',
             'views': [(False, 'list'), (False, 'form')],
             'view_mode': 'tree,form',

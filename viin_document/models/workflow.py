@@ -5,7 +5,7 @@ from odoo import models, fields, api
 
 
 class WorkflowActionRule(models.Model):
-    _name = "documents.workflow.rule"
+    _name = "viin_document.action"
     _description = "A set of condition and actions which will be available to all attachments matching the conditions"
     _order = "sequence"
 
@@ -131,7 +131,7 @@ class WorkflowTagAction(models.Model):
     _name = "viin_document.action.tag"
     _description = "Document Workflow Tag Action"
 
-    workflow_rule_id = fields.Many2one('documents.workflow.rule', ondelete='cascade')
+    workflow_rule_id = fields.Many2one('viin_document.action', ondelete='cascade')
 
     action = fields.Selection([
         ('add', "Add"),

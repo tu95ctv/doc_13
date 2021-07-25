@@ -349,7 +349,7 @@ const DocumentsControllerMixin = Object.assign({}, fileUploadMixin, {
      */
     async _triggerRule(ruleId, recordIds, { preventReload } = {}) {
         const result = await this._rpc({
-            model: 'documents.workflow.rule',
+            model: 'viin_document.action',
             method: 'apply_actions',
             args: [[ruleId], recordIds],
         });

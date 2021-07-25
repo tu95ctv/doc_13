@@ -329,82 +329,82 @@ class ShareRoute(http.Controller):
         return request.not_found()
 
     # Upload file(s) route.
-    @http.route(["/document/upload/<int:share_id>/<token>/",
-                 "/document/upload/<int:share_id>/<token>/<int:document_id>"],
-                type='http', auth='public', methods=['POST'], csrf=False)
-    def upload_attachment(self, share_id, token, document_id=None, **kwargs):
-        """
-        Allows public upload if provided with the right token and share_Link.
+    # @http.route(["/document/upload/<int:share_id>/<token>/",
+    #              "/document/upload/<int:share_id>/<token>/<int:document_id>"],
+    #             type='http', auth='public', methods=['POST'], csrf=False)
+    # def upload_attachment(self, share_id, token, document_id=None, **kwargs):
+    #     """
+    #     Allows public upload if provided with the right token and share_Link.
 
-        :param share_id: id of the share.
-        :param token: share access token.
-        :param document_id: id of a document request to directly upload its content
-        :return if files are uploaded, recalls the share portal with the updated content.
-        """
-        share = http.request.env['documents.share'].sudo().browse(share_id)
-        if not share.can_upload or (not document_id and share.action != 'downloadupload'):
-            return http.request.not_found()
+    #     :param share_id: id of the share.
+    #     :param token: share access token.
+    #     :param document_id: id of a document request to directly upload its content
+    #     :return if files are uploaded, recalls the share portal with the updated content.
+    #     """
+    #     share = http.request.env['documents.share'].sudo().browse(share_id)
+    #     if not share.can_upload or (not document_id and share.action != 'downloadupload'):
+    #         return http.request.not_found()
 
-        available_documents = share._get_documents_and_check_access(
-            token, [document_id] if document_id else [], operation='write')
-        folder = share.folder_id
-        folder_id = folder.id or False
-        button_text = share.name or _('Share link')
-        chatter_message = _('''<b> File uploaded by: </b> %s <br/>
-                               <b> Link created by: </b> %s <br/>
-                               <a class="btn btn-primary" href="/web#id=%s&model=documents.share&view_type=form" target="_blank">
-                                  <b>%s</b>
-                               </a>
-                             ''') % (
-                http.request.env.user.name,
-                share.create_uid.name,
-                share_id,
-                button_text,
-            )
-        if document_id and available_documents:
-            if available_documents.type != 'empty':
-                return http.request.not_found()
-            try:
-                file = request.httprequest.files.getlist('requestFile')[0]
-                data = file.read()
-                mimetype = file.content_type
-                write_vals = {
-                    'mimetype': mimetype,
-                    'name': file.filename,
-                    'type': 'binary',
-                    'datas': base64.b64encode(data),
-                }
-            except Exception:
-                logger.exception("Failed to read uploaded file")
-            else:
-                available_documents.with_context(binary_field_real_user=http.request.env.user).write(write_vals)
-                available_documents.message_post(body=chatter_message)
-        elif not document_id and available_documents is not False:
-            try:
-                for file in request.httprequest.files.getlist('files'):
-                    data = file.read()
-                    mimetype = file.content_type
-                    document_dict = {
-                        'mimetype': mimetype,
-                        'name': file.filename,
-                        'datas': base64.b64encode(data),
-                        'tag_ids': [(6, 0, share.tag_ids.ids)],
-                        'partner_id': share.partner_id.id,
-                        'owner_id': share.owner_id.id,
-                        'folder_id': folder_id,
-                    }
-                    document = request.env['viin_document.document'].with_user(share.create_uid).with_context(binary_field_real_user=http.request.env.user).create(document_dict)
-                    document.message_post(body=chatter_message)
-                    if share.activity_option:
-                        document.documents_set_activity(settings_record=share)
+    #     available_documents = share._get_documents_and_check_access(
+    #         token, [document_id] if document_id else [], operation='write')
+    #     folder = share.folder_id
+    #     folder_id = folder.id or False
+    #     button_text = share.name or _('Share link')
+    #     chatter_message = _('''<b> File uploaded by: </b> %s <br/>
+    #                            <b> Link created by: </b> %s <br/>
+    #                            <a class="btn btn-primary" href="/web#id=%s&model=documents.share&view_type=form" target="_blank">
+    #                               <b>%s</b>
+    #                            </a>
+    #                          ''') % (
+    #             http.request.env.user.name,
+    #             share.create_uid.name,
+    #             share_id,
+    #             button_text,
+    #         )
+    #     if document_id and available_documents:
+    #         if available_documents.type != 'empty':
+    #             return http.request.not_found()
+    #         try:
+    #             file = request.httprequest.files.getlist('requestFile')[0]
+    #             data = file.read()
+    #             mimetype = file.content_type
+    #             write_vals = {
+    #                 'mimetype': mimetype,
+    #                 'name': file.filename,
+    #                 'type': 'binary',
+    #                 'datas': base64.b64encode(data),
+    #             }
+    #         except Exception:
+    #             logger.exception("Failed to read uploaded file")
+    #         else:
+    #             available_documents.with_context(binary_field_real_user=http.request.env.user).write(write_vals)
+    #             available_documents.message_post(body=chatter_message)
+    #     elif not document_id and available_documents is not False:
+    #         try:
+    #             for file in request.httprequest.files.getlist('files'):
+    #                 data = file.read()
+    #                 mimetype = file.content_type
+    #                 document_dict = {
+    #                     'mimetype': mimetype,
+    #                     'name': file.filename,
+    #                     'datas': base64.b64encode(data),
+    #                     'tag_ids': [(6, 0, share.tag_ids.ids)],
+    #                     'partner_id': share.partner_id.id,
+    #                     'owner_id': share.owner_id.id,
+    #                     'folder_id': folder_id,
+    #                 }
+    #                 document = request.env['viin_document.document'].with_user(share.create_uid).with_context(binary_field_real_user=http.request.env.user).create(document_dict)
+    #                 document.message_post(body=chatter_message)
+    #                 if share.activity_option:
+    #                     document.documents_set_activity(settings_record=share)
 
-            except Exception:
-                logger.exception("Failed to upload document")
-        else:
-            return http.request.not_found()
-        return """<script type='text/javascript'>
-                    window.open("/document/share/%s/%s", "_self");
-                </script>""" % (share_id, token)
+    #         except Exception:
+    #             logger.exception("Failed to upload document")
+    #     else:
+    #         return http.request.not_found()
+    #     return """<script type='text/javascript'>
+    #                 window.open("/document/share/%s/%s", "_self");
+    #             </script>""" % (share_id, token)
 
     # Frontend portals #############################################################################
 

@@ -3,7 +3,7 @@
 
     <record id="action_view_search" model="ir.ui.view">
         <field name="name">Action search view</field>
-        <field name="model">documents.workflow.rule</field>
+        <field name="model">viin_document.action</field>
         <field name="arch" type="xml">
             <search string="Documents">
                 <field name="name"/>
@@ -14,7 +14,7 @@
 
     <record id="workflow_rule_view_tree" model="ir.ui.view">
         <field name="name">action tree</field>
-        <field name="model">documents.workflow.rule</field>
+        <field name="model">viin_document.action</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="sequence" widget="handle"/>
@@ -27,7 +27,7 @@
 
     <record id="workflow_rule_form_view" model="ir.ui.view">
         <field name="name">Rules form</field>
-        <field name="model">documents.workflow.rule</field>
+        <field name="model">viin_document.action</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -160,7 +160,7 @@
 
     <record id="workflow_rule_action" model="ir.actions.act_window">
         <field name="name">Workflow Actions</field>
-        <field name="res_model">documents.workflow.rule</field>
+        <field name="res_model">viin_document.action</field>
         <field name="view_mode">tree,form</field>
         </record>
 </odoo>

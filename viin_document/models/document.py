@@ -86,7 +86,7 @@ class Document(models.Model):
     partner_id = fields.Many2one('res.partner', string="Contact", tracking=True) #rt
     owner_id = fields.Many2one('res.users', default=lambda self: self.env.user.id, string="Owner",
                                tracking=True) #rt
-    # available_rule_ids = fields.Many2many('documents.workflow.rule', compute='_compute_available_rules',
+    # available_rule_ids = fields.Many2many('viin_document.action', compute='_compute_available_rules',
     #                                       string='Available Rules')
     # @api.depends('folder_id')
     # def _compute_available_rules(self):
@@ -99,7 +99,7 @@ class Document(models.Model):
     #     rule_domain = [('domain_folder_id', 'parent_of', folder_ids)] if folder_ids else []
     #     # searching rules with sudo as rules are inherited from parent folders and should be available even
     #     # when they come from a restricted folder.
-    #     rules = self.env['documents.workflow.rule'].sudo().search(rule_domain)
+    #     rules = self.env['viin_document.action'].sudo().search(rule_domain)
     #     for rule in rules:
     #         domain = []
     #         if rule.condition_type == 'domain':
