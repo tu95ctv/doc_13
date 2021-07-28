@@ -33,7 +33,7 @@ class TestCaseDocuments(TransactionCase):
             'name': "categ_b",
         })
         self.tag_b = self.env['viin_document.tag'].create({
-            'facet_id': self.tag_category_b.id,
+            'cate_tag_id': self.tag_category_b.id,
             'name': "tag_b",
         })
         self.tag_category_a = self.env['viin_document.tag.cate'].create({
@@ -45,11 +45,11 @@ class TestCaseDocuments(TransactionCase):
             'name': "categ_a_a",
         })
         self.tag_a_a = self.env['viin_document.tag'].create({
-            'facet_id': self.tag_category_a_a.id,
+            'cate_tag_id': self.tag_category_a_a.id,
             'name': "tag_a_a",
         })
         self.tag_a = self.env['viin_document.tag'].create({
-            'facet_id': self.tag_category_a.id,
+            'cate_tag_id': self.tag_category_a.id,
             'name': "tag_a",
         })
         self.document_gif = self.env['viin_document.document'].create({
@@ -76,7 +76,7 @@ class TestCaseDocuments(TransactionCase):
         })
         self.tag_action_a = self.env['viin_document.action.tag'].create({
             'action': 'add',
-            'facet_id': self.tag_category_b.id,
+            'cate_tag_id': self.tag_category_b.id,
             'tag_id': self.tag_b.id,
         })
         self.worflow_rule = self.env['viin_document.action'].create({

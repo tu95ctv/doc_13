@@ -8,21 +8,21 @@ class TagsCategories(models.Model):
     _description = "Category"
     _order = "sequence, name"
 
-    # the colors to be used to represent the display order of the facets (tag categories), the colors
+    # the colors to be used to represent the display order of the cate_tags (tag categories), the colors
     # depend on the order and amount of fetched categories
     # currently used in the searchPanel and the kanban view and should match across the two.
     #mở lại để test
-    FACET_ORDER_COLORS = ['#F06050', '#6CC1ED', '#F7CD1F', '#814968', '#30C381', '#D6145F', '#475577', '#F4A460',
+    cate_tag_ORDER_COLORS = ['#F06050', '#6CC1ED', '#F7CD1F', '#814968', '#30C381', '#D6145F', '#475577', '#F4A460',
                           '#EB7E7F', '#2C8397']
 
     folder_id = fields.Many2one('viin_document.folder', string="Workspace", ondelete="cascade")
     name = fields.Char(required=True, translate=True)
-    tag_ids = fields.One2many('viin_document.tag', 'facet_id')
+    tag_ids = fields.One2many('viin_document.tag', 'cate_tag_id')
     sequence = fields.Integer('Sequence', default=10)
     tooltip = fields.Char(help="Text shown when hovering on this tag category or its tags", string="Tooltip")
 
     _sql_constraints = [
-        ('name_unique', 'unique (folder_id, name)', "Facet already exists in this folder"),
+        ('name_unique', 'unique (folder_id, name)', "cate_tag already exists in this folder"),
     ]
 
 
@@ -31,14 +31,14 @@ class Tags(models.Model):
     _description = "Tag"
     _order = "sequence, name"
 
-    folder_id = fields.Many2one('viin_document.folder', string="Workspace", related='facet_id.folder_id', store=True,
+    folder_id = fields.Many2one('viin_document.folder', string="Workspace", related='cate_tag_id.folder_id', store=True,
                                 readonly=False)
-    facet_id = fields.Many2one('viin_document.tag.cate', string="Category", ondelete='cascade', required=True)
+    cate_tag_id = fields.Many2one('viin_document.tag.cate', string="Category", ondelete='cascade', required=True)
     name = fields.Char(required=True, translate=True)
     sequence = fields.Integer('Sequence', default=10)
 
     _sql_constraints = [
-        ('facet_name_unique', 'unique (facet_id, name)', "Tag already exists for this facet"),
+        ('cate_tag_name_unique', 'unique (cate_tag_id, name)', "Tag already exists for this cate_tag"),
     ]
 
     def name_get(self):
@@ -46,19 +46,19 @@ class Tags(models.Model):
         if self._context.get('simple_name'):
             return super(Tags, self).name_get()
         for record in self:
-            names.append((record.id, "%s > %s" % (record.facet_id.name, record.name)))
+            names.append((record.id, "%s > %s" % (record.cate_tag_id.name, record.name)))
         return names
 
     @api.model
     def _get_tags(self, domain, folder_id):
         """
-        fetches the tag and facet ids for the document selector (custom left sidebar of the kanban view)
+        fetches the tag and cate_tag ids for the document selector (custom left sidebar of the kanban view)
         """
         documents = self.env['viin_document.document'].search(domain)
-        # folders are searched with sudo() so we fetch the tags and facets from all the folder hierarchy (as tags
-        # and facets are inherited from ancestor folders).
+        # folders are searched with sudo() so we fetch the tags and cate_tags from all the folder hierarchy (as tags
+        # and cate_tags are inherited from ancestor folders).
         folders = self.env['viin_document.folder'].sudo().search([('parent_folder_id', 'parent_of', folder_id)])
-        self.flush(['sequence', 'name', 'facet_id'])
+        self.flush(['sequence', 'name', 'cate_tag_id'])
         self.env['viin_document.tag.cate'].flush(['sequence', 'name', 'tooltip'])
         query = """
             SELECT  tag_cate.sequence AS group_sequence,
@@ -68,7 +68,7 @@ class Tags(models.Model):
                     viin_document_tag.id AS id,
                     COUNT(rel.viin_document_document_id) AS __count
             FROM viin_document_tag
-                JOIN viin_document_tag_cate tag_cate ON viin_document_tag.facet_id = tag_cate.id
+                JOIN viin_document_tag_cate tag_cate ON viin_document_tag.cate_tag_id = tag_cate.id
                     AND tag_cate.folder_id = ANY(%s)
                 LEFT JOIN document_tag_rel rel ON viin_document_tag.id = rel.viin_document_tag_id
                     AND rel.viin_document_document_id = ANY(%s)

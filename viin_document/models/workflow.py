@@ -114,7 +114,7 @@ class WorkflowActionRule(models.Model):
                     feedback="completed by rule: %s. %s" % (self.name, self.note or '')
                 )
 
-            # tag and facet actions
+            # tag and cate_tag actions
             for tag_action in self.tag_action_ids:
                 tag_action.execute_tag_action(document)
 
@@ -139,22 +139,22 @@ class WorkflowTagAction(models.Model):
         ('remove', "Remove"),
     ], default='add', required=True)
 
-    facet_id = fields.Many2one('viin_document.tag.cate', string="Category")
+    cate_tag_id = fields.Many2one('viin_document.tag.cate', string="Category")
     tag_id = fields.Many2one('viin_document.tag', string="Tag")
 
     def execute_tag_action(self, document):
         if self.action == 'add' and self.tag_id.id:
             return document.write({'tag_ids': [(4, self.tag_id.id, False)]})
-        elif self.action == 'replace' and self.facet_id.id:
-            faceted_tags = self.env['viin_document.tag'].search([('facet_id', '=', self.facet_id.id)])
-            if faceted_tags.ids:
-                for tag in faceted_tags:
+        elif self.action == 'replace' and self.cate_tag_id.id:
+            cate_taged_tags = self.env['viin_document.tag'].search([('cate_tag_id', '=', self.cate_tag_id.id)])
+            if cate_taged_tags.ids:
+                for tag in cate_taged_tags:
                     document.write({'tag_ids': [(3, tag.id, False)]})
             return document.write({'tag_ids': [(4, self.tag_id.id, False)]})
         elif self.action == 'remove':
             if self.tag_id.id:
                 return document.write({'tag_ids': [(3, self.tag_id.id, False)]})
-            elif self.facet_id:
-                faceted_tags = self.env['viin_document.tag'].search([('facet_id', '=', self.facet_id.id)])
-                for tag in faceted_tags:
+            elif self.cate_tag_id:
+                cate_taged_tags = self.env['viin_document.tag'].search([('cate_tag_id', '=', self.cate_tag_id.id)])
+                for tag in cate_taged_tags:
                     return document.write({'tag_ids': [(3, tag.id, False)]})

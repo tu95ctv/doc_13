@@ -83,7 +83,7 @@
                                     <field name="tag_action_ids">
                                         <tree editable="bottom">
                                             <field name="action"/>
-                                            <field name="facet_id"
+                                            <field name="cate_tag_id"
                                                    domain="['|',
                                                        ('folder_id','parent_of', parent.folder_id),
                                                        ('folder_id', 'parent_of', parent.domain_folder_id)
@@ -91,7 +91,7 @@
                                                    required="1"/>
                                             <field name="tag_id"
                                                    context="{'simple_name': True}"
-                                                   domain="[('facet_id','=',facet_id)]"
+                                                   domain="[('cate_tag_id','=',cate_tag_id)]"
                                                    options='{"no_open": True}'/>
                                         </tree>
                                     </field>
@@ -131,7 +131,7 @@
         <field name="arch" type="xml">
             <tree editable="bottom">
                 <field name="action"/>
-                <field name="facet_id"/>
+                <field name="cate_tag_id"/>
                 <field name="tag_id"/>
             </tree>
         </field>
@@ -148,7 +148,7 @@
                             <field name="action"/>
                         </group>
                         <div>
-                            <field class="oe_inline" name="facet_id"/>
+                            <field class="oe_inline" name="cate_tag_id"/>
                             <field class="oe_inline" name="tag_id"/>
                         </div>
                     </group>

@@ -22,7 +22,7 @@
             <tree>
                 <field name="sequence" widget="handle"/>
                 <field name="display_name" string="Workspace"/>
-                <field name="facet_ids"  widget="many2many_tags" string="Tag Categories"/>
+                <field name="cate_tag_ids"  widget="many2many_tags" string="Tag Categories"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="group_ids" widget="many2many_tags"/>
                 <field name="read_group_ids" widget="many2many_tags"/>
@@ -64,7 +64,7 @@
                     </group>
                     <notebook>
                         <page string="Tags" name="tags">
-                            <field name="facet_ids" context="{
+                            <field name="cate_tag_ids" context="{
                                 'form_view_ref' : 'viin_document.tag_cate_view_form',
                                 'documents_view_from_folder' : True,
                                 'default_folder_id' : id,
@@ -75,8 +75,8 @@
                                     <field name="name" string="Category"/>
                                     <field name="tag_ids"
                                            string="Tags"
-                                           domain="[('facet_id', '=' , id)]"
-                                           context="{'default_facet_id' : id}"
+                                           domain="[('cate_tag_id', '=' , id)]"
+                                           context="{'default_cate_tag_id' : id}"
                                            options="{'no_create_edit': True}"
                                            widget="many2many_tags"/>
                                 </tree>

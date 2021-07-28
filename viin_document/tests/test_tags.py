@@ -7,15 +7,15 @@ class TestTags(TransactionCase):
         marketing_assets = self.ref('viin_document.documents_marketing_assets')
         tag = self.env['viin_document.tag'].create({
             'name': 'Foo',
-            'facet_id': marketing_assets,
+            'cate_tag_id': marketing_assets,
         })
-        self.assertEqual(tag.facet_id.id, marketing_assets, 'should have the right facet')
+        self.assertEqual(tag.cate_tag_id.id, marketing_assets, 'should have the right cate_tag')
         self.assertEqual(tag.name, 'Foo', 'should have the right name')
         self.assertTrue(tag.sequence > 0, 'should have a non-zero sequence')
 
     def test_get_tags(self):
         folder_id = self.ref('viin_document.documents_marketing_folder')
-        facet_assets = self.env['viin_document.tag.cate'].browse(self.ref('viin_document.documents_marketing_assets'))
+        cate_tag_assets = self.env['viin_document.tag.cate'].browse(self.ref('viin_document.documents_marketing_assets'))
         tag_assets_ads = self.env['viin_document.tag'].browse(self.ref('viin_document.documents_marketing_assets_ads'))
         tag_assets_videos = self.env['viin_document.tag'].browse(self.ref('viin_document.documents_marketing_assets_Videos'))
 
@@ -27,9 +27,9 @@ class TestTags(TransactionCase):
         self.assertEqual(len(tags), 4, 'should return a non-empty list of tags')
 
         first_record = {
-            'group_id': facet_assets.id,
-            'group_name': facet_assets.name,
-            'group_sequence': facet_assets.sequence,
+            'group_id': cate_tag_assets.id,
+            'group_name': cate_tag_assets.name,
+            'group_sequence': cate_tag_assets.sequence,
             'group_tooltip': None,
             'id': tag_assets_ads.id,
             'display_name': tag_assets_ads.name,
@@ -40,9 +40,9 @@ class TestTags(TransactionCase):
         self.assertEqual(tags[0], first_record, 'first record should match')
 
         last_record = {
-            'group_id': facet_assets.id,
-            'group_name': facet_assets.name,
-            'group_sequence': facet_assets.sequence,
+            'group_id': cate_tag_assets.id,
+            'group_name': cate_tag_assets.name,
+            'group_sequence': cate_tag_assets.sequence,
             'group_tooltip': None,
             'id': tag_assets_videos.id,
             'display_name': tag_assets_videos.name,
@@ -53,7 +53,7 @@ class TestTags(TransactionCase):
 
     def test_get_tags_reordered(self):
         folder_id = self.ref('viin_document.documents_marketing_folder')
-        facet_assets = self.env['viin_document.tag.cate'].browse(self.ref('viin_document.documents_marketing_assets'))
+        cate_tag_assets = self.env['viin_document.tag.cate'].browse(self.ref('viin_document.documents_marketing_assets'))
         tag_assets_images = self.env['viin_document.tag'].browse(self.ref('viin_document.documents_marketing_assets_images'))
         tag_assets_videos = self.env['viin_document.tag'].browse(self.ref('viin_document.documents_marketing_assets_Videos'))
 
@@ -65,9 +65,9 @@ class TestTags(TransactionCase):
         self.assertEqual(len(tags), 4, 'should return a non-empty list of tags')
 
         first_record = {
-            'group_id': facet_assets.id,
-            'group_name': facet_assets.name,
-            'group_sequence': facet_assets.sequence,
+            'group_id': cate_tag_assets.id,
+            'group_name': cate_tag_assets.name,
+            'group_sequence': cate_tag_assets.sequence,
             'group_tooltip': None,
             'id': tag_assets_images.id,
             'display_name': tag_assets_images.name,
@@ -78,9 +78,9 @@ class TestTags(TransactionCase):
         self.assertEqual(first_tag, first_record, 'first record should match')
 
         last_record = {
-            'group_id': facet_assets.id,
-            'group_name': facet_assets.name,
-            'group_sequence': facet_assets.sequence,
+            'group_id': cate_tag_assets.id,
+            'group_name': cate_tag_assets.name,
+            'group_sequence': cate_tag_assets.sequence,
             'group_tooltip': None,
             'id': tag_assets_videos.id,
             'display_name': tag_assets_videos.name,
@@ -95,7 +95,7 @@ class TestTags(TransactionCase):
             'name': 'Empty Folder',
             'parent_folder_id': self.env.ref('viin_document.documents_marketing_folder').id,
         }).id
-        facet_assets = self.env['viin_document.tag.cate'].browse(self.ref('viin_document.documents_marketing_assets'))
+        cate_tag_assets = self.env['viin_document.tag.cate'].browse(self.ref('viin_document.documents_marketing_assets'))
         tag_assets_ads = self.env['viin_document.tag'].browse(self.ref('viin_document.documents_marketing_assets_ads'))
         tag_assets_videos = self.env['viin_document.tag'].browse(self.ref('viin_document.documents_marketing_assets_Videos'))
 
@@ -106,9 +106,9 @@ class TestTags(TransactionCase):
         self.assertEqual(len(tags), 4, 'should return a non-empty list of tags')
 
         first_record = {
-            'group_id': facet_assets.id,
-            'group_name': facet_assets.name,
-            'group_sequence': facet_assets.sequence,
+            'group_id': cate_tag_assets.id,
+            'group_name': cate_tag_assets.name,
+            'group_sequence': cate_tag_assets.sequence,
             'group_tooltip': None,
             'id': tag_assets_ads.id,
             'display_name': tag_assets_ads.name,
@@ -118,9 +118,9 @@ class TestTags(TransactionCase):
         self.assertEqual(tags[0], first_record, 'first record should match')
 
         last_record = {
-            'group_id': facet_assets.id,
-            'group_name': facet_assets.name,
-            'group_sequence': facet_assets.sequence,
+            'group_id': cate_tag_assets.id,
+            'group_name': cate_tag_assets.name,
+            'group_sequence': cate_tag_assets.sequence,
             'group_tooltip': None,
             'id': tag_assets_videos.id,
             'display_name': tag_assets_videos.name,

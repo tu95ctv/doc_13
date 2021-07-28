@@ -92,7 +92,7 @@ class TagCategory(OdooObjectType):
     @staticmethod
     def resolve_tags(root, info, limit=80, offset=None):
         return info.context["env"]["viin_document.tag"].search(
-            [('facet_id','=', root.id)], limit=limit, offset=offset
+            [('cate_tag_id','=', root.id)], limit=limit, offset=offset
         )
     
 class Share(OdooObjectType):

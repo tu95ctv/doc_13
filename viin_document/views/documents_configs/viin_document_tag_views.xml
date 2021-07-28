@@ -13,7 +13,7 @@
                         <h1><field name="name"/></h1>
                     </div>
                     <group>
-                        <field name="facet_id" string="Category"/>
+                        <field name="cate_tag_id" string="Category"/>
                     </group>
                 </sheet>
             </form>
@@ -26,7 +26,7 @@
         <field name="arch" type="xml">
         <search>
             <field name="name" string="Tag"/>
-            <field name="facet_id"/>
+            <field name="cate_tag_id"/>
          </search>
         </field>
     </record>

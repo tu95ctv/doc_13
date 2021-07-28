@@ -9,8 +9,8 @@ from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 import re
 
-templates = ['addresses','archive','audio','binary','calendar','certificate','disk','document','font','image','javascript','pdf','presentation','print','script','spreadsheet','text','unknown','vector','video','web_code','web_style']
-templates2 = {
+ICON_SVGS = ['addresses','archive','audio','binary','calendar','certificate','disk','document','font','image','javascript','pdf','presentation','print','script','spreadsheet','text','unknown','vector','video','web_code','web_style']
+ICON_SVGS2 = {
     'archive':['zip','rar']
 }
 class Document(models.Model):
@@ -23,27 +23,17 @@ class Document(models.Model):
         ('attachment_unique', 'unique (attachment_id)', "This attachment is already a document"),
     ]
 
-    # Attachment
     attachment_id = fields.Many2one('ir.attachment', ondelete='cascade', auto_join=True, copy=False)
     attachment_name = fields.Char('Attachment Name', related='attachment_id.name', readonly=False)
-    # attachment_type = fields.Selection(string='Attachment Type', related='attachment_id.type', readonly=False)
     datas = fields.Binary(related='attachment_id.datas', related_sudo=True, readonly=False) #rt3
     file_size = fields.Integer(related='attachment_id.file_size', store=True)
     checksum = fields.Char(related='attachment_id.checksum')
     mimetype = fields.Char(related='attachment_id.mimetype', default='application/octet-stream') #rt2
-   
     res_model = fields.Char(related='attachment_id.res_model', store=True)
     res_id = fields.Many2oneReference(related='attachment_id.res_id', store=True)
-    # res_name = fields.Char('Resource Name', related='attachment_id.res_name')
-    # index_content = fields.Text(related='attachment_id.index_content')
     description = fields.Text('Attachment Description', related='attachment_id.description', readonly=False)
 
-    # Versioning
     previous_attachment_ids = fields.Many2many('ir.attachment', string="History")
-
-    # Document
-    # name = fields.Char(related='attachment_id.name', copy=True, store=True) #rt1
-
     name = fields.Char('Name', copy=True, store=True, compute='_compute_name', inverse='_inverse_name')
     @api.depends('attachment_id.name')
     def _compute_name(self):
@@ -176,13 +166,13 @@ class Document(models.Model):
                 return
             match = False
             icon_file = 'unknown'
-            for i in templates:
+            for i in ICON_SVGS:
                 if i in r.mimetype:
                     match = True
                     icon_file = i
                     break
             if match == False:
-                for k,vs in templates2.items():
+                for k,vs in ICON_SVGS2.items():
                     for i in vs:
                         if i in r.mimetype:
                             match = True
@@ -326,17 +316,17 @@ class Document(models.Model):
     # Nay dung de test thoi
     def _get_processed_tags(self, domain, folder_id):
         """
-        sets a group color to the tags based on the order of the facets (group_id)
+        sets a group color to the tags based on the order of the cate_tags (group_id)
         recomputed each time the search_panel fetches the tags as the colors depend on the order and
         amount of tag categories. If the amount of categories exceeds the amount of colors, the color
         loops back to the first one.
         """
         tags = self.env['viin_document.tag']._get_tags(domain, folder_id)
-        facets = list(OrderedDict.fromkeys([tag['group_id'] for tag in tags]))
-        facet_colors = self.env['viin_document.tag.cate'].FACET_ORDER_COLORS
+        cate_tags = list(OrderedDict.fromkeys([tag['group_id'] for tag in tags]))
+        cate_tag_colors = self.env['viin_document.tag.cate'].cate_tag_ORDER_COLORS
         for tag in tags:
-            color_index = facets.index(tag['group_id']) % len(facet_colors)
-            tag['group_hex_color'] = facet_colors[color_index]
+            color_index = cate_tags.index(tag['group_id']) % len(cate_tag_colors)
+            tag['group_hex_color'] = cate_tag_colors[color_index]
 
         return tags
 
