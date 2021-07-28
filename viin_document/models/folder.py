@@ -5,7 +5,7 @@ from odoo.exceptions import ValidationError
 
 class DocumentFolder(models.Model):
     _name = 'viin_document.folder'
-    _description = 'Documents Workspace'
+    _description = 'Documents Folder'
     _parent_name = 'parent_folder_id'
     _order = 'sequence'
 
@@ -13,14 +13,6 @@ class DocumentFolder(models.Model):
     def _check_parent_folder_id(self):
         if not self._check_recursion():
             raise ValidationError(_('You cannot create recursive folders.'))
-
-    @api.model
-    def default_get(self, fields):
-        res = super(DocumentFolder, self).default_get(fields)
-        if 'parent_folder_id' in fields and self._context.get('folder_id') and not res.get('parent_folder_id'):
-            res['parent_folder_id'] = self._context.get('folder_id')
-
-        return res
 
     def name_get(self):
         name_array = []
@@ -33,73 +25,26 @@ class DocumentFolder(models.Model):
         return name_array
 
     company_id = fields.Many2one('res.company', 'Company',
-                                 help="This workspace will only be available to the selected company")
+                                 help="This Folder will only be available to the selected company")
     parent_folder_id = fields.Many2one('viin_document.folder',
-                                       string="Parent Workspace",
+                                       string="Parent Folder",
                                        ondelete="cascade",
-                                       help="A workspace will inherit the tags of its parent workspace")
+                                       help="A Folder will inherit the tags of its parent Folder")
     name = fields.Char(required=True, translate=True)
     description = fields.Html(string="Description", translate=True)
-    children_folder_ids = fields.One2many('viin_document.folder', 'parent_folder_id', string="Sub workspaces")
     document_ids = fields.One2many('viin_document.document', 'folder_id', string="Documents")
     sequence = fields.Integer('Sequence', default=10)
-    share_link_ids = fields.One2many('viin_document.share', 'folder_id', string="Share Links")
     cate_tag_ids = fields.One2many('viin_document.tag.cate', 'folder_id',
                                 string="Tag Categories",
-                                help="Tag categories defined for this workspace")
+                                )
     write_group_ids = fields.Many2many('res.groups',
-        string="Write Groups", help='Groups able to see the workspace and read/create/edit its documents.')
+        string="Write Groups")
     read_group_ids = fields.Many2many('res.groups', 'viin_document_folder_read_groups',
-        string="Read Groups", help='Groups able to see the workspace and read its documents without create/edit rights.')
+        string="Read Groups")
 
     user_specific = fields.Boolean(string="Own Documents Only",
-                                   help="Limit Read Groups to the documents of which they are owner.")
-
-    #stat buttons
+                                  )
     action_count = fields.Integer('Action Count', compute='_compute_action_count')
     document_count = fields.Integer('Document Count', compute='_compute_document_count')
 
-    def _compute_action_count(self):
-        read_group_var = self.env['viin_document.action'].read_group(
-            [('domain_folder_id', 'in', self.ids)],
-            fields=['domain_folder_id'],
-            groupby=['domain_folder_id'])
-
-        action_count_dict = dict((d['domain_folder_id'][0], d['domain_folder_id_count']) for d in read_group_var)
-        for record in self:
-            record.action_count = action_count_dict.get(record.id, 0)
-
-    def action_see_actions(self):
-        return {
-            'name': _('Actions'),
-            'res_model': 'viin_document.action',
-            'type': 'ir.actions.act_window',
-            'views': [(False, 'list'), (False, 'form')],
-            'view_mode': 'tree,form',
-            'context': {
-                'default_domain_folder_id': self.id,
-                'search_default_domain_folder_id': self.id,
-            }
-        }
-
-    def _compute_document_count(self):
-        read_group_var = self.env['viin_document.document'].read_group(
-            [('folder_id', 'in', self.ids)],
-            fields=['folder_id'],
-            groupby=['folder_id'])
-
-        document_count_dict = dict((d['folder_id'][0], d['folder_id_count']) for d in read_group_var)
-        for record in self:
-            record.document_count = document_count_dict.get(record.id, 0)
-
-    def action_see_documents(self):
-        domain = [('folder_id', '=', self.id)]
-        return {
-            'name': _('Documents'),
-            'domain': domain,
-            'res_model': 'viin_document.document',
-            'type': 'ir.actions.act_window',
-            'views': [(False, 'list'), (False, 'form')],
-            'view_mode': 'tree,form',
-            'context': "{'default_folder_id': %s}" % self.id
-        }
+    

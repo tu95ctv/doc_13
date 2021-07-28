@@ -15,7 +15,7 @@ class TagsCategories(models.Model):
     cate_tag_ORDER_COLORS = ['#F06050', '#6CC1ED', '#F7CD1F', '#814968', '#30C381', '#D6145F', '#475577', '#F4A460',
                           '#EB7E7F', '#2C8397']
 
-    folder_id = fields.Many2one('viin_document.folder', string="Workspace", ondelete="cascade")
+    folder_id = fields.Many2one('viin_document.folder', string="Folder", ondelete="cascade")
     name = fields.Char(required=True, translate=True)
     tag_ids = fields.One2many('viin_document.tag', 'cate_tag_id')
     sequence = fields.Integer('Sequence', default=10)
@@ -31,7 +31,7 @@ class Tags(models.Model):
     _description = "Tag"
     _order = "sequence, name"
 
-    folder_id = fields.Many2one('viin_document.folder', string="Workspace", related='cate_tag_id.folder_id', store=True,
+    folder_id = fields.Many2one('viin_document.folder', string="Folder", related='cate_tag_id.folder_id', store=True,
                                 readonly=False)
     cate_tag_id = fields.Many2one('viin_document.tag.cate', string="Category", ondelete='cascade', required=True)
     name = fields.Char(required=True, translate=True)

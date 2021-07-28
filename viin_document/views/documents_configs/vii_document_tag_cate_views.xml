@@ -12,7 +12,7 @@
             <field name="tag_ids"/>
             <field name="folder_id"/>
             <group expand="0" string="Group By">
-                <filter string="Workspace" name="group_by_folder" domain="[]" context="{'group_by': 'folder_id'}"/>
+                <filter string="Folder" name="group_by_folder" domain="[]" context="{'group_by': 'folder_id'}"/>
             </group>
          </search>
         </field>

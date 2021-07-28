@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <!-- folders -->
-
     <record id="folder_view_search" model="ir.ui.view">
-        <field name="name">Workspace search</field>
+        <field name="name">Folder search</field>
         <field name="model">viin_document.folder</field>
         <field name="arch" type="xml">
         <search>
             <field name="name"/>
             <field name="parent_folder_id"/>
-            <filter string="Parent Workspace" name="by_parent" domain="[]" context="{'group_by': 'parent_folder_id'}"/>
+            <filter string="Parent Folder" name="by_parent" domain="[]" context="{'group_by': 'parent_folder_id'}"/>
          </search>
         </field>
     </record>
 
     <record id="folder_view_tree" model="ir.ui.view">
-        <field name="name">Workspace tree</field>
+        <field name="name">Folder tree</field>
         <field name="model">viin_document.folder</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="sequence" widget="handle"/>
-                <field name="display_name" string="Workspace"/>
+                <field name="display_name" string="Folder"/>
                 <field name="cate_tag_ids"  widget="many2many_tags" string="Tag Categories"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="write_group_ids" widget="many2many_tags"/>
@@ -31,25 +29,12 @@
     </record>
 
     <record id="folder_view_form" model="ir.ui.view">
-        <field name="name">Workspace form</field>
+        <field name="name">Folder form</field>
         <field name="model">viin_document.folder</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_see_actions" type="object" class="oe_stat_button" icon="fa-gears">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_value"><field name="action_count"/></span>
-                                <span class="o_stat_text">Actions</span>
-                            </div>
-                        </button>
-                        <button name="action_see_documents" type="object" class="oe_stat_button" icon="fa-file-text-o" attrs="{'invisible' : [('document_count', '=', 0)]}">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_value"><field name="document_count"/></span>
-                                <span class="o_stat_text">Documents</span>
-                            </div>
-                        </button>
-                    </div>
+                    
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only"/>
                         <h1><field name="name" placeholder="E.g. Finance"/></h1>
@@ -66,7 +51,6 @@
                         <page string="Tags" name="tags">
                             <field name="cate_tag_ids" context="{
                                 'form_view_ref' : 'viin_document.tag_cate_view_form',
-                                'documents_view_from_folder' : True,
                                 'default_folder_id' : id,
                                 'simple_name': True
                             }">
@@ -106,9 +90,6 @@
       <field name="name">Workspaces</field>
       <field name="res_model">viin_document.folder</field>
       <field name="view_mode">tree,form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('viin_document.folder_view_tree')}),
-            (0, 0, {'view_mode': 'form', 'view_id': False})]"/>
     </record>
 
 </odoo>

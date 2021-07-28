@@ -26,7 +26,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         #data
-        'data/documents_data.xml',
+        # 'data/documents_data.xml',
         #view
         'views/documents_configs/viin_document_folder_views.xml',
         'views/documents_configs/vii_document_tag_cate_views.xml',
