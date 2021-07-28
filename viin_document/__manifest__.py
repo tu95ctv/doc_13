@@ -28,12 +28,7 @@
         #data
         'data/documents_data.xml',
         #view
-        # 'views/documents_views.xml',
-        'views/vii_templates.xml',
-        'views/vii_assets.xml',
         'views/documents_configs/documents_folder_views.xml',
-        'views/documents_configs/viin_document_share_views.xml',
-        'views/documents_configs/viin_document_action_views.xml',
         'views/documents_configs/vii_document_tag_cate_views.xml',
         'views/documents_configs/viin_document_tag_views.xml',
         'views/menu.xml',
