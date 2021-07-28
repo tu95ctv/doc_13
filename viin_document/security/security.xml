@@ -37,8 +37,8 @@
                 '|', '|',
                     '&amp;',
                         ('read_group_ids', '=', False),
-                        ('group_ids', '=', False),
-                    ('group_ids', 'in', [g.id for g in user.groups_id]),
+                        ('write_group_ids', '=', False),
+                    ('write_group_ids', 'in', [g.id for g in user.groups_id]),
                     ('read_group_ids', 'in', [g.id for g in user.groups_id]),
                 ]</field>
         </record>
@@ -83,10 +83,10 @@
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[
                 '|',
-                    ('folder_id.group_ids', 'in', [g.id for g in user.groups_id]),
+                    ('folder_id.write_group_ids', 'in', [g.id for g in user.groups_id]),
                     '&amp;',
                         ('folder_id.read_group_ids', '=', False),
-                        ('folder_id.group_ids', '=', False)]
+                        ('folder_id.write_group_ids', '=', False)]
                     </field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>

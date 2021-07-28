@@ -155,8 +155,8 @@ class DocumentShare(models.Model):
     def _compute_can_upload(self):
         for record in self:
             folder = record.folder_id
-            folder_has_groups = folder.group_ids.ids or folder.read_group_ids.ids
-            in_write_group = set(folder.group_ids.ids) & set(record.create_uid.groups_id.ids)
+            folder_has_groups = folder.write_group_ids.ids or folder.read_group_ids.ids
+            in_write_group = set(folder.write_group_ids.ids) & set(record.create_uid.groups_id.ids)
             record.can_upload = in_write_group or not folder_has_groups
 
     def _compute_state(self):

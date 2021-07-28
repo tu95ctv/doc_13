@@ -85,7 +85,7 @@ class TestCaseSecurity(TransactionCase):
 
         folder_a = self.env['viin_document.folder'].create({
             'name': 'folder A',
-            'group_ids': [(6, 0, [self.ref('viin_document.viin_document_group_manager')])],
+            'write_group_ids': [(6, 0, [self.ref('viin_document.viin_document_group_manager')])],
         })
 
         document_a = self.env['viin_document.document'].create({
@@ -147,7 +147,7 @@ class TestCaseSecurity(TransactionCase):
 
         folder_c = self.env['viin_document.folder'].create({
             'name': 'folder C',
-            'group_ids': [(6, 0, [self.arbitrary_group.id])],
+            'write_group_ids': [(6, 0, [self.arbitrary_group.id])],
         })
         document_c = self.env['viin_document.document'].create({
             'name': 'document C',
@@ -188,7 +188,7 @@ class TestCaseSecurity(TransactionCase):
         })
         folder_owner = self.env['viin_document.folder'].create({
             'name': 'folder owner',
-            'group_ids': [(6, 0, [self.arbitrary_group.id])],
+            'write_group_ids': [(6, 0, [self.arbitrary_group.id])],
             'read_group_ids': [(6, 0, [arbitrary_group2.id])],
             'user_specific': True,
         })
@@ -276,7 +276,7 @@ class TestCaseSecurity(TransactionCase):
         available_documents = test_share._get_documents_and_check_access(test_share.access_token, operation='read')
         self.assertEqual(len(available_documents), 1,
                          'This method should indicate that the create_uid has access to the folder')
-        folder_share.write({'group_ids': [(6, 0, [self.ref('viin_document.viin_document_group_manager')])]})
+        folder_share.write({'write_group_ids': [(6, 0, [self.ref('viin_document.viin_document_group_manager')])]})
         available_documents = test_share._get_documents_and_check_access(test_share.access_token, operation='read')
         self.assertEqual(len(available_documents), 0,
                          'This method should indicate that the create_uid doesnt have access to the folder anymore')

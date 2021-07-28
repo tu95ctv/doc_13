@@ -147,9 +147,9 @@ class Document(models.Model):
                                 required=True,
                                 index=True)
     company_id = fields.Many2one('res.company', string='Company', related='folder_id.company_id', readonly=True)
-    group_ids = fields.Many2many('res.groups', string="Access Groups", readonly=True,
+    write_group_ids = fields.Many2many('res.groups', string="Access Groups", readonly=True,
                                  help="This attachment will only be available for the selected user groups",
-                                 related='folder_id.group_ids')
+                                 related='folder_id.write_group_ids')
 
     download_url = fields.Char(compute='_compute_download_url')
     request_activity_id = fields.Many2one('mail.activity')

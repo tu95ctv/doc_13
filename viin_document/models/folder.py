@@ -47,7 +47,7 @@ class DocumentFolder(models.Model):
     cate_tag_ids = fields.One2many('viin_document.tag.cate', 'folder_id',
                                 string="Tag Categories",
                                 help="Tag categories defined for this workspace")
-    group_ids = fields.Many2many('res.groups',
+    write_group_ids = fields.Many2many('res.groups',
         string="Write Groups", help='Groups able to see the workspace and read/create/edit its documents.')
     read_group_ids = fields.Many2many('res.groups', 'viin_document_folder_read_groups',
         string="Read Groups", help='Groups able to see the workspace and read its documents without create/edit rights.')
