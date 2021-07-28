@@ -12,7 +12,7 @@ import uuid
 
 
 class DocumentShare(models.Model):
-    _name = 'documents.share'
+    _name = 'viin_document.share'
     _inherit = ['mail.thread', 'mail.alias.mixin']
     _description = 'Documents Share'
 
@@ -217,7 +217,7 @@ class DocumentShare(models.Model):
         view_id = self.env.ref('viin_document.share_view_form_popup').id
         return {
             'context': self._context,
-            'res_model': 'documents.share',
+            'res_model': 'viin_document.share',
             'target': 'new',
             'name': _('Share selected records') if vals.get('type') == 'ids' else _('Share domain'),
             'res_id': share.id,

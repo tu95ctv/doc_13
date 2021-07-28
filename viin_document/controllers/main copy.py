@@ -30,7 +30,7 @@ class ShareRoute(http.Controller):
         filehash = None
 
         if share_id:
-            share = env['documents.share'].sudo().browse(int(share_id))
+            share = env['viin_document.share'].sudo().browse(int(share_id))
             record = share._get_documents_and_check_access(share_token, [int(id)], operation='read')
         if not record:
             return (404, [], None)
@@ -258,7 +258,7 @@ class ShareRoute(http.Controller):
         """
         env = request.env
         try:
-            share = env['documents.share'].sudo().browse(share_id)
+            share = env['viin_document.share'].sudo().browse(share_id)
             documents = share._get_documents_and_check_access(access_token, operation='read')
             if documents:
                 return self._make_zip((share.name or 'unnamed-link') + '.zip', documents)
@@ -277,7 +277,7 @@ class ShareRoute(http.Controller):
         """
         try:
             env = request.env
-            share = env['documents.share'].sudo().browse(share_id)
+            share = env['viin_document.share'].sudo().browse(share_id)
             if share._get_documents_and_check_access(access_token, document_ids=[], operation='read') is not False:
                 image = env['res.users'].sudo().browse(share.create_uid.id).image_128
 
@@ -341,7 +341,7 @@ class ShareRoute(http.Controller):
         :param document_id: id of a document request to directly upload its content
         :return if files are uploaded, recalls the share portal with the updated content.
         """
-        share = http.request.env['documents.share'].sudo().browse(share_id)
+        share = http.request.env['viin_document.share'].sudo().browse(share_id)
         if not share.can_upload or (not document_id and share.action != 'downloadupload'):
             return http.request.not_found()
 
@@ -352,7 +352,7 @@ class ShareRoute(http.Controller):
         button_text = share.name or _('Share link')
         chatter_message = _('''<b> File uploaded by: </b> %s <br/>
                                <b> Link created by: </b> %s <br/>
-                               <a class="btn btn-primary" href="/web#id=%s&model=documents.share&view_type=form" target="_blank">
+                               <a class="btn btn-primary" href="/web#id=%s&model=viin_document.share&view_type=form" target="_blank">
                                   <b>%s</b>
                                </a>
                              ''') % (
@@ -418,7 +418,7 @@ class ShareRoute(http.Controller):
         :param token: share access token
         """
         try:
-            share = http.request.env['documents.share'].sudo().browse(share_id)
+            share = http.request.env['viin_document.share'].sudo().browse(share_id)
             available_documents = share._get_documents_and_check_access(token, operation='read')
             if available_documents is False:
                 if share._check_token(token):

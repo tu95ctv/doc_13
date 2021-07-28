@@ -269,7 +269,7 @@ class ShareMutate(graphene.Mutation):#
     @staticmethod
     def mutate(self, info,id=None,folder_id=None,action=None,type=None, document_ids=None):
         env = info.context["env"]
-        share = env["documents.share"].browse(id)
+        share = env["viin_document.share"].browse(id)
 
         vals = {}
         if document_ids !=None:

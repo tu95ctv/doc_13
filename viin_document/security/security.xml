@@ -104,23 +104,23 @@
         <!-- share  -->
 
         <record id="viin_document_share_rule_company" model="ir.rule">
-            <field name="name">Documents.share: company</field>
-            <field name="model_id" ref="model_documents_share"/>
+            <field name="name">viin_document.share: company</field>
+            <field name="model_id" ref="model_viin_document_share"/>
             <field name="domain_force">['|',
                 ('folder_id.company_id', '=', False),
                 ('folder_id.company_id', 'in', company_ids)]</field>
         </record>
 
         <record id="viin_document_share_rule_user" model="ir.rule">
-            <field name="name">viin_documents.share: user</field>
-            <field name="model_id" ref="model_documents_share"/>
+            <field name="name">viin_viin_document.share: user</field>
+            <field name="model_id" ref="model_viin_document_share"/>
             <field name="groups" eval="[(4, ref('viin_document_group_user'))]"/>
             <field name="domain_force">[('create_uid', '=', user.id)]</field>
         </record>
 
         <record id="viin_document_share_rule_manager" model="ir.rule">
-            <field name="name">viin_documents.share: manager</field>
-            <field name="model_id" ref="model_documents_share"/>
+            <field name="name">viin_viin_document.share: manager</field>
+            <field name="model_id" ref="model_viin_document_share"/>
             <field name="groups" eval="[(4, ref('viin_document_group_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>

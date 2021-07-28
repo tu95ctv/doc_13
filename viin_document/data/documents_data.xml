@@ -268,7 +268,7 @@
 
         <!-- share links -->
 
-        <record id="share_account_folder" model="documents.share">
+        <record id="share_account_folder" model="viin_document.share">
             <field name="name">Inbox Financial</field>
             <field name="alias_name">inbox-financial</field>
             <field name="type">domain</field>
@@ -280,10 +280,10 @@
             <field name="activity_type_id" ref="mail_documents_activity_data_Inbox"/>
             <field name="activity_date_deadline_range">7</field>
             <field name="activity_date_deadline_range_type">days</field>
-            <field name="alias_model_id" ref="viin_document.model_documents_share"/>
+            <field name="alias_model_id" ref="viin_document.model_viin_document_share"/>
         </record>
 
-        <record id="share_internal_folder" model="documents.share">
+        <record id="share_internal_folder" model="viin_document.share">
             <field name="name">Inbox Internal</field>
             <field name="alias_name">inbox</field>
             <field name="type">domain</field>
@@ -295,7 +295,7 @@
             <field name="activity_type_id" ref="mail_documents_activity_data_Inbox"/>
             <field name="activity_date_deadline_range">7</field>
             <field name="activity_date_deadline_range_type">days</field>
-            <field name="alias_model_id" ref="viin_document.model_documents_share"/>
+            <field name="alias_model_id" ref="viin_document.model_viin_document_share"/>
         </record>
     </data>
 </odoo>

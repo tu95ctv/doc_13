@@ -268,7 +268,7 @@ class TestCaseSecurity(TransactionCase):
             'mimetype': 'image/gif',
             'folder_id': folder_share.id,
         })
-        test_share = self.env['documents.share'].with_user(self.document_user).create({
+        test_share = self.env['viin_document.share'].with_user(self.document_user).create({
             'folder_id': folder_share.id,
             'type': 'ids',
             'document_ids': [(6, 0, [document.id])]
@@ -312,7 +312,7 @@ class TestCaseSecurity(TransactionCase):
             'mimetype': 'image/gif',
             'folder_id': folder_share.id,
         })
-        test_share = self.env['documents.share'].with_user(self.document_user).create({
+        test_share = self.env['viin_document.share'].with_user(self.document_user).create({
             'folder_id': folder_share.id,
             'type': 'ids',
             'document_ids': [(6, 0, [document_a.id, document_b.id, document_c.id])]

@@ -146,7 +146,7 @@ class Document(models.Model):
                     self.user_has_groups('viin_document.viin_document_group_manager'))
             record.is_locked = record.lock_uid and not is_permit_user
     # mo lai
-    create_share_id = fields.Many2one('documents.share', help='Share used to create this document')
+    create_share_id = fields.Many2one('viin_document.share', help='Share used to create this document')
     request_activity_id = fields.Many2one('mail.activity')
 
     # Folder
@@ -223,7 +223,7 @@ class Document(models.Model):
             'document_ids': [(6, 0, self.ids)],
             'folder_id': self.folder_id.id,
         }
-        return self.env['documents.share'].create_share(vals)
+        return self.env['viin_document.share'].create_share(vals)
 
     def toggle_lock(self):
         """

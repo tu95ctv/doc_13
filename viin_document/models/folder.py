@@ -43,7 +43,7 @@ class DocumentFolder(models.Model):
     children_folder_ids = fields.One2many('viin_document.folder', 'parent_folder_id', string="Sub workspaces")
     document_ids = fields.One2many('viin_document.document', 'folder_id', string="Documents")
     sequence = fields.Integer('Sequence', default=10)
-    share_link_ids = fields.One2many('documents.share', 'folder_id', string="Share Links")
+    share_link_ids = fields.One2many('viin_document.share', 'folder_id', string="Share Links")
     facet_ids = fields.One2many('viin_document.tag.cate', 'folder_id',
                                 string="Tag Categories",
                                 help="Tag categories defined for this workspace")
