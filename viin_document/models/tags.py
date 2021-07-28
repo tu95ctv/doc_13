@@ -11,13 +11,15 @@ class TagsCategories(models.Model):
     # the colors to be used to represent the display order of the facets (tag categories), the colors
     # depend on the order and amount of fetched categories
     # currently used in the searchPanel and the kanban view and should match across the two.
-    # FACET_ORDER_COLORS = ['#F06050', '#6CC1ED', '#F7CD1F', '#814968', '#30C381', '#D6145F', '#475577', '#F4A460',
-    #                       '#EB7E7F', '#2C8397']
+    #mở lại để test
+    FACET_ORDER_COLORS = ['#F06050', '#6CC1ED', '#F7CD1F', '#814968', '#30C381', '#D6145F', '#475577', '#F4A460',
+                          '#EB7E7F', '#2C8397']
 
     folder_id = fields.Many2one('viin_document.folder', string="Workspace", ondelete="cascade")
     name = fields.Char(required=True, translate=True)
     tag_ids = fields.One2many('viin_document.tag', 'facet_id')
     sequence = fields.Integer('Sequence', default=10)
+    tooltip = fields.Char(help="Text shown when hovering on this tag category or its tags", string="Tooltip")
 
     _sql_constraints = [
         ('name_unique', 'unique (folder_id, name)', "Facet already exists in this folder"),
@@ -47,48 +49,48 @@ class Tags(models.Model):
             names.append((record.id, "%s > %s" % (record.facet_id.name, record.name)))
         return names
 
-    # @api.model
-    # def _get_tags(self, domain, folder_id):
-    #     """
-    #     fetches the tag and facet ids for the document selector (custom left sidebar of the kanban view)
-    #     """
-    #     documents = self.env['viin_document.document'].search(domain)
-    #     # folders are searched with sudo() so we fetch the tags and facets from all the folder hierarchy (as tags
-    #     # and facets are inherited from ancestor folders).
-    #     folders = self.env['viin_document.folder'].sudo().search([('parent_folder_id', 'parent_of', folder_id)])
-    #     self.flush(['sequence', 'name', 'facet_id'])
-    #     self.env['viin_document.tag.cate'].flush(['sequence', 'name', 'tooltip'])
-    #     query = """
-    #         SELECT  facet.sequence AS group_sequence,
-    #                 facet.id AS group_id,
-    #                 facet.tooltip AS group_tooltip,
-    #                 viin_document_tag.sequence AS sequence,
-    #                 viin_document_tag.id AS id,
-    #                 COUNT(rel.documents_document_id) AS __count
-    #         FROM viin_document_tag
-    #             JOIN documents_facet facet ON viin_document_tag.facet_id = facet.id
-    #                 AND facet.folder_id = ANY(%s)
-    #             LEFT JOIN document_tag_rel rel ON viin_document_tag.id = rel.viin_document_tag_id
-    #                 AND rel.documents_document_id = ANY(%s)
-    #         GROUP BY facet.sequence, facet.name, facet.id, facet.tooltip, viin_document_tag.sequence, viin_document_tag.name, viin_document_tag.id
-    #         ORDER BY facet.sequence, facet.name, facet.id, facet.tooltip, viin_document_tag.sequence, viin_document_tag.name, viin_document_tag.id
-    #     """
-    #     params = [
-    #         list(folders.ids),
-    #         list(documents.ids),  # using Postgresql's ANY() with a list to prevent empty list of documents
-    #     ]
-    #     self.env.cr.execute(query, params)
-    #     result = self.env.cr.dictfetchall()
+    @api.model
+    def _get_tags(self, domain, folder_id):
+        """
+        fetches the tag and facet ids for the document selector (custom left sidebar of the kanban view)
+        """
+        documents = self.env['viin_document.document'].search(domain)
+        # folders are searched with sudo() so we fetch the tags and facets from all the folder hierarchy (as tags
+        # and facets are inherited from ancestor folders).
+        folders = self.env['viin_document.folder'].sudo().search([('parent_folder_id', 'parent_of', folder_id)])
+        self.flush(['sequence', 'name', 'facet_id'])
+        self.env['viin_document.tag.cate'].flush(['sequence', 'name', 'tooltip'])
+        query = """
+            SELECT  tag_cate.sequence AS group_sequence,
+                    tag_cate.id AS group_id,
+                    tag_cate.tooltip AS group_tooltip,
+                    viin_document_tag.sequence AS sequence,
+                    viin_document_tag.id AS id,
+                    COUNT(rel.viin_document_document_id) AS __count
+            FROM viin_document_tag
+                JOIN viin_document_tag_cate tag_cate ON viin_document_tag.facet_id = tag_cate.id
+                    AND tag_cate.folder_id = ANY(%s)
+                LEFT JOIN document_tag_rel rel ON viin_document_tag.id = rel.viin_document_tag_id
+                    AND rel.viin_document_document_id = ANY(%s)
+            GROUP BY tag_cate.sequence, tag_cate.name, tag_cate.id, tag_cate.tooltip, viin_document_tag.sequence, viin_document_tag.name, viin_document_tag.id
+            ORDER BY tag_cate.sequence, tag_cate.name, tag_cate.id, tag_cate.tooltip, viin_document_tag.sequence, viin_document_tag.name, viin_document_tag.id
+        """
+        params = [
+            list(folders.ids),
+            list(documents.ids),  # using Postgresql's ANY() with a list to prevent empty list of documents
+        ]
+        self.env.cr.execute(query, params)
+        result = self.env.cr.dictfetchall()
 
-    #     # Translating result
-    #     groups = self.env['viin_document.tag.cate'].browse({r['group_id'] for r in result})
-    #     group_names = {group['id']: group['name'] for group in groups}
+        # Translating result
+        groups = self.env['viin_document.tag.cate'].browse({r['group_id'] for r in result})
+        group_names = {group['id']: group['name'] for group in groups}
 
-    #     tags = self.env['viin_document.tag'].browse({r['id'] for r in result})
-    #     tags_names = {tag['id']: tag['name'] for tag in tags}
+        tags = self.env['viin_document.tag'].browse({r['id'] for r in result})
+        tags_names = {tag['id']: tag['name'] for tag in tags}
 
-    #     for r in result:
-    #         r['group_name'] = group_names.get(r['group_id'])
-    #         r['display_name'] = tags_names.get(r['id'])
+        for r in result:
+            r['group_name'] = group_names.get(r['group_id'])
+            r['display_name'] = tags_names.get(r['id'])
 
-    #     return result
+        return result

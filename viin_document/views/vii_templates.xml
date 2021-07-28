@@ -145,7 +145,7 @@
                 <div class="row no-gutters justify-content-center">
                     <div class="mr-3">
                         <form class="o_docs_upload_wrapper position-relative d-inline-block" t-if="upload" enctype="multipart/form-data" t-attf-action="/document/upload/#{share_id}/#{token}" method="POST">
-                            <button title="Upload" class="btn btn-primary"><i class="fa fa-upload"/>  Upload</button>
+                            <button title="Upload" class="btn btn-primary"><i class="fa fa-upload"/>  Upload Plz</button>
                             <input name="files" multiple="multiple" type="file" onchange="form.submit()"/>
                         </form>
                     </div>

@@ -26,9 +26,7 @@ class ShareRoute(http.Controller):
                        download=False, unique=False, filename_field='name'):
         env = env or request.env
         record = env['viin_document.document'].browse(int(id))
-        print ('binary_content ***record', record,'share_id', share_id)
         filehash = None
-
         if share_id:
             share = env['documents.share'].sudo().browse(int(share_id))
             record = share._get_documents_and_check_access(share_token, [int(id)], operation='read')
@@ -54,11 +52,15 @@ class ShareRoute(http.Controller):
             status, content, filename, mimetype, filehash = env['ir.http']._binary_record_content(
                 record, field=field, filename=None, filename_field=filename_field,
                 default_mimetype='application/octet-stream')
-        print ('**status**', status)
-        print ('***filename', filename)
+            
+            # status, content, filename, mimetype, filehash = self._binary_record_content(
+            #     record, field=field, filename=filename, filename_field=filename_field,
+            #     default_mimetype='application/octet-stream')
+
         status, headers, content = env['ir.http']._binary_set_headers(
             status, content, filename, mimetype, unique, filehash=filehash, download=download)
-
+        # status, headers, content = self._binary_set_headers(
+        #     status, content, filename, mimetype, unique, filehash=filehash, download=download)
         return status, headers, content
 
     def _get_file_response(self, id, field='datas', share_id=None, share_token=None):
@@ -78,6 +80,25 @@ class ShareRoute(http.Controller):
             response = request.make_response(content_base64, headers)
 
         return response
+    
+    #     '/web/content/<string:model>/<int:id>/<string:field>/<string:filename>'], type='http', auth="public")
+    # def content_common(self, xmlid=None, model='ir.attachment', id=None, field='datas',
+    #                    filename=None, filename_field='name', unique=None, mimetype=None,
+    #                    download=None, data=None, token=None, access_token=None, **kw):
+
+    #     status, headers, content = request.env['ir.http'].binary_content(
+    #         xmlid=xmlid, model=model, id=id, field=field, unique=unique, filename=filename,
+    #         filename_field=filename_field, download=download, mimetype=mimetype, access_token=access_token)
+
+    #     if status != 200:
+    #         return request.env['ir.http']._response_by_status(status, headers, content)
+    #     else:
+    #         content_base64 = base64.b64decode(content)
+    #         headers.append(('Content-Length', len(content_base64)))
+    #         response = request.make_response(content_base64, headers)
+    #     if token:
+    #         response.set_cookie('fileToken', token)
+    #     return response
 
     def _make_zip(self, name, documents):
         """returns zip files for the Document Inspector and the portal.
@@ -210,11 +231,11 @@ class ShareRoute(http.Controller):
 
     #     response = request.make_response(json.dumps(new_documents.ids), [('Content-Type', 'application/json')])
     #     return response
-
+    #1
     @http.route(['/documents/content/<int:id>'], type='http', auth='user')
     def documents_content(self, id):
         return self._get_file_response(id)
-
+    #2
     @http.route(['/documents/image/<int:id>',
                  '/documents/image/<int:id>/<int:width>x<int:height>',
                  ], type='http', auth="public")

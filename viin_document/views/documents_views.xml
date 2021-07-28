@@ -75,8 +75,12 @@
         <field name="model">viin_document.document</field>
         <field name="arch" type="xml">
             <tree >
+                <field name="id" />
+                
+
                 <field name="name" string="Document" required="True"/>
                 <field name="url" optional="hide"/>
+                <field name="attachment_id" />
                 <field name="mimetype" />
                 <!-- <field name="icon_file" />
                 <field name="icon_url" /> -->
